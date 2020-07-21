@@ -1,0 +1,9 @@
+C:\Users\Zoli\source\repos\Race.Web\Race.Model\bin\Debug\netcoreapp2.2\Race.Model.deps.json
+C:\Users\Zoli\source\repos\Race.Web\Race.Model\bin\Debug\netcoreapp2.2\Race.Model.dll
+C:\Users\Zoli\source\repos\Race.Web\Race.Model\bin\Debug\netcoreapp2.2\Race.Model.pdb
+C:\Users\Zoli\source\repos\Race.Web\Race.Model\obj\Debug\netcoreapp2.2\Race.Model.csprojAssemblyReference.cache
+C:\Users\Zoli\source\repos\Race.Web\Race.Model\obj\Debug\netcoreapp2.2\Race.Model.AssemblyInfoInputs.cache
+C:\Users\Zoli\source\repos\Race.Web\Race.Model\obj\Debug\netcoreapp2.2\Race.Model.AssemblyInfo.cs
+C:\Users\Zoli\source\repos\Race.Web\Race.Model\obj\Debug\netcoreapp2.2\Race.Model.csproj.CoreCompileInputs.cache
+C:\Users\Zoli\source\repos\Race.Web\Race.Model\obj\Debug\netcoreapp2.2\Race.Model.dll
+C:\Users\Zoli\source\repos\Race.Web\Race.Model\obj\Debug\netcoreapp2.2\Race.Model.pdb

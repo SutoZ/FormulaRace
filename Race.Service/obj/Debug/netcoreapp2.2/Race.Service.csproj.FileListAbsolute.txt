@@ -1,0 +1,16 @@
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\bin\Debug\netcoreapp2.2\appsettings.Development.json
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\bin\Debug\netcoreapp2.2\appsettings.json
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\bin\Debug\netcoreapp2.2\Race.Service.deps.json
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\bin\Debug\netcoreapp2.2\Race.Service.dll
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\bin\Debug\netcoreapp2.2\Race.Service.pdb
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\bin\Debug\netcoreapp2.2\Race.Model.dll
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\bin\Debug\netcoreapp2.2\Race.Repo.dll
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\bin\Debug\netcoreapp2.2\Race.Model.pdb
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\bin\Debug\netcoreapp2.2\Race.Repo.pdb
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\obj\Debug\netcoreapp2.2\Race.Service.csprojAssemblyReference.cache
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\obj\Debug\netcoreapp2.2\Race.Service.AssemblyInfoInputs.cache
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\obj\Debug\netcoreapp2.2\Race.Service.AssemblyInfo.cs
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\obj\Debug\netcoreapp2.2\Race.Service.csproj.CoreCompileInputs.cache
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\obj\Debug\netcoreapp2.2\Race.Service.csproj.CopyComplete
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\obj\Debug\netcoreapp2.2\Race.Service.dll
+C:\Users\Zoli\source\repos\Race.Web\Race.Service\obj\Debug\netcoreapp2.2\Race.Service.pdb
