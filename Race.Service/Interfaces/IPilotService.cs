@@ -8,7 +8,7 @@ namespace Race.Service.Interfaces
     {
         Task<List<PilotListDto>> GetAllPilot();
         Task<PilotDetailsDto> GetPilotAsync(int id);
-        Task<int> InsertPilotAsync(PilotCreateDto createDto);
+        Task<int> CreatePilotAsync(PilotCreateDto createDto);
         Task UpdatePilotAsync(int id, PilotUpdateDto updateDto);
         Task DeletePilotAsync(int id);
     }

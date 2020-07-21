@@ -17,7 +17,7 @@ namespace Race.Service.Services
             this.pilotRepository = pilotRepository;
         }
 
-        public async Task<int> InsertPilotAsync(PilotCreateDto createDto)
+        public async Task<int> CreatePilotAsync(PilotCreateDto createDto)
         {
             return await pilotRepository.InsertAsync(createDto);
         }
