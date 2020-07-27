@@ -10,8 +10,6 @@ namespace Race.Web
     {
         public static void Main(string[] args)
         {
-            //            Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-
             try
             {
                 var host = CreateWebHostBuilder(args).Build();

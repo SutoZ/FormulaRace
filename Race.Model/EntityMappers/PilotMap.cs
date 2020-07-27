@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Race.Model.Models;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Race.Model.EntityMappers
 {
