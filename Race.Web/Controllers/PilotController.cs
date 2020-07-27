@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Race.Repo.Dtos.Pilots;
 using System.Collections.Generic;
 using Swashbuckle.Swagger.Annotations;
+using System;
 
 namespace Race.Web.Controllers
 {
@@ -28,7 +29,7 @@ namespace Race.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<PilotDetailsDto> GetPilot(int id)
+        public async Task<PilotDetailsDto> GetPilot(Guid id)
         {
             return await pilotService.GetPilotAsync(id);
 
@@ -36,7 +37,7 @@ namespace Race.Web.Controllers
 
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<int> CreatePilot([FromBody] PilotCreateDto createDto)
+        public async Task<Guid> CreatePilot([FromQuery] PilotCreateDto createDto)
         {
             return await pilotService.CreatePilotAsync(createDto);
         }
@@ -44,7 +45,7 @@ namespace Race.Web.Controllers
       
         [HttpPut("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task UpdatePilot(int id, [FromBody] PilotUpdateDto updateDto)
+        public async Task UpdatePilot(Guid id, [FromBody] PilotUpdateDto updateDto)
         {
             await pilotService.UpdatePilotAsync(id, updateDto);
         }

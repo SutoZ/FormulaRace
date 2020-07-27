@@ -1,10 +1,11 @@
 ﻿using Race.Model.Models;
+using System;
 
 namespace Race.Repo.Dtos.Pilots
 {
     public class PilotCreateDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Number { get; set; }
         public string Code { get; set; }

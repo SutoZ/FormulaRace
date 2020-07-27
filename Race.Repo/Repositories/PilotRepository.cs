@@ -22,7 +22,7 @@ namespace Race.Repo.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             //var pilot = await context.FirstOrDefaultAsync(x => x.Id == id);
             //if (pilot == null) throw new Exception("Entity not found by given Id");
@@ -36,13 +36,13 @@ namespace Race.Repo.Repositories
             return (pilots.Select(pilot => new PilotListDto(pilot))).ToList();
         }
 
-        public async Task<PilotDetailsDto> GetPilotAsync(int id)
+        public async Task<PilotDetailsDto> GetPilotAsync(Guid id)
         {
             var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.PilotId == id);
             return new PilotDetailsDto(pilot);
         }      
 
-        public async Task<int> InsertAsync(PilotCreateDto createDto)
+        public async Task<Guid> InsertAsync(PilotCreateDto createDto)
         {
             if (createDto == null) throw new ArgumentNullException("entity");
 
@@ -56,7 +56,7 @@ namespace Race.Repo.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task UpdatePilotAsync(int id, PilotUpdateDto updateDto)
+        public async Task UpdatePilotAsync(Guid id, PilotUpdateDto updateDto)
         {
             var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.PilotId == id);
             pilot = updateDto.UpdateModelObject(pilot);

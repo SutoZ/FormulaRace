@@ -7,7 +7,7 @@ namespace Race.Repo.ApplicationContext
     public class RaceContext : DbContext
     {
         public RaceContext(DbContextOptions<RaceContext> context) : base(context)
-        {           
+        {                   
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
