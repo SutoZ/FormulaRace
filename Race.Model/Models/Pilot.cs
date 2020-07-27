@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -8,9 +9,9 @@ namespace Race.Model.Models
     public class Pilot //: BaseEntity
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
-        public int PilotId { get; set; }
+        public Guid PilotId { get; set; }
         public string Name { get; set; }
         public string Number { get; set; }
         public string Code { get; set; }
