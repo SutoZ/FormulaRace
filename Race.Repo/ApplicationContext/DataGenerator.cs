@@ -74,22 +74,7 @@ namespace Race.Repo.ApplicationContext
                 context.Pilots.AddRange(p);
                 context.Results.AddRange(r);
                 context.SaveChanges();
-
-                //SavetoDatabase(context);
             }
-        }
-
-        private static void SavetoDatabase(RaceContext context)
-        {
-            context.Database.OpenConnection();
-
-            try
-            {
-                context.Database.ExecuteSqlCommand(@"SET IDENTITY_INSERT dbo.Pilots ON");
-                context.SaveChanges();
-                context.Database.ExecuteSqlCommand(@"SET IDENTITY_INSERT dbo.Pilots OFF");
-            }
-            finally { context.Database.CloseConnection(); }
-        }
+        }      
     }
 }
