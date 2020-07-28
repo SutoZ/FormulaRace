@@ -11,6 +11,6 @@ namespace Race.Service.Interfaces
         Task<PilotDetailsDto> GetPilotAsync(Guid id);
         Task<Guid> CreatePilotAsync(PilotCreateDto createDto);
         Task UpdatePilotAsync(Guid id, PilotUpdateDto updateDto);
-        Task DeletePilotAsync(Guid id);
+        Task<Guid> DeletePilotAsync(Guid id);
     }
 }

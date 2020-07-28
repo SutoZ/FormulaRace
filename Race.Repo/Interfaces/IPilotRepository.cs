@@ -11,7 +11,7 @@ namespace Race.Repo.Interfaces
         Task<List<PilotListDto>> GetAllPilotAsync();
         Task<PilotDetailsDto> GetPilotAsync(Guid id);
         Task UpdatePilotAsync(Guid id, PilotUpdateDto updateDto);
-        Task DeleteAsync(Guid id);
+        Task<Guid> DeleteAsync(Guid id);
         Task SaveChangesAsync();
     }
 }

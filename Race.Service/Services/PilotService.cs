@@ -1,6 +1,5 @@
 ﻿using Race.Repo.Dtos.Pilots;
 using Race.Repo.Interfaces;
-using Race.Service.Dtos;
 using Race.Service.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -36,9 +35,9 @@ namespace Race.Service.Services
         {
             await pilotRepository.UpdatePilotAsync(id, updateDto);
         }
-        public async Task DeletePilotAsync(Guid id)
+        public async Task<Guid> DeletePilotAsync(Guid id)
         {
-            await pilotRepository.DeleteAsync(id);
+           return await pilotRepository.DeleteAsync(id);
         }     
     }
 }
