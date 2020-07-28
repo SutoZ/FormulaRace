@@ -63,6 +63,15 @@ namespace Race.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            //using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            //{
+            //    var context = serviceScope.ServiceProvider.GetRequiredService<RaceContext>();
+
+            //    context.Database.EnsureDeleted();
+            //    context.Database.Migrate();
+            //}
+
+
             //addig swagger middleware
             app.UseSwagger();
             app.UseSwaggerUI(
