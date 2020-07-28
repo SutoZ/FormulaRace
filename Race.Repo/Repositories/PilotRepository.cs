@@ -22,33 +22,44 @@ namespace Race.Repo.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task<Guid> DeleteAsync(Guid id)
         {
-            //var pilot = await context.FirstOrDefaultAsync(x => x.Id == id);
-            //if (pilot == null) throw new Exception("Entity not found by given Id");
+            var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.PilotId == id);
+            if (pilot == null) throw new Exception("Entity not found by given Id");
+
+            context.Remove(pilot);
 
             await context.SaveChangesAsync();
+            return pilot.PilotId;
         }
 
         public async Task<List<PilotListDto>> GetAllPilotAsync()
         {
-            var pilots = await context.Pilots.ToListAsync();
+            var pilots = await context.Pilots.AsNoTracking().ToListAsync();
             return (pilots.Select(pilot => new PilotListDto(pilot))).ToList();
         }
 
         public async Task<PilotDetailsDto> GetPilotAsync(Guid id)
         {
-            var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.PilotId == id);
+            var pilot = await context.Pilots.AsNoTracking().FirstOrDefaultAsync(x => x.PilotId == id);
             return new PilotDetailsDto(pilot);
-        }      
+        }
 
         public async Task<Guid> InsertAsync(PilotCreateDto createDto)
         {
-            if (createDto == null) throw new ArgumentNullException("entity");
+            try
+            {
+                if (createDto == null) throw new ArgumentNullException("entity");
+                var pilot = createDto.CreateModelObject();
 
-            context.Add(createDto);
-            await context.SaveChangesAsync();
-            return createDto.Id;
+                context.Add(pilot);
+                await context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw new ArgumentException(e.Message);
+            }
+            return createDto.PilotId;
         }
 
         public async Task SaveChangesAsync()
@@ -62,6 +73,6 @@ namespace Race.Repo.Repositories
             pilot = updateDto.UpdateModelObject(pilot);
 
             await context.SaveChangesAsync();
-        }     
+        }
     }
 }

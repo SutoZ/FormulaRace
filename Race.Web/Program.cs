@@ -17,7 +17,7 @@ namespace Race.Web
                using (var scope = host.Services.CreateScope())
                 {
                     var services = scope.ServiceProvider;
-                    var context = services.GetRequiredService<RaceContext>();
+                  //  var context = services.GetRequiredService<RaceContext>();
 
                     DataGenerator.Initialize(services);
                 }
