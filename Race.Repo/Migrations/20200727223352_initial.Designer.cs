@@ -10,14 +10,14 @@ using Race.Repo.ApplicationContext;
 namespace Race.Repo.Migrations
 {
     [DbContext(typeof(RaceContext))]
-    [Migration("20200726233042_IdentityUpdate")]
-    partial class IdentityUpdate
+    [Migration("20200727223352_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
