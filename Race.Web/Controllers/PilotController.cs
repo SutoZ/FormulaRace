@@ -23,7 +23,7 @@ namespace Race.Web.Controllers
 
         [HttpGet]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<List<PilotListDto>> GetAllPilot()
+        public async Task<ActionResult<List<PilotListDto>>> GetAllPilot()
         {
             return await pilotService.GetAllPilot();
         }
@@ -37,12 +37,12 @@ namespace Race.Web.Controllers
 
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<Guid> CreatePilot([FromQuery] PilotCreateDto createDto)
+        public async Task<Guid> CreatePilot([FromBody] PilotCreateDto createDto)        //Task<ActionResult<PilotCreateDto>>
         {
             return await pilotService.CreatePilotAsync(createDto);
         }
 
-      
+
         [HttpPut("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
         public async Task UpdatePilot(Guid id, [FromBody] PilotUpdateDto updateDto)
@@ -51,6 +51,12 @@ namespace Race.Web.Controllers
         }
 
 
-        //HttpDelete
+        [HttpDelete("{id}")]
+        [SwaggerOperation(Tags = new[] { OPNAME })]
+        public async Task<Guid> DeletePilot(Guid id)
+        {
+          return await pilotService.DeletePilotAsync(id);
+        }
+
     }
 }
