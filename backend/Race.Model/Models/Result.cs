@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Race.Model.Models
 {
-    public class Result //: BaseEntity
+    public class Result
     {
         [Key]
         [Required]
@@ -18,7 +18,7 @@ namespace Race.Model.Models
         [ForeignKey("Pilot")]
         public Guid PilotId { get; set; }
 
-        public Result(Guid resultId, Guid pilotId)// : base(id)
+        public Result(Guid resultId, Guid pilotId)
         {
             this.ResultId = resultId;
             this.PilotId = pilotId;

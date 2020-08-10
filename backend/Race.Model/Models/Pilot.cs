@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Race.Model.Models
 {
-    public class Pilot //: BaseEntity
+    public class Pilot
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
