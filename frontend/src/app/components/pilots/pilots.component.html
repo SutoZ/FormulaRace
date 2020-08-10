@@ -1,0 +1,25 @@
+<p>Pilots in Formula 1</p>
+<p *ngIf="!pilots"><em>Loading...</em></p>
+
+<div *ngIf="pilots">
+    <table class="table table-striped" aria-labelledby="tableLabel">
+        <thead>
+            <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Number</th>
+            <th>Code</th>
+            <th>Nationality</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let pilot of pilots">
+                <td>{{pilot.id}}</td>
+                <td>{{pilot.name}}</td>
+                <td>{{pilot.number}}</td>
+                <td>{{pilot.code}}</td>
+                <td>{{pilot.nationality}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
