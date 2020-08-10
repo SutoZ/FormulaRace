@@ -10,8 +10,8 @@ using Race.Repo.ApplicationContext;
 namespace Race.Repo.Migrations
 {
     [DbContext(typeof(RaceContext))]
-    [Migration("20200727223352_initial")]
-    partial class initial
+    [Migration("20200810170548_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,8 @@ namespace Race.Repo.Migrations
 
             modelBuilder.Entity("Race.Model.Models.Pilot", b =>
                 {
-                    b.Property<Guid>("PilotId");
+                    b.Property<Guid>("PilotId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Code")
                         .IsRequired();
@@ -40,6 +41,40 @@ namespace Race.Repo.Migrations
                     b.HasKey("PilotId");
 
                     b.ToTable("Pilots");
+
+                    b.HasData(
+                        new
+                        {
+                            PilotId = new Guid("595a50ec-75a6-434c-98f7-dc28a5ad6c00"),
+                            Code = "HAM",
+                            Name = "Hamilton",
+                            Nationality = "British",
+                            Number = "44"
+                        },
+                        new
+                        {
+                            PilotId = new Guid("c274f0f1-9aba-41ef-b271-e671074d8aa2"),
+                            Code = "HEI",
+                            Name = "Heidfeld",
+                            Nationality = "German",
+                            Number = "50"
+                        },
+                        new
+                        {
+                            PilotId = new Guid("3dc612c0-5582-46ba-b2fa-6d72493e130d"),
+                            Code = "ROS",
+                            Name = "Rosberg",
+                            Nationality = "German",
+                            Number = "6"
+                        },
+                        new
+                        {
+                            PilotId = new Guid("76031f5a-3682-45ac-afac-8f31440cd863"),
+                            Code = "ALO",
+                            Name = "Alonso",
+                            Nationality = "Spanish",
+                            Number = "14"
+                        });
                 });
 
             modelBuilder.Entity("Race.Model.Models.Result", b =>

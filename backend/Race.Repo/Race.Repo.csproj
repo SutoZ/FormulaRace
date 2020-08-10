@@ -37,8 +37,4 @@
     <ProjectReference Include="..\Race.Model\Race.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EntityConfig\" />
-  </ItemGroup>
-
 </Project>

@@ -1,6 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Race.Model.EntityMappers;
 using Race.Model.Models;
+using Race.Model.Seed.Pilots;
+using Race.Repo.EntityConfig;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Race.Repo.ApplicationContext
 {
@@ -10,19 +15,28 @@ namespace Race.Repo.ApplicationContext
         {
         }
 
+        public virtual DbSet<Pilot> Pilots { get; set; }
+        public virtual DbSet<Result> Results { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.ApplyConfiguration(new EntitytypeConfiguration<>)        TODO
-            modelBuilder.Entity<Pilot>().ToTable("Pilots");
-            modelBuilder.Entity<Pilot>().Property(x => x.PilotId).ValueGeneratedNever();
+            modelBuilder.ApplyConfiguration(new PilotConfiguration());
 
-            new PilotMap(modelBuilder.Entity<Pilot>());
-            new ResultMap(modelBuilder.Entity<Result>());
+         //   new ResultMap(modelBuilder.Entity<Result>());
+
+            SeedInitialDatas(modelBuilder);
         }
 
-        public virtual DbSet<Pilot> Pilots { get; set; }
-        public virtual DbSet<Result> Results { get; set; }
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void SeedInitialDatas(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Pilot>().HasData(new PilotSeed().Entities);
+        }
     }
 }
