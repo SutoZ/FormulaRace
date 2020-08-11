@@ -15,6 +15,8 @@ import { Pilot } from '../pilot';
 export class PilotsComponent implements OnInit {
   pilots: Pilot[];
 
+public displayedColumns: String[] = ['id', 'name', 'number', 'code', 'nationality' ];
+
   constructor(private pilotsServive: PilotsService) { }
 
   ngOnInit(): void {

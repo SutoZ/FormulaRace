@@ -1,9 +1,43 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">    
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-item nav-link active" [routerLinkActive]="['link-active']"  [routerLinkActiveOptions]="{ exact: true }" [routerLink]="['link-active']" href="#">Home <span class="sr-only">(current)</span></a>
-        <a class="nav-item nav-link" [routerLinkActive]="['link-active']" [routerLink]="['/pilots']">Pilots</a>
-        <!-- <a class="nav-item nav-link disabled" href="#">Disabled</a> -->
+<header>
+  <nav
+    class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
+  >
+    <div class="container">
+      <a class="navbar-brand" [routerLink]="['/']">Formula 1</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target=".navbar-collapse"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+        <ul class="navbar-nav flex-grow">
+          <li
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
+          </li>
+          <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" routerLink="/api/pilots">Pilots</a>
+          </li>      
+        </ul>
       </div>
     </div>
   </nav>
+</header>
+
+
+<!-- 
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">    
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link active" [routerLinkActive]="['link-active']"  [routerLinkActiveOptions]="{ exact: true }" [routerLink]="['link-active']" href="#">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-item nav-link" [routerLinkActive]="['link-active']" [routerLink]="['pilots']">Pilots</a>        
+      </div>
+    </div>
+  </nav> -->
