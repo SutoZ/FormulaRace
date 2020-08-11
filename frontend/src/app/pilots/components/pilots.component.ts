@@ -1,7 +1,6 @@
-import { Component, OnInit, Inject, Injectable, Optional } from '@angular/core';
-import { Pilot } from './pilot';
-import { HttpClient } from '@angular/common/http';
-import { PilotsService } from 'src/app/pilots.service';
+import { Component, OnInit, Injectable } from '@angular/core';
+import { PilotsService } from 'src/app/pilots/services/pilots.service';
+import { Pilot } from '../pilot';
 
 @Component({
   selector: 'app-pilots',
