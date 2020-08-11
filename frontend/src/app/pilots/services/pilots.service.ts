@@ -1,8 +1,7 @@
-import { Injectable, Inject, Optional } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { PilotsListDto } from './components/pilots/Dtos/PilotsListDto';
 import { Observable } from 'rxjs';
-import { Pilot } from './components/pilots/pilot';
+import { Pilot } from '../pilot';
 
 @Injectable({
   providedIn: 'root'
