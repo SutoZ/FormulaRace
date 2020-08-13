@@ -7,7 +7,7 @@ namespace Race.Model.EntityMappers
     {
         public PilotMap(EntityTypeBuilder<Pilot> builder)
         {
-            builder.HasKey(x => x.PilotId);
+            builder.HasKey(x => x.Id);
             builder.Property(x => x.Name).IsRequired();
             builder.Property(x => x.Nationality).IsRequired();
             builder.Property(x => x.Number).IsRequired();

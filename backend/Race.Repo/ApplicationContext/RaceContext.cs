@@ -17,13 +17,14 @@ namespace Race.Repo.ApplicationContext
 
         public virtual DbSet<Pilot> Pilots { get; set; }
         public virtual DbSet<Result> Results { get; set; }
+        public virtual DbSet<Team> Teams { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new PilotConfiguration());
-
+            modelBuilder.ApplyConfiguration(new TeamConfiguration());
          //   new ResultMap(modelBuilder.Entity<Result>());
 
             SeedInitialDatas(modelBuilder);

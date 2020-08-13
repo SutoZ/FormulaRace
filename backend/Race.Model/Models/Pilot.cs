@@ -11,12 +11,17 @@ namespace Race.Model.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
-        public Guid PilotId { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Number { get; set; }
         public string Code { get; set; }
         public string Nationality { get; set; }
         public virtual List<Result> Results { get; set; }
+        public virtual Team Team { get; set; }
+
+        [ForeignKey("Team")]
+        public int TeamId { get; set; }
+
         public Pilot()
         {
 

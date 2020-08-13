@@ -2,24 +2,33 @@
 <p *ngIf="!pilots"><em>Loading...</em></p>
 
 <div *ngIf="pilots">
-    <table class="table table-striped" aria-labelledby="tableLabel">
-        <thead>
-            <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Number</th>
-            <th>Code</th>
-            <th>Nationality</th>
-        </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let pilot of pilots">
-                <td>{{pilot.pilotId}}</td>
-                <td>{{pilot.name}}</td>
-                <td>{{pilot.number}}</td>
-                <td>{{pilot.code}}</td>
-                <td>{{pilot.nationality}}</td>
-            </tr>
-        </tbody>
+    <table mat-table [dataSource]="pilots" class="mat-elevation-z8">
+        <ng-container matColumnDef="Id">
+            <th mat-header-cell *matHeaderCellDef> Id </th>
+            <td mat-cell *matCellDef="let pilot"> {{pilot.pilotId}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Name">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let pilot"> {{pilot.name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Number">
+            <th mat-header-cell *matHeaderCellDef> Number </th>
+            <td mat-cell *matCellDef="let pilot"> {{pilot.number}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Code">
+            <th mat-header-cell *matHeaderCellDef> Code </th>
+            <td mat-cell *matCellDef="let pilot"> {{pilot.code}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Nationality">
+            <th mat-header-cell *matHeaderCellDef> Nationality </th>
+            <td mat-cell *matCellDef="let pilot"> {{pilot.nationality}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
+
+    <mat-paginator [pageSize]="10"
+    [pageSizeOptions]="[10, 20, 50]"
+    showFirstLastButtons></mat-paginator>
 </div>

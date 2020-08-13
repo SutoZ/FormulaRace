@@ -1,6 +1,8 @@
-import { Component, OnInit, Injectable } from '@angular/core';
+import { Component, OnInit, Injectable, ViewChild } from '@angular/core';
 import { PilotsService } from 'src/app/pilots/services/pilots.service';
 import { Pilot } from '../pilot';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-pilots',
@@ -13,9 +15,10 @@ import { Pilot } from '../pilot';
 })
 
 export class PilotsComponent implements OnInit {
-  pilots: Pilot[];
+ public pilots: Pilot[];
 
-public displayedColumns: String[] = ['id', 'name', 'number', 'code', 'nationality' ];
+  public displayedColumns: String[] = ['Id', 'Name', 'Number', 'Code', 'Nationality'];
+  public dataSource = this.pilots;
 
   constructor(private pilotsServive: PilotsService) { }
 
@@ -24,6 +27,6 @@ public displayedColumns: String[] = ['id', 'name', 'number', 'code', 'nationalit
   }
 
   getPilots(): void {
-    this.pilotsServive.getPilots().subscribe(pilots => this.pilots = pilots);
+    this.pilotsServive.getPilots().subscribe(result => {this.pilots = result; }, error => console.error(error));
   }
 }

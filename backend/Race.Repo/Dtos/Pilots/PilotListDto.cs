@@ -13,7 +13,7 @@ namespace Race.Repo.Dtos.Pilots
 
         public PilotListDto(Pilot pilot)
         {
-            PilotId = pilot.PilotId;
+            PilotId = pilot.Id;
             Name = pilot.Name;
             Number = pilot.Number;
             Code = pilot.Code;

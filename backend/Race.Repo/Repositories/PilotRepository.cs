@@ -20,13 +20,13 @@ namespace Race.Repo.Repositories
 
         public async Task<Guid> DeleteAsync(Guid id)
         {
-            var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.PilotId == id);
+            var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.Id == id);
             if (pilot == null) throw new Exception("Entity not found by given Id");
 
             context.Remove(pilot);
 
             await context.SaveChangesAsync();
-            return pilot.PilotId;
+            return pilot.Id;
         }
 
         public async Task<List<PilotListDto>> GetAllPilotAsync()
@@ -37,7 +37,7 @@ namespace Race.Repo.Repositories
 
         public async Task<PilotDetailsDto> GetPilotAsync(Guid id)
         {
-            var pilot = await context.Pilots.AsNoTracking().FirstOrDefaultAsync(x => x.PilotId == id);
+            var pilot = await context.Pilots.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             return new PilotDetailsDto(pilot);
         }
 
@@ -65,7 +65,7 @@ namespace Race.Repo.Repositories
 
         public async Task UpdatePilotAsync(Guid id, PilotUpdateDto updateDto)
         {
-            var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.PilotId == id);
+            var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.Id == id);
             pilot = updateDto.UpdateModelObject(pilot);
 
             await context.SaveChangesAsync();

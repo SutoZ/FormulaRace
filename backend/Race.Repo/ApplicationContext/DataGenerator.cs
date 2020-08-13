@@ -18,14 +18,14 @@ namespace Race.Repo.ApplicationContext
                 Result r;
                 Pilot p = new Pilot
                 {
-                    PilotId = new Guid("595A50EC-75A6-434C-98F7-DC28A5AD6C00"),
+                    Id = new Guid("595A50EC-75A6-434C-98F7-DC28A5AD6C00"),
                     Code = "HAM",
                     Number = "44",
                     Name = "Hamilton",
                     Nationality = "British"
                 };
 
-                r = new Result(resultId: new Guid("E173913C-A132-484B-8AD4-8A4A2F24B693"), p.PilotId);
+                r = new Result(resultId: new Guid("E173913C-A132-484B-8AD4-8A4A2F24B693"), p.Id);
 
                 p.Results = new List<Result>() { r };
 
@@ -34,13 +34,13 @@ namespace Race.Repo.ApplicationContext
 
                 p = new Pilot()
                 {
-                    PilotId = new Guid("C274F0F1-9ABA-41EF-B271-E671074D8AA2"),
+                    Id = new Guid("C274F0F1-9ABA-41EF-B271-E671074D8AA2"),
                     Code = "HEI",
                     Number = "50",
                     Name = "Heidfeld",
                     Nationality = "German"
                 };
-                r = new Result(resultId: new Guid("72655CEC-CEB4-49AB-9056-790D24C01355"), p.PilotId);
+                r = new Result(resultId: new Guid("72655CEC-CEB4-49AB-9056-790D24C01355"), p.Id);
                 p.Results = new List<Result>() { r };
 
                 context.Pilots.AddRange(p);
@@ -48,13 +48,13 @@ namespace Race.Repo.ApplicationContext
 
                 p = new Pilot()
                 {
-                    PilotId = new Guid("3DC612C0-5582-46BA-B2FA-6D72493E130D"),
+                    Id = new Guid("3DC612C0-5582-46BA-B2FA-6D72493E130D"),
                     Code = "ROS",
                     Number = "6",
                     Name = "Rosberg",
                     Nationality = "German"
                 };
-                r = new Result(resultId: new Guid("95397422-F23E-4754-B2E6-266CD41F9C4C"), p.PilotId);
+                r = new Result(resultId: new Guid("95397422-F23E-4754-B2E6-266CD41F9C4C"), p.Id);
                 p.Results = new List<Result>() { r };
 
                 context.Pilots.AddRange(p);
@@ -62,13 +62,13 @@ namespace Race.Repo.ApplicationContext
 
                 p = new Pilot()
                 {
-                    PilotId = new Guid("76031F5A-3682-45AC-AFAC-8F31440CD863"),
+                    Id = new Guid("76031F5A-3682-45AC-AFAC-8F31440CD863"),
                     Code = "ALO",
                     Number = "14",
                     Name = "Alonso",
                     Nationality = "Spanish"
                 };
-                r = new Result(resultId: new Guid("B9B0693F-31FA-49E4-8747-5EE217046BDB"), p.PilotId);
+                r = new Result(resultId: new Guid("B9B0693F-31FA-49E4-8747-5EE217046BDB"), p.Id);
                 p.Results = new List<Result>() { r };
 
                 context.Pilots.AddRange(p);

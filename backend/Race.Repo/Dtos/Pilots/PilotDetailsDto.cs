@@ -14,7 +14,7 @@ namespace Race.Repo.Dtos.Pilots
         public List<Result> Results { get; set; }
         public PilotDetailsDto(Pilot pilot)
         {
-            Id = pilot.PilotId;
+            Id = pilot.Id;
             Name = pilot.Name;
             Code = pilot.Code;
             Nationality = pilot.Nationality;

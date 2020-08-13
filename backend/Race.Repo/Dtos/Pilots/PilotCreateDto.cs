@@ -14,7 +14,7 @@ namespace Race.Repo.Dtos.Pilots
 
         public PilotCreateDto(Pilot pilot)
         {
-            PilotId = pilot.PilotId;
+            PilotId = pilot.Id;
             Name = pilot.Name;
             Number = pilot.Number;
             Code = pilot.Code;
@@ -32,7 +32,7 @@ namespace Race.Repo.Dtos.Pilots
             Name = Name,
             Nationality = Nationality,
             Number = Number,
-            PilotId = PilotId,
+            Id = PilotId,
             //Results = Results.
         };
     }
