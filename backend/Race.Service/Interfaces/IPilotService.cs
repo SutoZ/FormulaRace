@@ -8,9 +8,9 @@ namespace Race.Service.Interfaces
     public interface IPilotService
     {
         Task<List<PilotListDto>> GetAllPilotAsync();
-        Task<PilotDetailsDto> GetPilotAsync(Guid id);
-        Task<Guid> CreatePilotAsync(PilotCreateDto createDto);
-        Task UpdatePilotAsync(Guid id, PilotUpdateDto updateDto);
-        Task<Guid> DeletePilotAsync(Guid id);
+        Task<PilotDetailsDto> GetPilotAsync(int id);
+        Task<int> CreatePilotAsync(PilotCreateDto createDto);
+        Task UpdatePilotAsync(int id, PilotUpdateDto updateDto);
+        Task<int> DeletePilotAsync(int id);
     }
 }

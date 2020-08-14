@@ -7,11 +7,11 @@ namespace Race.Repo.Interfaces
 {
     public interface IPilotRepository
     {
-        Task<Guid> InsertAsync(PilotCreateDto entity);
+        Task<int> InsertAsync(PilotCreateDto entity);
         Task<List<PilotListDto>> GetAllPilotAsync();
-        Task<PilotDetailsDto> GetPilotAsync(Guid id);
-        Task UpdatePilotAsync(Guid id, PilotUpdateDto updateDto);
-        Task<Guid> DeleteAsync(Guid id);
+        Task<PilotDetailsDto> GetPilotAsync(int id);
+        Task UpdatePilotAsync(int id, PilotUpdateDto updateDto);
+        Task<int> DeleteAsync(int id);
         Task SaveChangesAsync();
     }
 }

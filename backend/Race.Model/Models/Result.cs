@@ -8,7 +8,7 @@ namespace Race.Model.Models
     {
         [Key]
         [Required]
-        public Guid ResultId { get; set; }
+        public int ResultId { get; set; }
 
         [ForeignKey("Race")]
         public int RaceId { get; set; }
@@ -18,7 +18,7 @@ namespace Race.Model.Models
         [ForeignKey("Pilot")]
         public Guid PilotId { get; set; }
 
-        public Result(Guid resultId, Guid pilotId)
+        public Result(int resultId, Guid pilotId)
         {
             this.ResultId = resultId;
             this.PilotId = pilotId;

@@ -7,7 +7,7 @@ namespace Race.Repo.Dtos.Results
     {
         public Guid Id { get; set; }
         public int RaceId { get; set; }
-        public Guid PilotId { get; set; }
+        public int PilotId { get; set; }
         public Result CreateModelObject()
         {
             return new Result(PilotId, Id);

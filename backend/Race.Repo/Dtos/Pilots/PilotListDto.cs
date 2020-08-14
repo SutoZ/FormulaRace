@@ -5,7 +5,7 @@ namespace Race.Repo.Dtos.Pilots
 {
    public class PilotListDto
     {
-        public Guid PilotId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Number { get; set; }
         public string Code { get; set; }
@@ -13,7 +13,7 @@ namespace Race.Repo.Dtos.Pilots
 
         public PilotListDto(Pilot pilot)
         {
-            PilotId = pilot.Id;
+            Id = pilot.Id;
             Name = pilot.Name;
             Number = pilot.Number;
             Code = pilot.Code;

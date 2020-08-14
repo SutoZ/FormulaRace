@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Race.Model.EntityMappers;
 using Race.Model.Models;
 using Race.Model.Seed.Pilots;
 using Race.Repo.EntityConfig;
@@ -25,7 +24,6 @@ namespace Race.Repo.ApplicationContext
 
             modelBuilder.ApplyConfiguration(new PilotConfiguration());
             modelBuilder.ApplyConfiguration(new TeamConfiguration());
-         //   new ResultMap(modelBuilder.Entity<Result>());
 
             SeedInitialDatas(modelBuilder);
         }
@@ -38,6 +36,7 @@ namespace Race.Repo.ApplicationContext
         private void SeedInitialDatas(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Pilot>().HasData(new PilotSeed().Entities);
+            modelBuilder.Entity<Team>().HasData(new TeamsSeed().Entities);
         }
     }
 }

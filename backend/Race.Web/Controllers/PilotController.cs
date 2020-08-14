@@ -29,7 +29,7 @@ namespace Race.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<PilotDetailsDto> GetPilot(Guid id)
+        public async Task<PilotDetailsDto> GetPilot(int id)
         {
             return await pilotService.GetPilotAsync(id);
 
@@ -37,7 +37,7 @@ namespace Race.Web.Controllers
 
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<Guid> CreatePilot([FromBody] PilotCreateDto createDto)        //Task<ActionResult<PilotCreateDto>>
+        public async Task<int> CreatePilot([FromBody] PilotCreateDto createDto)        //Task<ActionResult<PilotCreateDto>>
         {
             return await pilotService.CreatePilotAsync(createDto);
         }
@@ -45,7 +45,7 @@ namespace Race.Web.Controllers
 
         [HttpPut("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task UpdatePilot(Guid id, [FromBody] PilotUpdateDto updateDto)
+        public async Task UpdatePilot(int id, [FromBody] PilotUpdateDto updateDto)
         {
             await pilotService.UpdatePilotAsync(id, updateDto);
         }
@@ -53,7 +53,7 @@ namespace Race.Web.Controllers
 
         [HttpDelete("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<Guid> DeletePilot(Guid id)
+        public async Task<int> DeletePilot(int id)
         {
           return await pilotService.DeletePilotAsync(id);
         }

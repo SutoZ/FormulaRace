@@ -6,7 +6,7 @@ namespace Race.Repo.Dtos.Pilots
 {
     public class PilotDetailsDto
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Number { get; set; }
         public string Code { get; set; }

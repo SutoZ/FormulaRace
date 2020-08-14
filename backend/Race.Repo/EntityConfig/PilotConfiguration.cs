@@ -8,7 +8,7 @@ namespace Race.Repo.EntityConfig
     {
         public void Configure(EntityTypeBuilder<Pilot> builder)
         {
-            builder.ToTable("Pilots");            
+            builder.ToTable("Pilots");
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Name).IsRequired();
@@ -19,6 +19,10 @@ namespace Race.Repo.EntityConfig
             builder.HasMany(x => x.Results)
                 .WithOne(x => x.Pilot)
                 .HasForeignKey(x => x.ResultId);
+
+            builder.HasOne(x => x.Team)
+                .WithMany(x => x.Pilots)
+                .HasForeignKey(x => x.TeamId);
         }
     }
 }
