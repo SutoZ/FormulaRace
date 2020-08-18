@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Race.Repo.ApplicationContext
 {
-    public class RaceContext : DbContext
+    public class RaceContext : DbContext, IRaceContext
     {
         public RaceContext(DbContextOptions<RaceContext> context) : base(context)
         {
