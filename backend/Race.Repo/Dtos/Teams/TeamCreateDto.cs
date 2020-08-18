@@ -19,5 +19,14 @@ namespace Race.Repo.Dtos.Teams
             OwnerName = team.OwnerName;
             DateOfFoundation = team.DateOfFoundation;
         }
+
+        public Team CreateModelObject() => new Team
+        {
+            Id = Id,
+            Name = Name,
+            ChampionShipPoints = ChampionShipPoints,
+            OwnerName = OwnerName,
+            DateOfFoundation = DateOfFoundation
+        };
     }
 }

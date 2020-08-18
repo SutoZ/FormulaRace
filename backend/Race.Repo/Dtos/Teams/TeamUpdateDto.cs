@@ -5,23 +5,21 @@ using System.Text;
 
 namespace Race.Repo.Dtos.Teams
 {
-    public class TeamDetailsDto
+    public class TeamUpdateDto
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public DateTime DateOfFoundation { get; set; }
         public string OwnerName { get; set; }
         public int ChampionShipPoints { get; set; }
         public List<Pilot> Pilots { get; set; }
 
-        public TeamDetailsDto(Team team)
+        public TeamUpdateDto(Team team)
         {
-            Id = team.Id;
             Name = team.Name;
             DateOfFoundation = team.DateOfFoundation;
             OwnerName = team.OwnerName;
             ChampionShipPoints = team.ChampionShipPoints;
-            Pilots = team.Pilots != null ? Pilots = new List<Pilot>() : null;
+            Pilots = team.Pilots != null ? new List<Pilot>() : null;
         }
     }
 }

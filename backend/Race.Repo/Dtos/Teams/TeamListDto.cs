@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Race.Repo.Dtos.Teams
 {
-    public class TeamDetailsDto
+    public class TeamListDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -14,14 +14,14 @@ namespace Race.Repo.Dtos.Teams
         public int ChampionShipPoints { get; set; }
         public List<Pilot> Pilots { get; set; }
 
-        public TeamDetailsDto(Team team)
+        public TeamListDto(Team team)
         {
             Id = team.Id;
             Name = team.Name;
             DateOfFoundation = team.DateOfFoundation;
             OwnerName = team.OwnerName;
             ChampionShipPoints = team.ChampionShipPoints;
-            Pilots = team.Pilots != null ? Pilots = new List<Pilot>() : null;
+            Pilots = team.Pilots != null ? new List<Pilot>() : null;
         }
     }
 }
