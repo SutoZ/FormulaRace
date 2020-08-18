@@ -21,14 +21,14 @@ namespace Race.Repo.Repositories
 
         public async Task<List<TeamListDto>> GetAllTeamAsync()
         {
-            var pilots = await context.Teams.ToListAsync();
-            return pilots.Select(ent => new TeamListDto(ent)).ToList();
+            var teams = await context.Teams.ToListAsync();
+            return teams.Select(ent => new TeamListDto(ent)).ToList();
         }
 
         public async Task<TeamDetailsDto> GetTeamByIdAsync(int id)
         {
-            var pilot = await context.Teams.FirstOrDefaultAsync(ent => ent.Id == id);
-            return new TeamDetailsDto(pilot);
+            var team = await context.Teams.FirstOrDefaultAsync(ent => ent.Id == id);
+            return new TeamDetailsDto(team);
         }
 
         public async Task<int> DeleteAsync(int id)

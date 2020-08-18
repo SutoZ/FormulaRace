@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Race.Repo.Repositories
 {
-    public class PilotRepository //<T> : IPilotRepository<T> where T : class
+    public class PilotRepository : IPilotRepository //<T> : IPilotRepository<T> where T : class
     {
         private readonly RaceContext context;
 
@@ -27,6 +27,12 @@ namespace Race.Repo.Repositories
 
             await context.SaveChangesAsync();
             return pilot.Id;
+        }
+
+        public async Task<List<PilotListDto>> GetAllPilotAsync()
+        {
+            var pilots = await context.Pilots.ToListAsync();
+            return pilots.Select(ent => new PilotListDto(ent)).ToList();
         }
 
         public async Task<PilotDetailsDto> GetPilotAsync(int id)
@@ -50,6 +56,14 @@ namespace Race.Repo.Repositories
                 throw new ArgumentException(e.Message);
             }
             return createDto.Id;
+        }        
+
+        public async Task UpdatePilotAsync(int id, PilotUpdateDto updateDto)
+        {
+            var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.Id == id);
+            pilot = updateDto.UpdateModelObject(pilot);
+
+            await context.SaveChangesAsync();
         }
     }
 }
