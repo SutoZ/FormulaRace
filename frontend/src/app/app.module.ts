@@ -7,13 +7,15 @@ import { PilotsComponent } from './pilots/components/pilots.component';
 import { NavMenuComponent } from './nav-menu/components/nav-menu.component';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TeamsComponent } from './teams/teams.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     PilotsComponent,
-    NavMenuComponent
+    NavMenuComponent,
+    TeamsComponent
   ],
   imports: [
     BrowserModule,

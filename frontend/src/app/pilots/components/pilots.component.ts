@@ -15,7 +15,7 @@ import { MatPaginator } from '@angular/material/paginator';
 })
 
 export class PilotsComponent implements OnInit {
- public pilots: Pilot[];
+  public pilots: Pilot[];
 
   public displayedColumns: String[] = ['Id', 'Name', 'Number', 'Code', 'Nationality'];
   public dataSource = this.pilots;
@@ -27,6 +27,6 @@ export class PilotsComponent implements OnInit {
   }
 
   getPilots(): void {
-    this.pilotsServive.getPilots().subscribe(result => {this.pilots = result; }, error => console.error(error));
+    this.pilotsServive.getPilots().subscribe(result => { this.pilots = result; }, error => console.error(error));
   }
 }

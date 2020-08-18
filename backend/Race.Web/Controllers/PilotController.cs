@@ -10,7 +10,7 @@ namespace Race.Web.Controllers
 {
     [Route("api/pilots")]
     [ApiController]
-    public class PilotController : Controller
+    public class PilotController
     {
         private const string OPNAME = "Pilots";
 
@@ -37,7 +37,7 @@ namespace Race.Web.Controllers
 
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<int> CreatePilot([FromBody] PilotCreateDto createDto)        //Task<ActionResult<PilotCreateDto>>
+        public async Task<ActionResult<int>> CreatePilot([FromBody] PilotCreateDto createDto)
         {
             return await pilotService.CreatePilotAsync(createDto);
         }
