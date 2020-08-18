@@ -47,8 +47,13 @@ namespace Race.Web
                 });
             });
 
-            services.AddScoped(typeof(IPilotRepository), typeof(PilotRepository));
-            services.AddTransient<IPilotService, PilotService>();
+            services.AddScoped<IRaceContext, RaceContext>();
+
+            services.AddScoped<IPilotRepository, PilotRepository>();
+            services.AddScoped<ITeamRepository,TeamRepository>();
+
+            services.AddScoped<ITeamService, TeamService>();
+            services.AddScoped<IPilotService, PilotService>();
 
             services.AddDbContext<RaceContext>(options => options.UseSqlServer(Configuration.GetConnectionString("RaceConnection")));
 
@@ -100,7 +105,7 @@ namespace Race.Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
-            });            
+            });
         }
     }
 }
