@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Race.Repo.Interfaces
+namespace Race.Service.Interfaces
 {
-    public interface ITeamRepository
+    public interface ITeamService
     {
-        Task<int> InsertAsync(TeamCreateDto entity);
         Task<List<TeamListDto>> GetAllTeamAsync();
         Task<TeamDetailsDto> GetTeamByIdAsync(int id);
+        Task<int> CreateTeamAsync(TeamCreateDto createDto);
         Task UpdateTeamAsync(int id, TeamUpdateDto updateDto);
-        Task<int> DeleteAsync(int id);
+        Task<int> DeleteTeamAsync(int id);
     }
 }
