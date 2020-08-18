@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Race.Repo.Repositories
 {
-    public class PilotRepository : IPilotRepository
+    public class PilotRepository //<T> : IPilotRepository<T> where T : class
     {
         private readonly RaceContext context;
 
@@ -20,19 +20,13 @@ namespace Race.Repo.Repositories
 
         public async Task<int> DeleteAsync(int id)
         {
-            var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.Id == id);
+            var pilot = await context.Pilots.FirstAsync(x => x.Id == id);
             if (pilot == null) throw new Exception("Entity not found by given Id");
 
-            context.Remove(pilot);
+            context.Pilots.Remove(pilot);
 
             await context.SaveChangesAsync();
             return pilot.Id;
-        }
-
-        public async Task<List<PilotListDto>> GetAllPilotAsync()
-        {
-            var pilots = await context.Pilots.AsNoTracking().ToListAsync();
-            return (pilots.Select(pilot => new PilotListDto(pilot))).ToList();
         }
 
         public async Task<PilotDetailsDto> GetPilotAsync(int id)
@@ -45,7 +39,7 @@ namespace Race.Repo.Repositories
         {
             try
             {
-                if (createDto == null) throw new ArgumentNullException("entity");
+                if (createDto == null) throw new ArgumentNullException("Entity was null");
                 var pilot = createDto.CreateModelObject();
 
                 context.Add(pilot);
@@ -56,19 +50,6 @@ namespace Race.Repo.Repositories
                 throw new ArgumentException(e.Message);
             }
             return createDto.Id;
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await context.SaveChangesAsync();
-        }
-
-        public async Task UpdatePilotAsync(int id, PilotUpdateDto updateDto)
-        {
-            var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.Id == id);
-            pilot = updateDto.UpdateModelObject(pilot);
-
-            await context.SaveChangesAsync();
         }
     }
 }
