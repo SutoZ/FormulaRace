@@ -7,7 +7,6 @@ namespace Race.Repo.Dtos.Pilots
 {
     public class PilotUpdateDto
     {
-       // public Guid Id { get; set; }
         public string Name { get; set; }
         public string Number { get; set; }
         public string Code { get; set; }
@@ -16,7 +15,6 @@ namespace Race.Repo.Dtos.Pilots
 
         public Pilot UpdateModelObject(Pilot pilot)
         {
-            //pilot.PilotId = Id;
             pilot.Name = Name;
             pilot.Number = Number;
             pilot.Code = Code;
