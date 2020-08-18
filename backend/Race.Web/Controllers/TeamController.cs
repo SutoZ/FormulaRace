@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 namespace Race.Web.Controllers
 {
     [ApiController]
+    [Route("api/teams")]
     public class TeamController
     {
-        
         private const string OPNAME = "Teams";
 
         private readonly ITeamService teamService;
