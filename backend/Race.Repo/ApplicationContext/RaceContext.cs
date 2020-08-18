@@ -28,15 +28,15 @@ namespace Race.Repo.ApplicationContext
             SeedInitialDatas(modelBuilder);
         }
 
-        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-        {
-            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
-
         private void SeedInitialDatas(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Pilot>().HasData(new PilotSeed().Entities);
             modelBuilder.Entity<Team>().HasData(new TeamsSeed().Entities);
+        }
+
+        public Task<int> SaveChangesAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }
