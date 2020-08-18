@@ -10,7 +10,6 @@ namespace Race.Repo.Dtos.Pilots
         public string Number { get; set; }
         public string Code { get; set; }
         public string Nationality { get; set; }
-        //  public List<CreateResultDto> Results { get; set; } = new List<CreateResultDto>();
 
         public PilotCreateDto(Pilot pilot)
         {
@@ -19,7 +18,6 @@ namespace Race.Repo.Dtos.Pilots
             Number = pilot.Number;
             Code = pilot.Code;
             Nationality = pilot.Nationality;
-            //    Results = Results.CreateModelObject();
         }
         public PilotCreateDto()
         {
@@ -33,7 +31,6 @@ namespace Race.Repo.Dtos.Pilots
             Nationality = Nationality,
             Number = Number,
             Id = Id,
-            //Results = Results.
         };
     }
 }
