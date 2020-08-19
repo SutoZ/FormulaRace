@@ -47,13 +47,11 @@ namespace Race.Web
                 });
             });
 
-            services.AddScoped<IRaceContext, RaceContext>();
+            services.AddScoped(typeof(IPilotRepository), typeof(PilotRepository));
+            services.AddScoped(typeof(ITeamRepository), typeof(TeamRepository));
 
-            services.AddScoped<IPilotRepository, PilotRepository>();
-            services.AddScoped<ITeamRepository,TeamRepository>();
-
-            services.AddScoped<ITeamService, TeamService>();
-            services.AddScoped<IPilotService, PilotService>();
+            services.AddTransient<ITeamService, TeamService>();
+            services.AddTransient<IPilotService, PilotService>();
 
             services.AddDbContext<RaceContext>(options => options.UseSqlServer(Configuration.GetConnectionString("RaceConnection")));
 
@@ -79,15 +77,6 @@ namespace Race.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
-            //using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            //{
-            //    var context = serviceScope.ServiceProvider.GetRequiredService<RaceContext>();
-
-            //    context.Database.EnsureDeleted();
-            //    context.Database.Migrate();
-            //}
-
 
             //addig swagger middleware
             app.UseSwagger();

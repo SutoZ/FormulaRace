@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 
 namespace Race.Repo.ApplicationContext
 {
-    public class RaceContext : DbContext, IRaceContext
+    public class RaceContext : DbContext //, IRaceContext
     {
         public RaceContext(DbContextOptions<RaceContext> context) : base(context)
         {
         }
 
         public virtual DbSet<Pilot> Pilots { get; set; }
-        public virtual DbSet<Result> Results { get; set; }
         public virtual DbSet<Team> Teams { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,10 +32,9 @@ namespace Race.Repo.ApplicationContext
             modelBuilder.Entity<Pilot>().HasData(new PilotSeed().Entities);
             modelBuilder.Entity<Team>().HasData(new TeamsSeed().Entities);
         }
-
-        public Task<int> SaveChangesAsync()
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
     }
 }

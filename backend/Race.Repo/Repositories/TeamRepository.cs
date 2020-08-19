@@ -12,9 +12,9 @@ namespace Race.Repo.Repositories
 {
     public class TeamRepository : ITeamRepository
     {
-        private readonly IRaceContext context;
+        private readonly RaceContext context;
 
-        public TeamRepository(IRaceContext context)
+        public TeamRepository(RaceContext context)
         {
             this.context = context;
         }
