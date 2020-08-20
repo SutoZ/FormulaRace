@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Pilot } from '../pilot';
+import { IPilotViweModel } from '../pilot';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +16,8 @@ export class PilotsService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  getPilots(): Observable<Pilot[]> | null {
-    return this.http.get<Pilot[]>(this.baseUrl + "/api/pilots", this.httpOptions);
+  getPilots(): Observable<IPilotViweModel[]> | null {
+    return this.http.get<IPilotViweModel[]>(this.baseUrl + "/api/pilots", this.httpOptions);
   }
 }
 

@@ -1,10 +1,10 @@
-import { Pilot } from 'src/app/pilots/pilot';
+import { IPilotViweModel } from 'src/app/pilots/pilot';
 
-export class Team {
+export class ITeamViewModel {
     Id: number;
     Name: string;
     DateOfFoundation: string;
     OwnerName: string;
     ChampionShipPoints: number;
-    Pilots: Pilot[];
+    Pilots: IPilotViweModel[];
 }

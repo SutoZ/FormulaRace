@@ -1,4 +1,4 @@
-export interface Pilot {
+export interface IPilotViweModel {
     pilotId: number,
     name: string,
     number: string,
