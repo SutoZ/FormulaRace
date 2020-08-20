@@ -21,13 +21,13 @@ namespace Race.Repo.Repositories
 
         public async Task<List<TeamListDto>> GetAllTeamAsync()
         {
-            var teams = await context.Teams.ToListAsync();
+            var teams = await context.Teams.Include(ent => ent.Pilots).ToListAsync();
             return teams.Select(ent => new TeamListDto(ent)).ToList();
         }
 
         public async Task<TeamDetailsDto> GetTeamByIdAsync(int id)
         {
-            var team = await context.Teams.FirstOrDefaultAsync(ent => ent.Id == id);
+            var team = await context.Teams.Include(ent => ent.Pilots).FirstOrDefaultAsync(ent => ent.Id == id);
             return new TeamDetailsDto(team);
         }
 

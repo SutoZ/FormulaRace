@@ -17,7 +17,7 @@ namespace Race.Model.Models
         public string Code { get; set; }
         public string Nationality { get; set; }
         public virtual List<Result> Results { get; set; }
-        public virtual Team Team { get; set; }
+        public Team Team { get; set; }
 
         [ForeignKey("Team")]
         public int TeamId { get; set; }

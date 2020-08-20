@@ -53,7 +53,11 @@ namespace Race.Web
             services.AddTransient<ITeamService, TeamService>();
             services.AddTransient<IPilotService, PilotService>();
 
-            services.AddDbContext<RaceContext>(options => options.UseSqlServer(Configuration.GetConnectionString("RaceConnection")));
+            services.AddDbContext<RaceContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("RaceConnection"));
+                options.EnableSensitiveDataLogging();
+            });
 
             services.AddSpaStaticFiles(spa => spa.RootPath = "racefrontend");
 

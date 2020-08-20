@@ -53,60 +53,15 @@ namespace Race.Repo.Migrations
                             Name = "Lewis Hamilton",
                             Nationality = "British",
                             Number = "44",
-                            TeamId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Code = "HEI",
-                            Name = "Nick Heidfeld",
-                            Nationality = "German",
-                            Number = "50",
-                            TeamId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Code = "ROS",
-                            Name = "Nico Rosberg",
-                            Nationality = "German",
-                            Number = "6",
-                            TeamId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Code = "RAI",
-                            Name = "Kimi Raikonnen",
-                            Nationality = "Finnish",
-                            Number = "14",
-                            TeamId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Code = "KUB",
-                            Name = "Robert Kubica",
-                            Nationality = "Polish",
-                            Number = "19",
-                            TeamId = 1
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Code = "GLO",
-                            Name = "Timo Glock",
-                            Nationality = "German",
-                            Number = "20",
                             TeamId = 2
                         },
                         new
                         {
-                            Id = 7,
-                            Code = "SAT",
-                            Name = "Tacuma Sato",
-                            Nationality = "Japanese",
-                            Number = "21",
+                            Id = 20,
+                            Code = "BOT",
+                            Name = "Walteri Bottas",
+                            Nationality = "Finnish",
+                            Number = "70",
                             TeamId = 2
                         });
                 });
@@ -121,7 +76,7 @@ namespace Race.Repo.Migrations
 
                     b.HasKey("ResultId");
 
-                    b.ToTable("Results");
+                    b.ToTable("Result");
                 });
 
             modelBuilder.Entity("Race.Model.Models.Team", b =>
@@ -147,19 +102,11 @@ namespace Race.Repo.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            ChampionShipPoints = 20,
-                            DateOfFoundation = new DateTime(1950, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Ferrari",
-                            OwnerName = "Teszt Random"
-                        },
-                        new
-                        {
                             Id = 2,
                             ChampionShipPoints = 30,
                             DateOfFoundation = new DateTime(1970, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Mercedes",
-                            OwnerName = "Teszt Random 23"
+                            OwnerName = "Toto Wolff"
                         });
                 });
 

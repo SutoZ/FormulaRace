@@ -48,7 +48,7 @@ namespace Race.Repo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Results",
+                name: "Result",
                 columns: table => new
                 {
                     ResultId = table.Column<int>(nullable: false),
@@ -57,9 +57,9 @@ namespace Race.Repo.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Results", x => x.ResultId);
+                    table.PrimaryKey("PK_Result", x => x.ResultId);
                     table.ForeignKey(
-                        name: "FK_Results_Pilots_ResultId",
+                        name: "FK_Result_Pilots_ResultId",
                         column: x => x.ResultId,
                         principalTable: "Pilots",
                         principalColumn: "Id",
@@ -69,26 +69,17 @@ namespace Race.Repo.Migrations
             migrationBuilder.InsertData(
                 table: "Teams",
                 columns: new[] { "Id", "ChampionShipPoints", "DateOfFoundation", "Name", "OwnerName" },
-                values: new object[] { 1, 20, new DateTime(1950, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), "Ferrari", "Teszt Random" });
-
-            migrationBuilder.InsertData(
-                table: "Teams",
-                columns: new[] { "Id", "ChampionShipPoints", "DateOfFoundation", "Name", "OwnerName" },
-                values: new object[] { 2, 30, new DateTime(1970, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), "Mercedes", "Teszt Random 23" });
+                values: new object[] { 2, 30, new DateTime(1970, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), "Mercedes", "Toto Wolff" });
 
             migrationBuilder.InsertData(
                 table: "Pilots",
                 columns: new[] { "Id", "Code", "Name", "Nationality", "Number", "TeamId" },
-                values: new object[,]
-                {
-                    { 1, "HAM", "Lewis Hamilton", "British", "44", 1 },
-                    { 2, "HEI", "Nick Heidfeld", "German", "50", 1 },
-                    { 3, "ROS", "Nico Rosberg", "German", "6", 1 },
-                    { 4, "RAI", "Kimi Raikonnen", "Finnish", "14", 1 },
-                    { 5, "KUB", "Robert Kubica", "Polish", "19", 1 },
-                    { 6, "GLO", "Timo Glock", "German", "20", 2 },
-                    { 7, "SAT", "Tacuma Sato", "Japanese", "21", 2 }
-                });
+                values: new object[] { 1, "HAM", "Lewis Hamilton", "British", "44", 2 });
+
+            migrationBuilder.InsertData(
+                table: "Pilots",
+                columns: new[] { "Id", "Code", "Name", "Nationality", "Number", "TeamId" },
+                values: new object[] { 20, "BOT", "Walteri Bottas", "Finnish", "70", 2 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pilots_TeamId",
@@ -99,7 +90,7 @@ namespace Race.Repo.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Results");
+                name: "Result");
 
             migrationBuilder.DropTable(
                 name: "Pilots");

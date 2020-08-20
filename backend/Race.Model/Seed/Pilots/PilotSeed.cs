@@ -5,6 +5,7 @@ namespace Race.Model.Seed.Pilots
 {
     public class PilotSeed
     {
+
         public Pilot[] Entities => new[]
         {
                 new Pilot
@@ -12,65 +13,69 @@ namespace Race.Model.Seed.Pilots
                   Id = 1,
                   Code = "HAM",
                   Number = "44",
-                  Name = "Lewis Hamilton",
-                  TeamId = 1,
+                  Name = "Lewis Hamilton",                  
+                  TeamId = 2,
                   Nationality = "British"
                 },
-                new Pilot()
+                //new Pilot()
+                //{
+                //    Id = 2,
+                //    Code = "HEI",
+                //    Number = "50",
+                //    Name = "Nick Heidfeld",
+                //    TeamId = 1,
+                //    Team = new Team {Id = 1},
+                //    Nationality = "German"
+                //},
+                   new Pilot
                 {
-                    Id = 2,
-                    Code = "HEI",
-                    Number = "50",
-                    Name = "Nick Heidfeld",
-                  TeamId = 1,
-
-                    Nationality = "German"
-                },
-                new Pilot()
-                {
-                    Id = 3,
-                    Code = "ROS",
-                  TeamId = 1,
-                    Number = "6",
-                    Name = "Nico Rosberg",
-                    Nationality = "German"
-                },
-                new Pilot()
-                {
-                    Id = 4,
-                    Code = "RAI",
-                  TeamId = 1,
-                    Number = "14",
-                    Name = "Kimi Raikonnen",
-                    Nationality = "Finnish"
-                },
-                new Pilot()
-                {
-                    Id = 5,
-                    Code = "KUB",
-                    Number = "19",
-                    Name = "Robert Kubica",
-                  TeamId = 1,
-                    Nationality = "Polish"
-                },
-            new Pilot()
-                {
-                    Id = 6,
-                    Code = "GLO",
+                  Id = 20,
+                  Code = "BOT",
+                  Number = "70",
+                  Name = "Walteri Bottas",
                   TeamId = 2,
-                    Number = "20",
-                    Name = "Timo Glock",
-                    Nationality = "German"
+                  Nationality = "Finnish"
                 },
-            new Pilot()
-                {
-                    Id = 7,
-                    Code = "SAT",
-                    Number = "21",
-                  TeamId = 2,
-                    Name = "Tacuma Sato",
-                    Nationality = "Japanese"
-                },
+            //    new Pilot()
+            //    {
+            //        Id = 4,
+            //        Code = "RAI",
+            //        TeamId = 1,
+            //        Team = new Team {Id = 1},
+            //        Number = "14",
+            //        Name = "Kimi Raikonnen",
+            //        Nationality = "Finnish"
+            //    },
+            //    new Pilot()
+            //    {
+            //        Id = 5,
+            //        Code = "KUB",
+            //        Number = "19",
+            //        Name = "Robert Kubica",
+            //        TeamId = 1,
+            //        Team = new Team {Id = 1},
+            //        Nationality = "Polish"
+            //    },
+            //new Pilot()
+            //    {
+            //        Id = 6,
+            //        Code = "GLO",
+            //        TeamId = 2,
+            //        Team = new Team {Id = 2},
+            //        Number = "20",
+            //        Name = "Timo Glock",
+            //        Nationality = "German"
+            //    },
+            //new Pilot()
+            //    {
+            //        Id = 7,
+            //        Code = "SAT",
+            //        Number = "21",
+            //        TeamId = 2,
+            //        Team = new Team {Id = 2},
+            //        Name = "Tacuma Sato",
+            //        Nationality = "Japanese"
+            //    },
         /*    new Pilot()
                 {
                     Id = new Guid("AEB5A563-9B9F-44DB-A56E-D7404ADE9BE3"),

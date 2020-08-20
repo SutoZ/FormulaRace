@@ -13,7 +13,7 @@ namespace Race.Repo.ApplicationContext
         {
             var optionsBuilder = new DbContextOptionsBuilder<RaceContext>();
             optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Race;Integrated Security=false;");
-
+            optionsBuilder.EnableSensitiveDataLogging();
             return new RaceContext(optionsBuilder.Options);
         }
     }
