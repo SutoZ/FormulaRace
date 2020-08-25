@@ -1,4 +1,4 @@
-import { IPilotViweModel } from 'src/app/pilots/pilot';
+import { IPilotViweModel } from '../pilots/IPilotViewModel';
 
 export class ITeamViewModel {
     Id: number;
