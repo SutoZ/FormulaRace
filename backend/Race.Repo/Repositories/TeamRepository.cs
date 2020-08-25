@@ -21,7 +21,7 @@ namespace Race.Repo.Repositories
 
         public async Task<List<TeamListDto>> GetAllTeamAsync()
         {
-            var teams = await context.Teams.Include(ent => ent.Pilots).ToListAsync();
+            var teams = await context.Teams.ToListAsync();
             return teams.Select(ent => new TeamListDto(ent)).ToList();
         }
 

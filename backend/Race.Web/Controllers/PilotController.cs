@@ -3,8 +3,6 @@ using Race.Service.Interfaces;
 using System.Threading.Tasks;
 using Race.Repo.Dtos.Pilots;
 using Swashbuckle.Swagger.Annotations;
-using System;
-using Race.Model.Models;
 using Race.Shared.Paging;
 using Race.Repo.Dtos;
 
@@ -25,9 +23,9 @@ namespace Race.Web.Controllers
 
         [HttpGet]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<IPagedList<PilotListDto>> GetAllPilot(PagerDto dto)
+        public async Task<IPagedList<PilotListDto>> GetAllPilot(int pageIndex, int pageSize, string sortColumn = null, string sortOrder = null)
         {
-            return await pilotService.GetAllPilotAsync(dto);
+            return await pilotService.GetAllPilotAsync(pageIndex, pageSize, sortColumn, sortOrder);
         }
 
         [HttpGet("{id}")]
@@ -44,14 +42,12 @@ namespace Race.Web.Controllers
             return await pilotService.CreatePilotAsync(createDto);
         }
 
-
         [HttpPut("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
         public async Task UpdatePilot(int id, [FromQuery] PilotUpdateDto updateDto)
         {
             await pilotService.UpdatePilotAsync(id, updateDto);
         }
-
 
         [HttpDelete("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
