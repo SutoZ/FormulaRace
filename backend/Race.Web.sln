@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Race.Web", "Race.Web\Race.Web.csproj", "{5949CBCC-2197-4E24-8AAF-0DFE42BBA5EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Race.Web", "Race.Web\Race.Web.csproj", "{5949CBCC-2197-4E24-8AAF-0DFE42BBA5EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Race.Model", "Race.Model\Race.Model.csproj", "{2D7E8DC5-22F7-438D-88CC-5BC6815B07D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Race.Model", "Race.Model\Race.Model.csproj", "{2D7E8DC5-22F7-438D-88CC-5BC6815B07D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Race.Repo", "Race.Repo\Race.Repo.csproj", "{DF37CF42-6B50-4103-A34B-F4F4D545B3AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Race.Repo", "Race.Repo\Race.Repo.csproj", "{DF37CF42-6B50-4103-A34B-F4F4D545B3AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Race.Service", "Race.Service\Race.Service.csproj", "{B78A1013-B817-422F-931A-A99EB66C4C27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Race.Service", "Race.Service\Race.Service.csproj", "{B78A1013-B817-422F-931A-A99EB66C4C27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Race.Shared", "Race.Shared\Race.Shared.csproj", "{6734E462-E4BE-406F-B738-63C92DA02728}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{B78A1013-B817-422F-931A-A99EB66C4C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B78A1013-B817-422F-931A-A99EB66C4C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B78A1013-B817-422F-931A-A99EB66C4C27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6734E462-E4BE-406F-B738-63C92DA02728}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6734E462-E4BE-406F-B738-63C92DA02728}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6734E462-E4BE-406F-B738-63C92DA02728}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6734E462-E4BE-406F-B738-63C92DA02728}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
