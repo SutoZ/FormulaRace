@@ -128,7 +128,7 @@ namespace Race.Model.Seed.Pilots
                 },
             new Pilot
                 {
-                  Id = 24,
+                  Id = 14,
                   Code = "BOT",
                   Number = "70",
                   Name = "Walteri Bottas",
