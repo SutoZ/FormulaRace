@@ -165,26 +165,13 @@ namespace Race.Repo.Migrations
                         },
                         new
                         {
-                            Id = 24,
+                            Id = 14,
                             Code = "BOT",
                             Name = "Walteri Bottas",
                             Nationality = "Finnish",
                             Number = "70",
                             TeamId = 2
                         });
-                });
-
-            modelBuilder.Entity("Race.Model.Models.Result", b =>
-                {
-                    b.Property<int>("ResultId");
-
-                    b.Property<Guid>("PilotId");
-
-                    b.Property<int>("RaceId");
-
-                    b.HasKey("ResultId");
-
-                    b.ToTable("Result");
                 });
 
             modelBuilder.Entity("Race.Model.Models.Team", b =>
@@ -263,14 +250,6 @@ namespace Race.Repo.Migrations
                     b.HasOne("Race.Model.Models.Team", "Team")
                         .WithMany("Pilots")
                         .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Race.Model.Models.Result", b =>
-                {
-                    b.HasOne("Race.Model.Models.Pilot", "Pilot")
-                        .WithMany("Results")
-                        .HasForeignKey("ResultId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

@@ -5,7 +5,7 @@ namespace Race.Repo.Dtos.Pilots
 {
     public class PilotCreateDto
     {
-        public int Id { get; set; }
+    //    public int Id { get; set; }
         public string Name { get; set; }
         public string Number { get; set; }
         public string Code { get; set; }
@@ -13,7 +13,7 @@ namespace Race.Repo.Dtos.Pilots
 
         public PilotCreateDto(Pilot pilot)
         {
-            Id = pilot.Id;
+      //      Id = pilot.Id;
             Name = pilot.Name;
             Number = pilot.Number;
             Code = pilot.Code;
@@ -30,7 +30,7 @@ namespace Race.Repo.Dtos.Pilots
             Name = Name,
             Nationality = Nationality,
             Number = Number,
-            Id = Id,
+       //     Id = Id,
         };
     }
 }

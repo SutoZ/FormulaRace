@@ -47,25 +47,6 @@ namespace Race.Repo.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Result",
-                columns: table => new
-                {
-                    ResultId = table.Column<int>(nullable: false),
-                    RaceId = table.Column<int>(nullable: false),
-                    PilotId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Result", x => x.ResultId);
-                    table.ForeignKey(
-                        name: "FK_Result_Pilots_ResultId",
-                        column: x => x.ResultId,
-                        principalTable: "Pilots",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "Teams",
                 columns: new[] { "Id", "ChampionShipPoints", "DateOfFoundation", "Name", "OwnerName" },
@@ -89,7 +70,7 @@ namespace Race.Repo.Migrations
                     { 13, "SCH", "Michael Schumacher", "German", "33", 1 },
                     { 1, "HAM", "Lewis Hamilton", "British", "44", 2 },
                     { 4, "RAI", "Kimi Raikonnen", "Finnish", "14", 2 },
-                    { 24, "BOT", "Walteri Bottas", "Finnish", "70", 2 },
+                    { 14, "BOT", "Walteri Bottas", "Finnish", "70", 2 },
                     { 7, "NOR", "Lando Norris", "Italian", "24", 3 },
                     { 8, "SAI", "Carlos Sainz", "Spanish", "25", 3 },
                     { 2, "OCO", "Esteban Occon", "France", "50", 4 },
@@ -108,9 +89,6 @@ namespace Race.Repo.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Result");
-
             migrationBuilder.DropTable(
                 name: "Pilots");
 

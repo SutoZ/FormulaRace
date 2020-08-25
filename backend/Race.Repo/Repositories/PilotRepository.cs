@@ -16,7 +16,7 @@ namespace Race.Repo.Repositories
         public PilotRepository(RaceContext context)
         {
             this.context = context;
-        }    
+        }
 
         public async Task<int> DeleteAsync(int id)
         {
@@ -29,9 +29,9 @@ namespace Race.Repo.Repositories
             return pilot.Id;
         }
 
-        public async Task<List<PilotListDto>> GetAllPilotAsync()
+        public async Task<List<PilotListDto>> GetAllPilotAsync(int pageIndex = 0, int pageSize = 5)
         {
-            var pilots = await context.Pilots.ToListAsync();
+            var pilots = await context.Pilots.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
             return pilots.Select(ent => new PilotListDto(ent)).ToList();
         }
 
@@ -48,15 +48,20 @@ namespace Race.Repo.Repositories
                 if (createDto == null) throw new ArgumentNullException("Entity was null");
                 var pilot = createDto.CreateModelObject();
 
-                context.Add(pilot);
+                var team = await context.Teams.Include(ent => ent.Pilots).FirstOrDefaultAsync(ent => ent.Id == 2);
+
+                pilot.Team = team;
+                pilot.TeamId = team.Id;
+
+                context.Pilots.Add(pilot);
                 await context.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 throw new ArgumentException(e.Message);
             }
-            return createDto.Id;
-        }        
+            return 0;
+        }
 
         public async Task UpdatePilotAsync(int id, PilotUpdateDto updateDto)
         {
