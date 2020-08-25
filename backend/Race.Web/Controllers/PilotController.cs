@@ -37,7 +37,7 @@ namespace Race.Web.Controllers
 
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<ActionResult<int>> CreatePilot([FromBody] PilotCreateDto createDto)
+        public async Task<ActionResult<int>> CreatePilot([FromQuery] PilotCreateDto createDto)
         {
             return await pilotService.CreatePilotAsync(createDto);
         }
@@ -45,7 +45,7 @@ namespace Race.Web.Controllers
 
         [HttpPut("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task UpdatePilot(int id, [FromBody] PilotUpdateDto updateDto)
+        public async Task UpdatePilot(int id, [FromQuery] PilotUpdateDto updateDto)
         {
             await pilotService.UpdatePilotAsync(id, updateDto);
         }
