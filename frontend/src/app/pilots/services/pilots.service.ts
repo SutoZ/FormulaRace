@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 
@@ -12,14 +12,10 @@ export class PilotsService {
     //@Optional() @Inject('BASE_URL') private baseUrl: string) { }
   ) { }
 
-  getPilots(event: PageEvent, params: HttpParams): Observable<any> | null {   
 
-    var params = new HttpParams()
-      .set("pageIndex", event.pageIndex.toString())
-      .set("pageSize", event.pageSize.toString());
-
-    var url = this.baseUrl + "api/pilots";
-    return this.http.get<any>(url, { params });
+  getPilots(event: PageEvent, parameters: HttpParams): Observable<any> | null {
+    var header = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.get<any>(this.baseUrl + "api/pilots", { headers: header, params: parameters });
   }
 }
 

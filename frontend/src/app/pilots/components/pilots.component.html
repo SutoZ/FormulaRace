@@ -1,27 +1,27 @@
 <p>Pilots in Formula 1</p>
-<p *ngIf="!pilots"><em>Loading...</em></p>
+<p *ngIf="!dataSource"><em>Loading...</em></p>
 
 <!-- with *ngIf @ViewChild's change detection stops paginator from being initialized so, hidden attribute is used -->
-<div [hidden]="!pilots">
-    <table mat-table [dataSource]="pilots" class="mat-elevation-z8">
+<div [hidden]="!dataSource" matSort (matSortChange)="loadData()" matSortActive="{{defaultSortColumn}}" matSortDirection="{{defaultSortOder}}">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="Id">
-            <th mat-header-cell *matHeaderCellDef> Id </th>
-            <td mat-cell *matCellDef="let pilot"> {{pilot.pilotId}} </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+            <td mat-cell *matCellDef="let pilot"> {{pilot.id}} </td>
         </ng-container>
         <ng-container matColumnDef="Name">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
             <td mat-cell *matCellDef="let pilot"> {{pilot.name}} </td>
         </ng-container>
         <ng-container matColumnDef="Number">
-            <th mat-header-cell *matHeaderCellDef> Number </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Number </th>
             <td mat-cell *matCellDef="let pilot"> {{pilot.number}} </td>
         </ng-container>
         <ng-container matColumnDef="Code">
-            <th mat-header-cell *matHeaderCellDef> Code </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Code </th>
             <td mat-cell *matCellDef="let pilot"> {{pilot.code}} </td>
         </ng-container>
         <ng-container matColumnDef="Nationality">
-            <th mat-header-cell *matHeaderCellDef> Nationality </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nationality </th>
             <td mat-cell *matCellDef="let pilot"> {{pilot.nationality}} </td>
         </ng-container>
 
@@ -29,7 +29,6 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <mat-paginator (page)="getPilots($event)" [pageSize]="10" [hidden]="!pilots"
-    [pageSizeOptions]="[10, 20, 50]"
-    showFirstLastButtons></mat-paginator>
+    <mat-paginator (page)="getPilots($event)" [pageSize]="10" [hidden]="!dataSource" [pageSizeOptions]="[10, 20, 50]"
+        showFirstLastButtons></mat-paginator>
 </div>
