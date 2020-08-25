@@ -1,15 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Race.Repo.ApplicationContext;
+using Race.Repo.Dtos;
 using Race.Repo.Dtos.Pilots;
 using Race.Repo.Interfaces;
+using Race.Shared.Paging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Race.Repo.Repositories
 {
-    public class PilotRepository : IPilotRepository //<T> : IPilotRepository<T> where T : class
+    public class PilotRepository : IPilotRepository
     {
         private readonly RaceContext context;
 
@@ -29,10 +30,10 @@ namespace Race.Repo.Repositories
             return pilot.Id;
         }
 
-        public async Task<List<PilotListDto>> GetAllPilotAsync(int pageIndex = 0, int pageSize = 5)
+        public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(PagerDto dto)
         {
-            var pilots = await context.Pilots.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
-            return pilots.Select(ent => new PilotListDto(ent)).ToList();
+            var pilots = await context.Pilots.Skip(dto.PageIndex *dto.PageSize).Take(dto.PageSize).ToListAsync();
+            return PagedList<PilotListDto>.CreateAsync(pilots.Select(ent => new PilotListDto(ent)).AsQueryable(), dto.PageIndex, dto.PageSize);
         }
 
         public async Task<PilotDetailsDto> GetPilotAsync(int id)
