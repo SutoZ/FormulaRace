@@ -1,8 +1,8 @@
-﻿using Race.Repo.Dtos.Pilots;
+﻿using Race.Repo.Dtos;
+using Race.Repo.Dtos.Pilots;
 using Race.Repo.Interfaces;
 using Race.Service.Interfaces;
-using System;
-using System.Collections.Generic;
+using Race.Shared.Paging;
 using System.Threading.Tasks;
 
 namespace Race.Service.Services
@@ -21,9 +21,9 @@ namespace Race.Service.Services
             return await pilotRepository.InsertAsync(createDto);
         }
 
-        public async Task<List<PilotListDto>> GetAllPilotAsync()
+        public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(PagerDto dto)
         {
-            return await pilotRepository.GetAllPilotAsync();
+            return await pilotRepository.GetAllPilotAsync(dto);
         }
 
         public async Task<PilotDetailsDto> GetPilotAsync(int id)

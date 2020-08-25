@@ -2,9 +2,11 @@
 using Race.Service.Interfaces;
 using System.Threading.Tasks;
 using Race.Repo.Dtos.Pilots;
-using System.Collections.Generic;
 using Swashbuckle.Swagger.Annotations;
 using System;
+using Race.Model.Models;
+using Race.Shared.Paging;
+using Race.Repo.Dtos;
 
 namespace Race.Web.Controllers
 {
@@ -23,9 +25,9 @@ namespace Race.Web.Controllers
 
         [HttpGet]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<ActionResult<List<PilotListDto>>> GetAllPilot()
+        public async Task<IPagedList<PilotListDto>> GetAllPilot(PagerDto dto)
         {
-            return await pilotService.GetAllPilotAsync();
+            return await pilotService.GetAllPilotAsync(dto);
         }
 
         [HttpGet("{id}")]
