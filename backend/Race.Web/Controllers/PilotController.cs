@@ -2,15 +2,17 @@
 using Race.Service.Interfaces;
 using System.Threading.Tasks;
 using Race.Repo.Dtos.Pilots;
-using System.Collections.Generic;
 using Swashbuckle.Swagger.Annotations;
 using System;
+using Race.Model.Models;
+using Race.Shared.Paging;
+using Race.Repo.Dtos;
 
 namespace Race.Web.Controllers
 {
     [Route("api/pilots")]
     [ApiController]
-    public class PilotController : Controller
+    public class PilotController
     {
         private const string OPNAME = "Pilots";
 
@@ -23,9 +25,9 @@ namespace Race.Web.Controllers
 
         [HttpGet]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<ActionResult<List<PilotListDto>>> GetAllPilot()
+        public async Task<IPagedList<PilotListDto>> GetAllPilot(PagerDto dto)
         {
-            return await pilotService.GetAllPilotAsync();
+            return await pilotService.GetAllPilotAsync(dto);
         }
 
         [HttpGet("{id}")]
@@ -37,7 +39,7 @@ namespace Race.Web.Controllers
 
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<int> CreatePilot([FromBody] PilotCreateDto createDto)        //Task<ActionResult<PilotCreateDto>>
+        public async Task<ActionResult<int>> CreatePilot([FromQuery] PilotCreateDto createDto)
         {
             return await pilotService.CreatePilotAsync(createDto);
         }
@@ -45,7 +47,7 @@ namespace Race.Web.Controllers
 
         [HttpPut("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task UpdatePilot(int id, [FromBody] PilotUpdateDto updateDto)
+        public async Task UpdatePilot(int id, [FromQuery] PilotUpdateDto updateDto)
         {
             await pilotService.UpdatePilotAsync(id, updateDto);
         }

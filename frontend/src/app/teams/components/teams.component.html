@@ -1,0 +1,31 @@
+<p>Teams in Formula 1!</p>
+<p *ngIf="!teams">Loading...</p>
+
+<div *ngIf="teams">
+    <table mat-table [dataSource="teams"] class="mat-elevation-28">
+        <ng-container matColumnDef="Id">
+            <th mat-header-cell *matHeaderCellDef> Id </th>
+            <td mat-cell *matCellDef="let team"> {{team.Id}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Name">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let team"> {{team.Name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="DateOfFoundation">
+            <th mat-header-cell *matHeaderCellDef> Date of Fundation </th>
+            <td mat-cell *matCellDef="let team"> {{team.DateOfFoundation}} </td>
+        </ng-container>
+        <ng-container matColumnDef="OwnerName">
+            <th mat-header-cell *matHeaderCellDef> Owner Name </th>
+            <td mat-cell *matCellDef="let team"> {{team.OwnerName}} </td>
+        </ng-container>
+        <ng-container matColumnDef="ChampionShipPoints">
+            <th mat-header-cell *matHeaderCellDef> Championship Points </th>
+            <td mat-cell *matCellDef="let team"> {{team.ChampionShipPoints}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+</div>

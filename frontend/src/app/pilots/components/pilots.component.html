@@ -1,7 +1,8 @@
 <p>Pilots in Formula 1</p>
 <p *ngIf="!pilots"><em>Loading...</em></p>
 
-<div *ngIf="pilots">
+<!-- with *ngIf @ViewChild's change detection stops paginator from being initialized so, hidden attribute is used -->
+<div [hidden]="!pilots">
     <table mat-table [dataSource]="pilots" class="mat-elevation-z8">
         <ng-container matColumnDef="Id">
             <th mat-header-cell *matHeaderCellDef> Id </th>
@@ -28,7 +29,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <mat-paginator [pageSize]="10"
+    <mat-paginator (page)="getPilots($event)" [pageSize]="10" [hidden]="!pilots"
     [pageSizeOptions]="[10, 20, 50]"
     showFirstLastButtons></mat-paginator>
 </div>
