@@ -40,8 +40,17 @@ namespace Race.Shared.Paging
         }
         public string SortColumn { get; set; }
         public string SortOrder { get; set; }
+        public string FilterColumn { get; set; }
+        public string FilterQuery { get; set; }
 
-        private PagedList(IList<T> data, int count, int pageIndex, int pageSize, string sortColumn, string sortOrder)
+        private PagedList(IList<T> data,
+            int count,
+            int pageIndex,
+            int pageSize,
+            string sortColumn,
+            string sortOrder,
+            string filterColumn,
+            string filterQuery)
         {
             Data = data;
             Count = count;
@@ -50,6 +59,8 @@ namespace Race.Shared.Paging
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             SortColumn = sortColumn;
             SortOrder = sortOrder;
+            FilterColumn = filterColumn;
+            FilterQuery = filterQuery;
         }
 
         /// <summary>
@@ -63,19 +74,22 @@ namespace Race.Shared.Paging
             }
         }
 
-        public static PagedList<T> CreateAsync(
+        public static PagedList<T> Create(
             IQueryable<T> source,
             int pageIndex,
             int pageSize,
             string sortColumn = null,
-            string sortOrder = null)
+            string sortOrder = null,
+            string filterColumn = null,
+            string filterQuery = null)
         {
             var count = source.Count();
 
 
-            if (!string.IsNullOrEmpty(sortColumn) && IsValidProperty(sortColumn))
+            if (!string.IsNullOrEmpty(sortColumn) && IsValidProperty(sortColumn) && filterQuery != "null" && IsValidProperty(filterColumn))
             {
                 sortOrder = !string.IsNullOrEmpty(sortOrder) && sortOrder.ToUpper() == "ASC" ? "ASC" : "DESC";
+                source = source.Where($"{filterColumn}.Contains(@0)", filterQuery);
                 source = source.OrderBy($"{sortColumn} {sortOrder}");
             }
 
@@ -87,7 +101,9 @@ namespace Race.Shared.Paging
                 pageIndex,
                 pageSize,
                 sortColumn,
-                sortOrder
+                sortOrder,
+                filterColumn,
+                filterQuery
                 );
         }
 
