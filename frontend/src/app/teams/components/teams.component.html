@@ -1,31 +1,36 @@
-<p>Teams in Formula 1!</p>
-<p *ngIf="!teams">Loading...</p>
+<p hidden="!dataSource">Loading...</p>
 
-<div *ngIf="teams">
-    <table mat-table [dataSource="teams"] class="mat-elevation-28">
-        <ng-container matColumnDef="Id">
-            <th mat-header-cell *matHeaderCellDef> Id </th>
-            <td mat-cell *matCellDef="let team"> {{team.Id}} </td>
-        </ng-container>
-        <ng-container matColumnDef="Name">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
-            <td mat-cell *matCellDef="let team"> {{team.Name}} </td>
-        </ng-container>
-        <ng-container matColumnDef="DateOfFoundation">
-            <th mat-header-cell *matHeaderCellDef> Date of Fundation </th>
-            <td mat-cell *matCellDef="let team"> {{team.DateOfFoundation}} </td>
-        </ng-container>
-        <ng-container matColumnDef="OwnerName">
-            <th mat-header-cell *matHeaderCellDef> Owner Name </th>
-            <td mat-cell *matCellDef="let team"> {{team.OwnerName}} </td>
-        </ng-container>
-        <ng-container matColumnDef="ChampionShipPoints">
-            <th mat-header-cell *matHeaderCellDef> Championship Points </th>
-            <td mat-cell *matCellDef="let team"> {{team.ChampionShipPoints}} </td>
-        </ng-container>
+<table [hidden]="!dataSource" mat-table matSort (matSortChange)="loadData()" matSortActive="{{defaultSortColumn}}"
+    matSortDirection="{{defaultSortOder}}" [dataSource]="dataSource" class="mat-elevation-z8">
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
+    <ng-container matColumnDef="Id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+        <td mat-cell *matCellDef="let team"> {{team.id}} </td>
+    </ng-container>
 
-</div>
+    <ng-container matColumnDef="Name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let team"> {{team.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="DateOfFoundation">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Date of Fundation </th>
+        <td mat-cell *matCellDef="let team"> {{team.dateOfFoundation}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="OwnerName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Owner Name </th>
+        <td mat-cell *matCellDef="let team"> {{team.ownerName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="ChampionShipPoints">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Championship Points </th>
+        <td mat-cell *matCellDef="let team"> {{team.championShipPoints}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<mat-paginator [hidden]="!dataSource" [pageSize]="10" [pageSizeOptions]="[10, 20, 50]" (page)="getTeams($event)">
+</mat-paginator>

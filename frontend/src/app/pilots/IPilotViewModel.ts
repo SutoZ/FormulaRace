@@ -1,7 +1,7 @@
-export interface IPilotViweModel {
+export interface IPilotViewModel {
     id: number,
-    name: string,
-    number: string,
-    code: string,
-    nationality: string
+    name?: string,
+    number?: string,
+    code?: string,
+    nationality?: string
 }

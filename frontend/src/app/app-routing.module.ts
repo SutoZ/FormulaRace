@@ -5,7 +5,7 @@ import { TeamsComponent } from './teams/components/teams.component';
 
 const routes: Routes = [
   {
-    path: 'api/pilots', component: PilotsComponent
+    path: 'pilots', component: PilotsComponent
   },
   { path: 'api/teams', component: TeamsComponent }
 ];
