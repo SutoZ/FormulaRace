@@ -1,4 +1,5 @@
 ﻿using Race.Model.Models;
+using Race.Repo.Dtos.Pilots;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +12,7 @@ namespace Race.Repo.Dtos.Teams
         public DateTime DateOfFoundation { get; set; }
         public string OwnerName { get; set; }
         public int ChampionShipPoints { get; set; }
-        public List<Pilot> Pilots { get; set; }
+        public List<PilotUpdateDto> Pilots { get; set; } = new List<PilotUpdateDto>();
 
         public TeamUpdateDto(Team team)
         {
@@ -19,7 +20,17 @@ namespace Race.Repo.Dtos.Teams
             DateOfFoundation = team.DateOfFoundation;
             OwnerName = team.OwnerName;
             ChampionShipPoints = team.ChampionShipPoints;
-            Pilots = team.Pilots != null ? new List<Pilot>() : null;
+            Pilots = team.Pilots != null ? new List<PilotUpdateDto>() : null;
+        }
+
+        public Team UpdateModelObject(Team team)
+        {
+            team.Name = Name;
+            team.DateOfFoundation = DateOfFoundation;
+            team.OwnerName = OwnerName;
+            team.ChampionShipPoints= ChampionShipPoints;
+
+            return team;
         }
     }
 }
