@@ -23,9 +23,12 @@ namespace Race.Web.Controllers
 
         [HttpGet]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<IPagedList<PilotListDto>> GetAllPilot(int pageIndex, int pageSize, string sortColumn = null, string sortOrder = null)
+        public async Task<IPagedList<PilotListDto>> GetAllPilot(int pageIndex,
+            int pageSize, 
+            string sortColumn = null,
+            string sortOrder = null, string filterColumn = null, string filterQuery = null)
         {
-            return await pilotService.GetAllPilotAsync(pageIndex, pageSize, sortColumn, sortOrder);
+            return await pilotService.GetAllPilotAsync(pageIndex, pageSize, sortColumn, sortOrder,filterColumn, filterQuery);
         }
 
         [HttpGet("{id}")]
