@@ -2,10 +2,9 @@
 using Race.Repo.ApplicationContext;
 using Race.Repo.Dtos.Teams;
 using Race.Repo.Interfaces;
+using Race.Shared.Paging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Race.Repo.Repositories
@@ -19,10 +18,10 @@ namespace Race.Repo.Repositories
             this.context = context;
         }
 
-        public async Task<List<TeamListDto>> GetAllTeamAsync()
+        public async Task<PagedList<TeamListDto>> GetAllTeamAsync(int pageIndex, int pageSize, string sortColumn, string sortOrder)
         {
             var teams = await context.Teams.Include(ent => ent.Pilots).ToListAsync();
-            return teams.Select(ent => new TeamListDto(ent)).ToList();
+            return PagedList<TeamListDto>.Create(teams.Select(ent => new TeamListDto(ent)).AsQueryable(), pageIndex, pageSize, sortColumn, sortOrder);
         }
 
         public async Task<TeamDetailsDto> GetTeamByIdAsync(int id)
@@ -62,10 +61,10 @@ namespace Race.Repo.Repositories
 
         public async Task UpdateTeamAsync(int id, TeamUpdateDto updateDto)
         {
-            //var pilot = await context.Teams.FirstOrDefaultAsync(x => x.Id == id);
-            //pilot = updateDto.UpdateModelObject(pilot);
+            var team = await context.Teams.FirstOrDefaultAsync(x => x.Id == id);
+            team = updateDto.UpdateModelObject(team);
 
-            //await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

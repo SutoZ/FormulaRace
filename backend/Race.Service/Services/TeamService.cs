@@ -1,6 +1,7 @@
 ﻿using Race.Repo.Dtos.Teams;
 using Race.Repo.Interfaces;
 using Race.Service.Interfaces;
+using Race.Shared.Paging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,9 +27,9 @@ namespace Race.Service.Services
             throw new NotImplementedException();
         }
 
-        public async Task<List<TeamListDto>> GetAllTeamAsync()
+        public async Task<PagedList<TeamListDto>> GetAllTeamAsync(int pageIndex, int pageSize, string sortColumn, string sortOrder)
         {
-            return await repository.GetAllTeamAsync();
+            return await repository.GetAllTeamAsync(pageIndex, pageSize, sortColumn, sortOrder);
         }
 
         public async Task<TeamDetailsDto> GetTeamByIdAsync(int id)

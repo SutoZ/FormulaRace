@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Race.Repo.Dtos.Teams;
-using Race.Repo.Interfaces;
 using Race.Service.Interfaces;
+using Race.Shared.Paging;
 using Swashbuckle.Swagger.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Race.Web.Controllers
@@ -25,23 +22,22 @@ namespace Race.Web.Controllers
 
         [HttpGet]
         [SwaggerOperation(Tags = new string[] { OPNAME })]
-        public ActionResult<Task<List<TeamListDto>>> GetAllTeams()
+        public Task<PagedList<TeamListDto>> GetAllTeams(int pageIndex, int pageSize, string sortColumn, string sortOrder)
         {
-            return teamService.GetAllTeamAsync();
+            return teamService.GetAllTeamAsync(pageIndex, pageSize, sortColumn, sortOrder);
         }
 
         [HttpGet("{id}")]
-        public async Task<TeamDetailsDto> GetTeam(int id)
+        public Task<TeamDetailsDto> GetTeam(int id)
         {
-            return await teamService.GetTeamByIdAsync(id);
-
+            return teamService.GetTeamByIdAsync(id);
         }
 
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<ActionResult<int>> CreateTeam([FromBody] TeamCreateDto createDto)
+        public Task<int> CreateTeam([FromBody] TeamCreateDto createDto)
         {
-            return await teamService.CreateTeamAsync(createDto);
+            return teamService.CreateTeamAsync(createDto);
         }
 
 

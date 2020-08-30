@@ -30,10 +30,17 @@ namespace Race.Repo.Repositories
             return pilot.Id;
         }
 
-        public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(PagerDto dto)
+        public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(
+            int pageIndex, 
+            int pageSize, 
+            string sortColumn = null, 
+            string sortOrder = null,
+            string filterColumn = null,
+            string filterQuery = "")
         {
-            var pilots = await context.Pilots.Skip(dto.PageIndex *dto.PageSize).Take(dto.PageSize).ToListAsync();
-            return PagedList<PilotListDto>.CreateAsync(pilots.Select(ent => new PilotListDto(ent)).AsQueryable(), dto.PageIndex, dto.PageSize);
+            var pilots = await context.Pilots.Include(x => x.Team).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
+            return PagedList<PilotListDto>
+                .Create(pilots.Select(ent => new PilotListDto(ent)).AsQueryable(), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
 
         public async Task<PilotDetailsDto> GetPilotAsync(int id)
