@@ -21,9 +21,15 @@ namespace Race.Service.Services
             return await pilotRepository.InsertAsync(createDto);
         }
 
-        public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(int pageIndex, int pageSize, string sortColumn, string sortOrder)
+        public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(
+            int pageIndex,
+            int pageSize,
+            string sortColumn = null,
+            string sortOrder = null,
+            string filterColumn = null,
+            string filterQuery = null)
         {
-            return await pilotRepository.GetAllPilotAsync(pageIndex, pageSize, sortColumn, sortOrder);
+            return await pilotRepository.GetAllPilotAsync(pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
 
         public async Task<PilotDetailsDto> GetPilotAsync(int id)
