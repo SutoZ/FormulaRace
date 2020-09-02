@@ -24,12 +24,24 @@ namespace Race.Service.Services
 
         public Task<int> DeleteTeamAsync(int id)
         {
-            throw new NotImplementedException();
+            return repository.DeleteAsync(id);
         }
 
-        public async Task<PagedList<TeamListDto>> GetAllTeamAsync(int pageIndex, int pageSize, string sortColumn, string sortOrder)
+        public async Task<PagedList<TeamListDto>> GetAllTeamAsync(
+            int pageIndex,
+            int pageSize,
+            string sortColumn = null,
+            string sortOrder = null,
+            string filterColumn = null,
+            string filterQuery = null)
         {
-            return await repository.GetAllTeamAsync(pageIndex, pageSize, sortColumn, sortOrder);
+            return await repository.GetAllTeamAsync(
+                pageIndex,
+                pageSize,
+                sortColumn,
+                sortOrder,
+                filterColumn,
+                filterQuery);
         }
 
         public async Task<TeamDetailsDto> GetTeamByIdAsync(int id)

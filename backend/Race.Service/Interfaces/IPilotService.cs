@@ -1,4 +1,4 @@
-﻿using Race.Repo.Dtos;
+﻿using Microsoft.AspNetCore.Mvc;
 using Race.Repo.Dtos.Pilots;
 using Race.Shared.Paging;
 using System.Threading.Tasks;
@@ -15,7 +15,7 @@ namespace Race.Service.Interfaces
             string filterQuery);
 
         Task<PilotDetailsDto> GetPilotAsync(int id);
-        Task<int> CreatePilotAsync(PilotCreateDto createDto);
+        Task<int> CreatePilotAsync(int id, PilotCreateDto createDto);
         Task UpdatePilotAsync(int id, PilotUpdateDto updateDto);
         Task<int> DeletePilotAsync(int id);
     }

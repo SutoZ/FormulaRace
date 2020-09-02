@@ -1,5 +1,4 @@
-﻿using Race.Repo.Dtos;
-using Race.Repo.Dtos.Pilots;
+﻿using Race.Repo.Dtos.Pilots;
 using Race.Shared.Paging;
 using System.Threading.Tasks;
 
@@ -7,7 +6,7 @@ namespace Race.Repo.Interfaces
 {
     public interface IPilotRepository
     {
-        Task<int> InsertAsync(PilotCreateDto entity);
+        Task<int> InsertAsync(int id, PilotCreateDto entity);
         Task<IPagedList<PilotListDto>> GetAllPilotAsync(
             int pageIndex,
             int pageSize,
