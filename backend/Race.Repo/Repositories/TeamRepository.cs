@@ -18,10 +18,22 @@ namespace Race.Repo.Repositories
             this.context = context;
         }
 
-        public async Task<PagedList<TeamListDto>> GetAllTeamAsync(int pageIndex, int pageSize, string sortColumn, string sortOrder)
+        public async Task<PagedList<TeamListDto>> GetAllTeamAsync(
+            int pageIndex,
+            int pageSize,
+            string sortColumn = null,
+            string sortOrder = null,
+            string filterColumn = null,
+            string filterQuery = null)
         {
             var teams = await context.Teams.Include(ent => ent.Pilots).ToListAsync();
-            return PagedList<TeamListDto>.Create(teams.Select(ent => new TeamListDto(ent)).AsQueryable(), pageIndex, pageSize, sortColumn, sortOrder);
+            return PagedList<TeamListDto>.Create(teams.Select(ent => new TeamListDto(ent)).AsQueryable(),
+                pageIndex,
+                pageSize,
+                sortColumn,
+                sortOrder,
+                filterColumn,
+                filterQuery);
         }
 
         public async Task<TeamDetailsDto> GetTeamByIdAsync(int id)
@@ -32,7 +44,7 @@ namespace Race.Repo.Repositories
 
         public async Task<int> DeleteAsync(int id)
         {
-             var team = await context.Teams.FirstAsync(ent => ent.Id == id);
+            var team = await context.Teams.FirstAsync(ent => ent.Id == id);
             if (team == null) throw new Exception("Entity not found by given Id");
 
             context.Teams.Remove(team);

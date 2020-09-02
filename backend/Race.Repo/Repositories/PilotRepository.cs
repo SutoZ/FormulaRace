@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Race.Repo.ApplicationContext;
 using Race.Repo.Dtos;
 using Race.Repo.Dtos.Pilots;
@@ -45,11 +46,11 @@ namespace Race.Repo.Repositories
 
         public async Task<PilotDetailsDto> GetPilotAsync(int id)
         {
-            var pilot = await context.Pilots.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var pilot = await context.Pilots.Include(ent => ent.Team).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             return new PilotDetailsDto(pilot);
         }
 
-        public async Task<int> InsertAsync(PilotCreateDto createDto)
+        public async Task<int> InsertAsync(int id, PilotCreateDto createDto)
         {
             try
             {
@@ -74,6 +75,8 @@ namespace Race.Repo.Repositories
         public async Task UpdatePilotAsync(int id, PilotUpdateDto updateDto)
         {
             var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.Id == id);
+            if (pilot == null) throw new Exception($"Pilot with id: {id} not found.");
+
             pilot = updateDto.UpdateModelObject(pilot);
 
             await context.SaveChangesAsync();
