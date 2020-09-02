@@ -9,7 +9,7 @@ namespace Race.Web.Controllers
 {
     [Route("api/pilots")]
     [ApiController]
-    public class PilotController : ControllerBase
+    public class PilotController // : ControllerBase
     {
         private const string OPNAME = "Pilots";
 

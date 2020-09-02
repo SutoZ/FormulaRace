@@ -5,6 +5,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { HttpParams } from '@angular/common/http';
 import { MatSort } from '@angular/material/sort';
 import { IPilotsListViewModel } from '../models/pilot.models';
+import { PagedList } from 'src/app/PagedList';
 
 @Component({
   selector: 'app-pilots',
@@ -19,8 +20,6 @@ import { IPilotsListViewModel } from '../models/pilot.models';
 export class PilotsComponent implements OnInit {
   public displayedColumns: String[] = ['Id', 'Name', 'Number', 'Code', 'Nationality'];
   public dataSource = new MatTableDataSource<IPilotsListViewModel>();
-
-  public value: string = "Clear me";
 
   defaultIndex = 0;
   defaultPageSize = 10;
@@ -43,6 +42,7 @@ export class PilotsComponent implements OnInit {
     var event = new PageEvent();
     event.pageIndex = this.defaultIndex;
     event.pageSize = this.defaultPageSize;
+    
     if (query) {
       this.filterQuery = query;
     }
@@ -58,7 +58,7 @@ export class PilotsComponent implements OnInit {
       .set("filterColumn", this.defaultFilterColumn)
       .set("filterQuery", this.filterQuery);
 
-    this.pilotsService.getPilots(params).subscribe(result => {
+    this.pilotsService.getPilots<PagedList<IPilotsListViewModel>>(params).subscribe(result => {
       this.paginator.length = result.totalPages;
       this.paginator.pageIndex = result.pageIndex;
       this.paginator.pageSize = result.pageSize;

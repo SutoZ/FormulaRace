@@ -1,0 +1,34 @@
+<div class="pilot-edit">
+    <h1>{{title}}</h1>
+
+    <p *ngIf="!pilot"><em>Loading...</em></p>
+    <div class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="form-group">
+            <label for="name">Pilot name...</label>
+            <br />
+            <input type="text" id="name" class="form-control" formControlName="name" required
+                placeholder="Enter name here...">
+
+            <label for="number">Pilot number...</label>
+            <br />
+            <input type="text" id="number" class="form-control" formControlName="number" required
+                placeholder="Enter number here...">
+
+            <label for="code">Pilot code...</label>
+            <br />
+            <input type="text" id="code" class="form-control" formControlName="code" required
+                placeholder="Enter code here...">
+
+            <label for="nationality">Pilot nationality...</label>
+            <br />
+            <input type="text" id="nationality" class="form-control" formControlName="nationality" required
+                placeholder="Enter nationality here...">
+        </div>
+
+        <div class="form-group">
+            <button type="button" class="btn btn-success" (click)="onSubmit()"> Create new Pilot </button>
+            <button type="button" class="btn btn-default" [routerLink]="['/pilots']"> Cancel </button>
+        </div>
+    </div>
+</div>

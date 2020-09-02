@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ITeamListViewModel } from '../models/team.models';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TeamsService {
-  baseUrl: string = "https://localhost:44372/";
-  constructor(private http: HttpClient
-    //@Optional() @Inject('BASE_URL') private baseUrl: string) { }
-  ) { }
+  constructor(private http: HttpClient) { }
 
   header = new HttpHeaders({ 'Content-Type': 'application/json' });
-
-  getTeams(parameters: HttpParams): Observable<any> | null {
-    return this.http.get<any>(this.baseUrl + "api/teams", { headers: this.header, params: parameters });
+  getTeams<PagedList>(parameters: HttpParams): Observable<PagedList> | null {
+  console.log(environment.BASE_URL);
+    return this.http.request<PagedList>('get', environment.BASE_URL + 'api/teams', { headers: this.header, params: parameters });
   }
 }

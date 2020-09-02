@@ -1,5 +1,9 @@
 <p hidden="!dataSource">Loading...</p>
 
+<mat-form-field [hidden]="!dataSource">
+    <input matInput placeHolder="Filter by Name..." (keyup)="loadData($event.target.value)">
+</mat-form-field>
+
 <table [hidden]="!dataSource" mat-table matSort (matSortChange)="loadData()" matSortActive="{{defaultSortColumn}}"
     matSortDirection="{{defaultSortOder}}" [dataSource]="dataSource" class="mat-elevation-z8">
 

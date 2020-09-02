@@ -10,6 +10,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { TeamsComponent } from './teams/components/teams.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
+import { PilotEditComponent } from './pilots/components/pilot-edit/pilot-edit.component';
 
 
 @NgModule({
@@ -17,7 +19,8 @@ import { MatInputModule } from '@angular/material/input';
     AppComponent,
     PilotsComponent,
     NavMenuComponent,
-    TeamsComponent
+    TeamsComponent,
+    PilotEditComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +29,8 @@ import { MatInputModule } from '@angular/material/input';
     AngularMaterialModule,
     BrowserAnimationsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
