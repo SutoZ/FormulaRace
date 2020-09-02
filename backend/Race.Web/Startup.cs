@@ -15,12 +15,21 @@ namespace Race.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private IConfiguration configuration;
+
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            this.isDevelopment = env.IsDevelopment();
+        }
+
+        public Startup(IConfiguration configuration)
+        {
+            this.configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
+        private bool isDevelopment { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -52,20 +61,27 @@ namespace Race.Web
 
             services.AddTransient<ITeamService, TeamService>();
             services.AddTransient<IPilotService, PilotService>();
-
-            services.AddDbContext<RaceContext>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("RaceConnection"));
-                options.EnableSensitiveDataLogging();
-            });
+            AddDbContext(services, isDevelopment);
 
             services.AddSpaStaticFiles(spa => spa.RootPath = "racefrontend");
 
             services.AddSwaggerGen();
         }
 
+        protected virtual void AddDbContext(IServiceCollection services, bool isDevelopment = false)
+        {
+            services.AddDbContext<RaceContext>(options =>
+            {
+                if (isDevelopment)
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("RaceConnection"));
+                    options.EnableSensitiveDataLogging();
+                }
+            });
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
