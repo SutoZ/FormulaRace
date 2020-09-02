@@ -1,6 +1,4 @@
 ﻿using Race.Model.Models;
-using System;
-using System.Collections.Generic;
 
 namespace Race.Repo.Dtos.Pilots
 {
@@ -17,6 +15,7 @@ namespace Race.Repo.Dtos.Pilots
             Name = pilot.Name;
             Code = pilot.Code;
             Nationality = pilot.Nationality;
+            Number = pilot.Number;
         }
     }
 }

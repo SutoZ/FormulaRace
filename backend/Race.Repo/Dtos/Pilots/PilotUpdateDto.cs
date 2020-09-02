@@ -4,6 +4,7 @@ namespace Race.Repo.Dtos.Pilots
 {
     public class PilotUpdateDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Number { get; set; }
         public string Code { get; set; }
@@ -12,6 +13,7 @@ namespace Race.Repo.Dtos.Pilots
         public PilotUpdateDto(Pilot pilot)
         {
             Name = pilot.Name;
+            Id = pilot.Id;
             Number = pilot.Number;
             Code = pilot.Code;
             Nationality = pilot.Nationality;
