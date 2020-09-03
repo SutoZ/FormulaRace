@@ -4,7 +4,7 @@ namespace Race.Shared.Paging
 {
     public interface IPagedList<T>
     {
-        int Count { get; }
+        int TotalCount { get; }
         IList<T> Data { get; set; }
         bool HasNextPage { get; }
         bool HasPreviousPage { get; }

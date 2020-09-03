@@ -27,7 +27,7 @@ namespace Race.Repo.Repositories
             string filterQuery = null)
         {
             var teams = await context.Teams.Include(ent => ent.Pilots).ToListAsync();
-            return PagedList<TeamListDto>.Create(teams.Select(ent => new TeamListDto(ent)).AsQueryable(),
+            return await PagedList<TeamListDto>.CreateAsync(teams.Select(ent => new TeamListDto(ent)).AsQueryable(),
                 pageIndex,
                 pageSize,
                 sortColumn,

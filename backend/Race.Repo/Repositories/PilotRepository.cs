@@ -40,12 +40,13 @@ namespace Race.Repo.Repositories
             string filterColumn = null,
             string filterQuery = "")
         {
-            var pilots = await context.Pilots.Include(x => x.Team).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
+            var pilots = context.Pilots.Include(x => x.Team);
+            //var pilots = await context.Pilots.Include(x => x.Team).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
 
         //    PilotListDto pilotListDto = mapper.Map<PilotListDto>(pilots);
 
-            return PagedList<PilotListDto>
-                .Create(pilots.Select(ent => new PilotListDto(ent)).AsQueryable(), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
+            return  await PagedList<PilotListDto>
+                .CreateAsync(pilots.Select(ent => new PilotListDto(ent)).AsQueryable(), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
 
         public async Task<PilotDetailsDto> GetPilotAsync(int id)
