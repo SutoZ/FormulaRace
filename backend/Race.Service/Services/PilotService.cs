@@ -1,5 +1,4 @@
-﻿using Race.Repo.Dtos;
-using Race.Repo.Dtos.Pilots;
+﻿using Race.Repo.Dtos.Pilots;
 using Race.Repo.Interfaces;
 using Race.Service.Interfaces;
 using Race.Shared.Paging;
@@ -16,9 +15,9 @@ namespace Race.Service.Services
             this.pilotRepository = pilotRepository;
         }
 
-        public async Task<int> CreatePilotAsync(int id, PilotCreateDto createDto)
+        public async Task CreatePilotAsync(PilotCreateDto createDto)
         {
-            return await pilotRepository.InsertAsync(id, createDto);
+            await pilotRepository.CreateAsync(createDto);
         }
 
         public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(

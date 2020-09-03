@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Race.Repo.ApplicationContext;
-using Race.Repo.Dtos;
 using Race.Repo.Dtos.Pilots;
 using Race.Repo.Interfaces;
 using Race.Shared.Paging;
@@ -14,10 +13,12 @@ namespace Race.Repo.Repositories
     public class PilotRepository : IPilotRepository
     {
         private readonly RaceContext context;
+        private readonly IMapper mapper;
 
-        public PilotRepository(RaceContext context)
+        public PilotRepository(RaceContext context, IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
 
         public async Task<int> DeleteAsync(int id)
@@ -40,6 +41,9 @@ namespace Race.Repo.Repositories
             string filterQuery = "")
         {
             var pilots = await context.Pilots.Include(x => x.Team).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
+
+        //    PilotListDto pilotListDto = mapper.Map<PilotListDto>(pilots);
+
             return PagedList<PilotListDto>
                 .Create(pilots.Select(ent => new PilotListDto(ent)).AsQueryable(), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
@@ -50,7 +54,7 @@ namespace Race.Repo.Repositories
             return new PilotDetailsDto(pilot);
         }
 
-        public async Task<int> InsertAsync(int id, PilotCreateDto createDto)
+        public async Task CreateAsync(PilotCreateDto createDto)
         {
             try
             {
@@ -69,7 +73,6 @@ namespace Race.Repo.Repositories
             {
                 throw new ArgumentException(e.Message);
             }
-            return 0;
         }
 
         public async Task UpdatePilotAsync(int id, PilotUpdateDto updateDto)

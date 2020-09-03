@@ -12,6 +12,7 @@ namespace Race.Web.Controllers
     public class PilotController // : ControllerBase
     {
         private const string OPNAME = "Pilots";
+        private const int PAGESIZE = 10;
 
         private readonly IPilotService pilotService;
 
@@ -22,10 +23,13 @@ namespace Race.Web.Controllers
 
         [HttpGet]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<IPagedList<PilotListDto>> GetAllPilot(int pageIndex,
-            int pageSize,
+        public async Task<IPagedList<PilotListDto>> GetAllPilot(
+            int pageIndex,
+            int pageSize = PAGESIZE,
             string sortColumn = null,
-            string sortOrder = null, string filterColumn = null, string filterQuery = null)
+            string sortOrder = null,
+            string filterColumn = null,
+            string filterQuery = null)
         {
             return await pilotService.GetAllPilotAsync(pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
@@ -38,9 +42,9 @@ namespace Race.Web.Controllers
 
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<ActionResult<int>> CreatePilot(int id, [FromQuery] PilotCreateDto createDto)
+        public async Task CreatePilot([FromBody] PilotCreateDto createDto)
         {
-            return await pilotService.CreatePilotAsync(id, createDto);
+            await pilotService.CreatePilotAsync(createDto);
         }
 
         [HttpPut("{id}")]

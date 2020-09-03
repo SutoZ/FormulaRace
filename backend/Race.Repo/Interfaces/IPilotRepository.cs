@@ -6,7 +6,7 @@ namespace Race.Repo.Interfaces
 {
     public interface IPilotRepository
     {
-        Task<int> InsertAsync(int id, PilotCreateDto entity);
+        Task CreateAsync(PilotCreateDto entity);
         Task<IPagedList<PilotListDto>> GetAllPilotAsync(
             int pageIndex,
             int pageSize,
