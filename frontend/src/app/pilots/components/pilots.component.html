@@ -5,6 +5,9 @@
     <input matInput placeHolder="Filter by Name..." (keyup)="loadData($event.target.value)">
 </mat-form-field>
 
+<button *ngIf="dataSource" class="commands text-right" [routerLink]="['/pilot']">Add new Pilot</button>
+<br/>
+
 <!-- with *ngIf @ViewChild's change detection stops paginator from being initialized so, hidden attribute is used -->
 <table mat-table [hidden]="!dataSource" matSort (matSortChange)="loadData()" matSortActive="{{defaultSortColumn}}"
     matSortDirection="{{defaultSortOder}}" [dataSource]="dataSource" class="mat-elevation-z8">

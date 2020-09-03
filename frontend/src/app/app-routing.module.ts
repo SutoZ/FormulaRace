@@ -6,8 +6,11 @@ import { PilotEditComponent } from './pilots/components/pilot-edit/pilot-edit.co
 
 const routes: Routes = [
   { path: 'pilots', component: PilotsComponent },
+  { path: 'pilots/:id', component: PilotEditComponent },
+  { path: 'pilot', component: PilotEditComponent },
+  //{ path: 'pilots/pilot', component: PilotEditComponent },
   { path: 'api/teams', component: TeamsComponent },
-  { path: 'pilots/:id', component: PilotEditComponent }
+
 ];
 
 @NgModule({

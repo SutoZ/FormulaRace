@@ -1,7 +1,7 @@
 <div class="pilot-edit">
     <h1>{{title}}</h1>
-
-    <p *ngIf="!pilot"><em>Loading...</em></p>
+    <!-- this.id && !pilot -->
+    <p *ngIf= "!id && !pilot"><em>Loading...</em></p>
     <div class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
 
         <div class="form-group">
@@ -27,8 +27,9 @@
         </div>
 
         <div class="form-group">
-            <button type="button" class="btn btn-success" (click)="onSubmit()"> Create new Pilot </button>
-            <button type="button" class="btn btn-default" [routerLink]="['/pilots']"> Cancel </button>
+            <button *ngIf="id" type="submit" class="btn btn-success" (click)="onSubmit()"> Save </button>
+            <button *ngIf="!id" type="submit" class="btn btn-success" (click)="onSubmit()">Create new Pilot</button>
+            <button type="submit" class="btn btn-default" [routerLink]="['/pilots']"> Cancel </button>
         </div>
     </div>
 </div>
