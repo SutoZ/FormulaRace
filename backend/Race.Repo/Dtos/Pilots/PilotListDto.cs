@@ -12,7 +12,7 @@ namespace Race.Repo.Dtos.Pilots
         public string Code { get; set; }
         public string Nationality { get; set; }
         //public TeamListDto TeamDto { get; set; }
-
+        public PilotListDto() { }
         public PilotListDto(Pilot pilot)
         {
             Id = pilot.Id;

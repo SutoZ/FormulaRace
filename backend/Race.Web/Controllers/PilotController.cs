@@ -42,14 +42,14 @@ namespace Race.Web.Controllers
 
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task CreatePilot([FromBody] PilotCreateDto createDto)
+        public async Task CreatePilot([FromBody] PilotCreateDto pilot)
         {
-            await pilotService.CreatePilotAsync(createDto);
+            await pilotService.CreatePilotAsync(pilot);
         }
 
         [HttpPut("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task UpdatePilot(int id, [FromQuery] PilotUpdateDto updateDto)
+        public async Task UpdatePilot(int id, [FromBody] PilotUpdateDto updateDto)
         {
             await pilotService.UpdatePilotAsync(id, updateDto);
         }
@@ -59,6 +59,14 @@ namespace Race.Web.Controllers
         public async Task<int> DeletePilot(int id)
         {
             return await pilotService.DeletePilotAsync(id);
+        }
+
+        [HttpPost]
+        [Route("IsNameExists")]
+        public bool NameExists([FromBody] PilotDetailsDto pilotDto)
+        {
+            return pilotService.CheckNameExists(pilotDto);
+         
         }
     }
 }

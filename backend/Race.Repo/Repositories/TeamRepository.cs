@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Race.Repo.ApplicationContext;
 using Race.Repo.Dtos.Teams;
 using Race.Repo.Interfaces;
@@ -12,13 +13,15 @@ namespace Race.Repo.Repositories
     public class TeamRepository : ITeamRepository
     {
         private readonly RaceContext context;
+        private readonly IMapper mapper;
 
-        public TeamRepository(RaceContext context)
+        public TeamRepository(RaceContext context, IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
 
-        public async Task<PagedList<TeamListDto>> GetAllTeamAsync(
+        public async Task<IPagedList<TeamListDto>> GetAllTeamAsync(
             int pageIndex,
             int pageSize,
             string sortColumn = null,
@@ -26,7 +29,7 @@ namespace Race.Repo.Repositories
             string filterColumn = null,
             string filterQuery = null)
         {
-            var teams = await context.Teams.Include(ent => ent.Pilots).ToListAsync();
+            var teams = context.Teams;
             return await PagedList<TeamListDto>.CreateAsync(teams.Select(ent => new TeamListDto(ent)).AsQueryable(),
                 pageIndex,
                 pageSize,
@@ -39,12 +42,12 @@ namespace Race.Repo.Repositories
         public async Task<TeamDetailsDto> GetTeamByIdAsync(int id)
         {
             var team = await context.Teams.Include(ent => ent.Pilots).FirstOrDefaultAsync(ent => ent.Id == id);
-            return new TeamDetailsDto(team);
+            return mapper.Map<TeamDetailsDto>(team);
         }
 
         public async Task<int> DeleteAsync(int id)
         {
-            var team = await context.Teams.FirstAsync(ent => ent.Id == id);
+            var team = await context.Teams.FirstOrDefaultAsync(ent => ent.Id == id);
             if (team == null) throw new Exception("Entity not found by given Id");
 
             context.Teams.Remove(team);

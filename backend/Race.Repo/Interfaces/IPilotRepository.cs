@@ -18,5 +18,6 @@ namespace Race.Repo.Interfaces
         Task<PilotDetailsDto> GetPilotAsync(int id);
         Task UpdatePilotAsync(int id, PilotUpdateDto updateDto);
         Task<int> DeleteAsync(int id);
+        bool CheckNameExists(PilotDetailsDto pilotDto);
     }
 }

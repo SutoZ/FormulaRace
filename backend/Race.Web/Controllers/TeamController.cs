@@ -22,12 +22,12 @@ namespace Race.Web.Controllers
 
         [HttpGet]
         [SwaggerOperation(Tags = new string[] { OPNAME })]
-        public Task<PagedList<TeamListDto>> GetAllTeams(
-            int pageIndex, 
-            int pageSize, 
+        public Task<IPagedList<TeamListDto>> GetAllTeams(
+            int pageIndex,
+            int pageSize,
             string sortColumn = null,
-            string sortOrder = null, 
-            string filterColumn = null, 
+            string sortOrder = null,
+            string filterColumn = null,
             string filterQuery = null)
         {
             return teamService.GetAllTeamAsync(pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);

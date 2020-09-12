@@ -9,6 +9,7 @@ namespace Race.Repo.Dtos.Pilots
         public string Number { get; set; }
         public string Code { get; set; }
         public string Nationality { get; set; }
+        public PilotDetailsDto() { }
         public PilotDetailsDto(Pilot pilot)
         {
             Id = pilot.Id;

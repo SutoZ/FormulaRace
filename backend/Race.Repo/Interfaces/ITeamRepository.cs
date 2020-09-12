@@ -7,7 +7,7 @@ namespace Race.Repo.Interfaces
     public interface ITeamRepository
     {
         Task<int> InsertAsync(TeamCreateDto entity);
-        Task<PagedList<TeamListDto>> GetAllTeamAsync(
+        Task<IPagedList<TeamListDto>> GetAllTeamAsync(
             int pageIndex,
             int pageSize,
             string sortColumn = null,

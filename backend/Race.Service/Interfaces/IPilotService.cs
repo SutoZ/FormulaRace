@@ -18,5 +18,6 @@ namespace Race.Service.Interfaces
         Task CreatePilotAsync(PilotCreateDto createDto);
         Task UpdatePilotAsync(int id, PilotUpdateDto updateDto);
         Task<int> DeletePilotAsync(int id);
+        bool CheckNameExists(PilotDetailsDto pilotDto);
     }
 }

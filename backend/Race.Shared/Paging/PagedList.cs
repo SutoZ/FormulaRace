@@ -87,14 +87,19 @@ namespace Race.Shared.Paging
         {
             var count = source.Count();
 
-            if (!string.IsNullOrEmpty(sortColumn) && IsValidProperty(sortColumn) && filterQuery != "null" && IsValidProperty(filterColumn))
+            if (!string.IsNullOrEmpty(sortColumn) && IsValidProperty(sortColumn))
             {
                 sortOrder = !string.IsNullOrEmpty(sortOrder) && sortOrder.ToUpper() == "ASC" ? "ASC" : "DESC";
-                source = source.Where($"{filterColumn}.Contains(@0)", filterQuery);
                 source = source.OrderBy($"{sortColumn} {sortOrder}");
+
+                if (filterColumn != null && filterQuery != "null" && IsValidProperty(filterColumn))
+                {
+                    source = source.Where($"{filterColumn}.Contains(@0)", filterQuery);
+                }
             }
 
-            source = source.Skip(pageIndex * pageSize).Take(pageSize);
+            if (pageSize != 0) source = source.Skip(pageIndex * pageSize).Take(pageSize);
+
             var data = await source.ToListAsync();
 
             return new PagedList<T>(

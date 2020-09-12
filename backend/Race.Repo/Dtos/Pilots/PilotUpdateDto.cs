@@ -9,6 +9,7 @@ namespace Race.Repo.Dtos.Pilots
         public string Number { get; set; }
         public string Code { get; set; }
         public string Nationality { get; set; }
+        public int TeamId { get; set; }
 
         //public PilotUpdateDto(Pilot pilot)
         //{
@@ -25,6 +26,7 @@ namespace Race.Repo.Dtos.Pilots
             pilot.Number = Number;
             pilot.Code = Code;
             pilot.Nationality = Nationality;
+            pilot.TeamId = TeamId;
 
             return pilot;
         }

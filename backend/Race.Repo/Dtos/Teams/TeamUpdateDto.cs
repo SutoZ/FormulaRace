@@ -14,14 +14,14 @@ namespace Race.Repo.Dtos.Teams
         public int ChampionShipPoints { get; set; }
         public List<PilotUpdateDto> Pilots { get; set; } = new List<PilotUpdateDto>();
 
-        public TeamUpdateDto(Team team)
-        {
-            Name = team.Name;
-            DateOfFoundation = team.DateOfFoundation;
-            OwnerName = team.OwnerName;
-            ChampionShipPoints = team.ChampionShipPoints;
-            Pilots = team.Pilots != null ? new List<PilotUpdateDto>() : null;
-        }
+        //public TeamUpdateDto(Team team)
+        //{
+        //    Name = team.Name;
+        //    DateOfFoundation = team.DateOfFoundation;
+        //    OwnerName = team.OwnerName;
+        //    ChampionShipPoints = team.ChampionShipPoints;
+        //    Pilots = team.Pilots != null ? new List<PilotUpdateDto>() : null;
+        //}
 
         public Team UpdateModelObject(Team team)
         {

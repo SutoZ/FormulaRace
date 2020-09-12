@@ -41,9 +41,6 @@ namespace Race.Repo.Repositories
             string filterQuery = "")
         {
             var pilots = context.Pilots.Include(x => x.Team);
-            //var pilots = await context.Pilots.Include(x => x.Team).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
-
-        //    PilotListDto pilotListDto = mapper.Map<PilotListDto>(pilots);
 
             return  await PagedList<PilotListDto>
                 .CreateAsync(pilots.Select(ent => new PilotListDto(ent)).AsQueryable(), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
@@ -52,7 +49,7 @@ namespace Race.Repo.Repositories
         public async Task<PilotDetailsDto> GetPilotAsync(int id)
         {
             var pilot = await context.Pilots.Include(ent => ent.Team).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            return new PilotDetailsDto(pilot);
+            return mapper.Map<PilotDetailsDto>(pilot);
         }
 
         public async Task CreateAsync(PilotCreateDto createDto)
@@ -62,7 +59,7 @@ namespace Race.Repo.Repositories
                 if (createDto == null) throw new ArgumentNullException("Entity was null");
                 var pilot = createDto.CreateModelObject();
 
-                var team = await context.Teams.Include(ent => ent.Pilots).FirstOrDefaultAsync(ent => ent.Id == 2);
+                var team = await context.Teams.Include(ent => ent.Pilots).FirstOrDefaultAsync(ent => ent.Id == createDto.TeamId);
 
                 pilot.Team = team;
                 pilot.TeamId = team.Id;
@@ -84,6 +81,11 @@ namespace Race.Repo.Repositories
             pilot = updateDto.UpdateModelObject(pilot);
 
             await context.SaveChangesAsync();
+        }
+
+        public bool CheckNameExists(PilotDetailsDto pilotDto)
+        {
+            return context.Pilots.Any(p => p.Name.ToUpper().Trim() == pilotDto.Name.ToUpper().Trim());
         }
     }
 }

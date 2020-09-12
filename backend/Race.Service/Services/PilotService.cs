@@ -44,5 +44,10 @@ namespace Race.Service.Services
         {
             return await pilotRepository.DeleteAsync(id);
         }
+
+        public bool CheckNameExists(PilotDetailsDto pilotDto)
+        {
+            return pilotRepository.CheckNameExists(pilotDto);
+        }
     }
 }
