@@ -30,6 +30,8 @@ CRUD operations
 
 To-do list:
 * Thread safety
+* Nationality dropdown field
+* validation errros to show
 
 ## Status
 Project is: _in progress_
