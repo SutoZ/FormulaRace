@@ -1,8 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { IPilotsListViewModel } from '../../models/pilot.models';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormGroup, FormControl, Validators, AsyncValidatorFn, AbstractControl } from '@angular/forms';
+import { IPilotsListViewModel, IPilotDetailsViewModel } from '../../models/pilot.models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PilotsService } from '../../services/pilots.service';
+import { ITeamListViewModel } from 'src/app/teams/models/team.models';
+import { TeamsService } from 'src/app/teams/services/teams.service';
+import { HttpParams } from '@angular/common/http';
+import { PagedList } from 'src/app/PagedList';
+import { MatSort } from '@angular/material/sort';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-pilot-edit',
@@ -10,31 +17,42 @@ import { PilotsService } from '../../services/pilots.service';
   styleUrls: ['./pilot-edit.component.css']
 })
 export class PilotEditComponent implements OnInit {
-
+  sortColumn: string = "Name";
+  sortOrder: string = "Asc";
+  filterColumn: string = "Name";
   title: string;
   form: FormGroup;
   pilot: IPilotsListViewModel;
+  teams: ITeamListViewModel[];
   id?: number;
+
+  //remove
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private pilotService: PilotsService,
-    private router: Router) { }
+    private teamsService: TeamsService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      name: new FormControl(''),
-      number: new FormControl(''),
-      code: new FormControl(''),
-      nationality: new FormControl(''),
-    });
+      name: new FormControl('', Validators.required),
+      number: new FormControl('', Validators.required),
+      code: new FormControl('', Validators.required),
+      nationality: new FormControl('', Validators.required),
+      teamId: new FormControl('', Validators.required)
+    }, null, this.CheckNameExists());
     this.loadData();
   }
 
   loadData() {
+    this.loadTeams();
+
     this.id = +this.activatedRoute.snapshot.paramMap.get('id');
     if (this.id) {
-      this.pilotService.getPilotsById(this.id).subscribe(res => {
+      this.pilotService.getPilotById(this.id).subscribe(res => {
         this.pilot = res;
         this.title = 'Edit: ' + this.pilot.name;
 
@@ -48,6 +66,20 @@ export class PilotEditComponent implements OnInit {
     }
   }
 
+  loadTeams() {
+    var params = new HttpParams()
+      .set("pageIndex", '0')
+      .set("pageSize", '20')
+      .set("sortColumn", this.sortColumn)
+      .set("sortOrder", this.sortOrder)
+      .set("filterColumn", 'null')
+      .set("filterQuery", 'null');
+
+    this.teamsService.getTeams<PagedList<ITeamListViewModel>>(params).subscribe(result => {
+      this.teams = result.data
+    }, error => console.log(error));
+  }
+
   onSubmit() {
     var pilot = (this.id) ? this.pilot : <IPilotsListViewModel>{};
 
@@ -55,7 +87,7 @@ export class PilotEditComponent implements OnInit {
     pilot.nationality = this.form.get('nationality').value;
     pilot.code = this.form.get('code').value;
     pilot.number = this.form.get('number').value;
-    //pilot.team = +this.form.get('team').value;
+    pilot.teamId = +this.form.get('teamId').value;
 
     if (this.id) {
       //update existing pilot
@@ -68,6 +100,18 @@ export class PilotEditComponent implements OnInit {
       this.pilotService.postPilot(pilot).subscribe(result => {
         this.router.navigate(['/pilots']);
       }, error => console.log(error));
+    }
+  }
+
+  CheckNameExists(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<{ [key: string]: any } | null> => {
+      var pilot = <IPilotDetailsViewModel>{};
+      pilot.id = (this.id) ? this.id : 0;
+      pilot.name = this.form.get('name').value;
+
+      return this.pilotService.checkNameExists<IPilotDetailsViewModel>(pilot).pipe(map(result => {
+        return (result ? { NameExists: true } : null)
+      }));
     }
   }
 }

@@ -1,12 +1,11 @@
-<p>Pilots in Formula 1</p>
 <p *ngIf="!dataSource"><em>Loading...</em></p>
 
 <mat-form-field [hidden]="!dataSource">
     <input matInput placeHolder="Filter by Name..." (keyup)="loadData($event.target.value)">
 </mat-form-field>
 
-<button *ngIf="dataSource" class="commands text-right" [routerLink]="['/pilot']">Add new Pilot</button>
-<br/>
+<button *ngIf="dataSource" class="btn btn-secondary float-right" [routerLink]="['/pilot']">Add new Pilot</button>
+
 
 <!-- with *ngIf @ViewChild's change detection stops paginator from being initialized so, hidden attribute is used -->
 <table mat-table [hidden]="!dataSource" matSort (matSortChange)="loadData()" matSortActive="{{defaultSortColumn}}"
@@ -47,5 +46,5 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
 
-<mat-paginator (page)="getPilots($event)" [pageSize]="10" [hidden]="!dataSource" [pageSizeOptions]="[10, 20, 50]"
+<mat-paginator #paginator (page)="getPilots($event)" [pageSize]="10" [hidden]="!dataSource" [pageSizeOptions]="[10, 20, 50]"
     showFirstLastButtons></mat-paginator>

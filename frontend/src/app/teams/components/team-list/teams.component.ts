@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { TeamsService } from '../services/teams.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { ITeamListViewModel as ITeamListViewModel } from '../models/team.models';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { HttpParams } from '@angular/common/http';
 import { PagedList } from 'src/app/PagedList';
+import { ITeamListViewModel } from '../../models/team.models';
+import { TeamsService } from '../../services/teams.service';
 
 @Component({
   selector: 'app-teams',
