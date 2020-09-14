@@ -25,9 +25,8 @@ export class PilotEditComponent implements OnInit {
   pilot: IPilotsListViewModel;
   teams: ITeamListViewModel[];
   id?: number;
-
-  //remove
-  @ViewChild(MatSort) sort: MatSort;
+  defaultIndex: number = 0;
+  defaultPageSize: number = 20;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -40,9 +39,10 @@ export class PilotEditComponent implements OnInit {
     this.form = new FormGroup({
       name: new FormControl('', Validators.required),
       number: new FormControl('', Validators.required),
-      code: new FormControl('', Validators.required),
+      code: new FormControl('', [Validators.required, Validators.maxLength(3)]),
       nationality: new FormControl('', Validators.required),
       teamId: new FormControl('', Validators.required)
+   
     }, null, this.CheckNameExists());
     this.loadData();
   }
@@ -68,8 +68,8 @@ export class PilotEditComponent implements OnInit {
 
   loadTeams() {
     var params = new HttpParams()
-      .set("pageIndex", '0')
-      .set("pageSize", '20')
+      .set("pageIndex", this.defaultIndex.toString())
+      .set("pageSize", this.defaultPageSize.toString())
       .set("sortColumn", this.sortColumn)
       .set("sortOrder", this.sortOrder)
       .set("filterColumn", 'null')

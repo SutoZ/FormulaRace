@@ -15,6 +15,7 @@ import { TeamEditComponent } from './teams/components/team-edit/team-edit/team-e
 import { PilotsComponent } from './pilots/components/pilot-list/pilots.component';
 import { TeamsComponent } from './teams/components/team-list/teams.component';
 import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { MatOptionModule } from '@angular/material/core';
     MatFormFieldModule,
     MatInputModule,
     MatOptionModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSelectModule 
   ],
   providers: [],
   bootstrap: [AppComponent]
