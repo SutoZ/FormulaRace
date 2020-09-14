@@ -9,6 +9,6 @@ namespace Race.Repo.ApplicationContext
     {
         DbSet<Pilot> Pilots { get; set; }
         DbSet<Team> Teams { get; set; }
-        Task<int> SaveChangesAsync();
+        Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
     }
 }

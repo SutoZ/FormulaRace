@@ -59,11 +59,6 @@ namespace Race.Repo.Repositories
                 if (createDto == null) throw new ArgumentNullException("Entity was null");
                 var pilot = createDto.CreateModelObject();
 
-                //var team = await context.Teams.Include(ent => ent.Pilots).FirstOrDefaultAsync(ent => ent.Id == createDto.TeamId);
-
-                //pilot.Team = team;
-                //pilot.TeamId = team.Id;
-
                 context.Pilots.Add(pilot);
                 await context.SaveChangesAsync();
             }

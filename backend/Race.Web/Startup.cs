@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Race.Model.Models;
 using Race.Repo.ApplicationContext;
 using Race.Repo.Interfaces;
 using Race.Repo.Repositories;
@@ -33,6 +35,8 @@ namespace Race.Web
 
         public IConfiguration Configuration { get; }
         private bool isDevelopment { get; set; }
+
+        private int passwordLength = 8;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -69,11 +73,25 @@ namespace Race.Web
 
             services.AddScoped(typeof(IPilotRepository), typeof(PilotRepository));
             services.AddScoped(typeof(ITeamRepository), typeof(TeamRepository));
+            services.AddScoped(typeof(IRaceContext), typeof(RaceContext));
 
             services.AddTransient<ITeamService, TeamService>();
             services.AddTransient<IPilotService, PilotService>();
             AddDbContext(services, isDevelopment);
 
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = true;
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = passwordLength;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<RaceContext>();
+
+            services.AddAuthorization();
             services.AddSpaStaticFiles(spa => spa.RootPath = "racefrontend");
 
             services.AddSwaggerGen();
@@ -108,6 +126,8 @@ namespace Race.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseAuthentication();
 
             //addig swagger middleware
             app.UseSwagger();
