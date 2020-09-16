@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NavMenuComponent } from './nav-menu/components/nav-menu.component';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -16,6 +16,8 @@ import { PilotsComponent } from './pilots/components/pilot-list/pilots.component
 import { TeamsComponent } from './teams/components/team-list/teams.component';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { ApiAuthorizationModule } from 'src/api-authorization/modules/api-authorization.module';
+import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 
 
 @NgModule({
@@ -26,7 +28,7 @@ import { MatSelectModule } from '@angular/material/select';
     TeamsComponent,
     PilotEditComponent,
     HomeComponent,
-    TeamEditComponent
+    TeamEditComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,9 +40,12 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     MatOptionModule,
     ReactiveFormsModule,
-    MatSelectModule 
+    MatSelectModule,
+    ApiAuthorizationModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
