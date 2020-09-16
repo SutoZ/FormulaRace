@@ -4,12 +4,14 @@ using System.Threading.Tasks;
 using Race.Repo.Dtos.Pilots;
 using Swashbuckle.Swagger.Annotations;
 using Race.Shared.Paging;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Race.Web.Controllers
 {
-    [Route("api/pilots")]
     [ApiController]
-    public class PilotController // : ControllerBase
+    [Route("api/pilots")]
+    public class PilotController
     {
         private const string OPNAME = "Pilots";
         private const int PAGESIZE = 10;
@@ -40,6 +42,7 @@ namespace Race.Web.Controllers
             return await pilotService.GetPilotAsync(id);
         }
 
+        [Authorize]
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
         public async Task CreatePilot([FromBody] PilotCreateDto pilot)
@@ -47,6 +50,7 @@ namespace Race.Web.Controllers
             await pilotService.CreatePilotAsync(pilot);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
         public async Task UpdatePilot(int id, [FromBody] PilotUpdateDto updateDto)
@@ -54,6 +58,7 @@ namespace Race.Web.Controllers
             await pilotService.UpdatePilotAsync(id, updateDto);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
         public async Task<int> DeletePilot(int id)

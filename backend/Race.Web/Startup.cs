@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Race.Model.Models;
 using Race.Repo.ApplicationContext;
 using Race.Repo.Interfaces;
@@ -20,9 +22,7 @@ namespace Race.Web
 {
     public class Startup
     {
-        private IConfiguration configuration;
-
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             this.isDevelopment = env.IsDevelopment();
@@ -30,7 +30,7 @@ namespace Race.Web
 
         public Startup(IConfiguration configuration)
         {
-            this.configuration = configuration;
+            this.Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -56,8 +56,13 @@ namespace Race.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddControllersWithViews()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.WriteIndented = true;
+                });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddCors(setup =>
             {
@@ -71,12 +76,16 @@ namespace Race.Web
                 });
             });
 
+            services.AddHealthChecks();
+
             services.AddScoped(typeof(IPilotRepository), typeof(PilotRepository));
             services.AddScoped(typeof(ITeamRepository), typeof(TeamRepository));
-            services.AddScoped(typeof(IRaceContext), typeof(RaceContext));
 
-            services.AddTransient<ITeamService, TeamService>();
-            services.AddTransient<IPilotService, PilotService>();
+            //services.AddScoped(typeof(IRaceContext), typeof(RaceContext));
+            
+            services.AddScoped(typeof(ITeamService), typeof(TeamService));
+            services.AddScoped(typeof(IPilotService), typeof(PilotService));
+
             AddDbContext(services, isDevelopment);
 
             services.AddDefaultIdentity<ApplicationUser>(options =>
@@ -89,7 +98,10 @@ namespace Race.Web
                 options.Password.RequireNonAlphanumeric = true;
             })
             .AddRoles<IdentityRole>()
+            .AddDefaultUI()
             .AddEntityFrameworkStores<RaceContext>();
+
+            services.AddIdentityServer().AddApiAuthorization<ApplicationUser, RaceContext>();
 
             services.AddAuthorization();
             services.AddSpaStaticFiles(spa => spa.RootPath = "racefrontend");
@@ -110,7 +122,7 @@ namespace Race.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -128,6 +140,9 @@ namespace Race.Web
             app.UseCookiePolicy();
 
             app.UseAuthentication();
+            app.UseIdentityServer();
+            app.UseAuthorization();
+
 
             //addig swagger middleware
             app.UseSwagger();
@@ -140,11 +155,20 @@ namespace Race.Web
 
             app.UseCors("AllowCredentials");
 
-            app.UseMvc(routes =>
+            app.UseRouting();
+
+            app.UseEndpoints(conf =>
             {
-                routes.MapRoute(
+                conf.MapRazorPages();
+            });
+
+            app.UseEndpoints(conf =>
+            {
+                conf.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                conf.MapRazorPages();
             });
         }
     }

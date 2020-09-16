@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Linq.Dynamic.Core;     //can query throw column, which is not not at compile time, only at runtim by reflection
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Race.Shared.Paging
 {

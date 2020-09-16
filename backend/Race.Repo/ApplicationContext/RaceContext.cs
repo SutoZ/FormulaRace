@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Race.Repo.ApplicationContext
 {
-    public class RaceContext : IdentityDbContext<ApplicationUser>, IRaceContext
+    public class RaceContext : IdentityDbContext<ApplicationUser> //, IRaceContext
     {
         public RaceContext() { }
         public RaceContext(DbContextOptions<RaceContext> context) : base(context)
@@ -47,6 +47,7 @@ namespace Race.Repo.ApplicationContext
                    .SetBasePath(Directory.GetCurrentDirectory())
                    .AddJsonFile("appsettings.json")
                    .Build();
+
                 var connectionString = configuration.GetConnectionString("RaceConnection");
                 optionsBuilder.UseSqlServer(connectionString);
             }

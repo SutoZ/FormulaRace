@@ -15,12 +15,13 @@ namespace Race.Web.Controllers
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IConfiguration conf;
-        private readonly IRaceContext context;
+        private readonly RaceContext context;
 
         public AccountController(
             RoleManager<IdentityRole> roleManager,
-            UserManager<ApplicationUser> userManager, IConfiguration conf,
-            IRaceContext context)
+            UserManager<ApplicationUser> userManager,
+            IConfiguration conf,
+            RaceContext context)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
@@ -39,7 +40,7 @@ namespace Race.Web.Controllers
 
             if (await roleManager.FindByNameAsync(role_administrator) == null)
                 await roleManager.CreateAsync(new IdentityRole(role_administrator));
-            
+
             //https://www.learnentityframeworkcore.com/concurrency/
 
             var userList_concurrent = new ConcurrentBag<ApplicationUser>();
@@ -70,8 +71,6 @@ namespace Race.Web.Controllers
                 UserName = conf.GetSection("TestUser").GetSection("UserName").Value.ToString(),
                 SecurityStamp = Guid.NewGuid().ToString()
             };
-
-            ApplicationUser asdf = await userManager.FindByNameAsync(conf.GetSection("TestUser").GetSection("UserName").Value.ToString());
 
             if (await userManager.FindByNameAsync(conf.GetSection("TestUser").GetSection("UserName").Value.ToString()) == null)
                 await userManager.CreateAsync(user_test, "Asdf12345678.");
