@@ -21,7 +21,7 @@ You can see the pilots and their corresponding teams in the database and you can
 
 ## Setup
 
-``` update database ```
+``` update database ``` \
 ``` npm install ```
 
 ## Features
