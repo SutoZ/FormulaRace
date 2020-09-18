@@ -21,6 +21,7 @@ You can see the pilots and their corresponding teams in the database and you can
 
 ## Setup
 
+``` dotnet restore ``` \
 ``` update database ``` \
 ``` npm install ```
 
