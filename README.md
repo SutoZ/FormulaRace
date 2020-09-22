@@ -13,8 +13,8 @@
 You can see the pilots and their corresponding teams in the database and you can also add new members. I have chosen C# for server-side development and Angular for client-side development.
 
 ## Technologies
-* ASP.NET Core 2.2
-* EntityFramework Core 2.2
+* ASP.NET Core 3.0
+* EntityFramework Core 3.0
 * AutoMapper 10.0
 * typescript 3.8.3
 * Angular 9
