@@ -16,23 +16,23 @@ namespace Race.Tests
         {
         }
 
-        public override void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var serviceProvirder = app.ApplicationServices;
-            var db = serviceProvirder.GetRequiredService<RaceContext>();
+            var logger = app.ApplicationServices.GetRequiredService<ILogger<RaceWebApplicationFactory>>();
 
-            var logger = serviceProvirder.GetRequiredService<ILogger<RaceWebApplicationFactory>>();
+            using (var context = app.ApplicationServices.GetRequiredService<RaceContext>())
+            {
+                context.Database.OpenConnection();
+                context.Database.EnsureCreated();
 
-            db.Database.OpenConnection();
-            db.Database.EnsureCreated();
-            try
-            {
-                AddTestData(db);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, ex.Message);
-                throw;
+                try
+                {
+                    AddTestData(context);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, ex.Message);
+                }
             }
 
             base.Configure(app, env);

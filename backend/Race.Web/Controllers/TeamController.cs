@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Race.Repo.Dtos.Teams;
 using Race.Service.Interfaces;
 using Race.Shared.Paging;

@@ -7,12 +7,31 @@ import { TeamsComponent } from './teams/components/team-list/teams.component';
 import { TeamEditComponent } from './teams/components/team-edit/team-edit/team-edit.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'pilots', component: PilotsComponent },
-  { path: 'pilots/:id', component: PilotEditComponent },
-  { path: 'pilot', component: PilotEditComponent },
-  { path: 'teams', component: TeamsComponent },
-  { path: 'teams/:id', component: TeamEditComponent }
+  {
+    path: '',
+    component: HomeComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'pilots',
+    component: PilotsComponent,
+  },
+  {
+    path: 'pilots/:id',
+    component: PilotEditComponent
+  },
+  {
+    path: 'pilot',
+    component: PilotEditComponent
+  },
+  {
+    path: 'teams',
+    component: TeamsComponent
+  },
+  {
+    path: 'teams/:id',
+    component: TeamEditComponent
+  }
 ];
 
 @NgModule({

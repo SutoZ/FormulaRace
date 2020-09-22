@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Race.Model.Models;
 using Race.Repo.ApplicationContext;
 using Race.Repo.Dtos.Pilots;
 using Race.Repo.Interfaces;
@@ -14,11 +16,15 @@ namespace Race.Repo.Repositories
     {
         private readonly RaceContext context;
         private readonly IMapper mapper;
+        private readonly ILogger<PilotRepository> logger;
 
-        public PilotRepository(RaceContext context, IMapper mapper)
+        public PilotRepository(
+            RaceContext context, IMapper mapper,
+            ILogger<PilotRepository> logger)
         {
             this.context = context;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         public async Task<int> DeleteAsync(int id)
@@ -33,22 +39,33 @@ namespace Race.Repo.Repositories
         }
 
         public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(
-            int pageIndex, 
-            int pageSize, 
-            string sortColumn = null, 
+            int pageIndex,
+            int pageSize,
+            string sortColumn = null,
             string sortOrder = null,
             string filterColumn = null,
             string filterQuery = "")
         {
             var pilots = context.Pilots.Include(x => x.Team);
 
-            return  await PagedList<PilotListDto>
-                .CreateAsync(pilots.Select(ent => new PilotListDto(ent)).AsQueryable(), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
+            return await PagedList<PilotListDto>
+                    .CreateAsync(pilots.Select(ent => new PilotListDto(ent)).AsQueryable(),
+                    pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
 
         public async Task<PilotDetailsDto> GetPilotAsync(int id)
         {
-            var pilot = await context.Pilots.Include(ent => ent.Team).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            Pilot pilot = new Pilot();
+
+            try
+            {
+                pilot = await context.Pilots.Include(ent => ent.Team).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+            }
+
             return mapper.Map<PilotDetailsDto>(pilot);
         }
 

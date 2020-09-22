@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Linq.Dynamic.Core;     //can query throw column, which is not not at compile time, only at runtim by reflection
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Race.Shared.Paging
 {
@@ -85,7 +86,7 @@ namespace Race.Shared.Paging
             string filterColumn = null,
             string filterQuery = null)
         {
-            var count = source.Count();
+            var count = await source.CountAsync();
 
             if (!string.IsNullOrEmpty(sortColumn) && IsValidProperty(sortColumn))
             {
@@ -100,10 +101,8 @@ namespace Race.Shared.Paging
 
             if (pageSize != 0) source = source.Skip(pageIndex * pageSize).Take(pageSize);
 
-            var data = await source.ToListAsync();
-
             return new PagedList<T>(
-                data,
+                await source.ToListAsync(),
                 count,
                 pageIndex,
                 pageSize,

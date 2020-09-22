@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NavMenuComponent } from './nav-menu/components/nav-menu.component';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -26,7 +26,7 @@ import { MatSelectModule } from '@angular/material/select';
     TeamsComponent,
     PilotEditComponent,
     HomeComponent,
-    TeamEditComponent
+    TeamEditComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,7 +38,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     MatOptionModule,
     ReactiveFormsModule,
-    MatSelectModule 
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -14,14 +14,11 @@ using Race.Repo.Repositories;
 using Race.Service.Interfaces;
 using Race.Service.Services;
 using Race.Web.Mappings;
-using System;
 
 namespace Race.Web
 {
     public class Startup
     {
-        private IConfiguration configuration;
-
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
@@ -30,7 +27,7 @@ namespace Race.Web
 
         public Startup(IConfiguration configuration)
         {
-            this.configuration = configuration;
+            this.Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -56,8 +53,8 @@ namespace Race.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
 
             services.AddCors(setup =>
             {
@@ -71,13 +68,24 @@ namespace Race.Web
                 });
             });
 
+            services.AddHealthChecks();
+
             services.AddScoped(typeof(IPilotRepository), typeof(PilotRepository));
             services.AddScoped(typeof(ITeamRepository), typeof(TeamRepository));
-            services.AddScoped(typeof(IRaceContext), typeof(RaceContext));
 
-            services.AddTransient<ITeamService, TeamService>();
-            services.AddTransient<IPilotService, PilotService>();
-            AddDbContext(services, isDevelopment);
+            services.AddScoped(typeof(ITeamService), typeof(TeamService));
+            services.AddScoped(typeof(IPilotService), typeof(PilotService));
+
+            services.AddEntityFrameworkSqlServer();
+
+            services.AddDbContext<RaceContext>(options =>
+            {
+                if (isDevelopment)
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("RaceConnection"));
+                    options.EnableSensitiveDataLogging();
+                }
+            });
 
             services.AddDefaultIdentity<ApplicationUser>(options =>
             {
@@ -88,11 +96,13 @@ namespace Race.Web
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = true;
             })
-            .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<RaceContext>();
+           .AddRoles<IdentityRole>()
+           .AddEntityFrameworkStores<RaceContext>();
 
             services.AddAuthorization();
-            services.AddSpaStaticFiles(spa => spa.RootPath = "racefrontend");
+
+            //services.AddSpaStaticFiles(spa => spa.RootPath = "racefrontend");
+            services.AddSpaStaticFiles(spa => spa.RootPath = "frontend");
 
             services.AddSwaggerGen();
         }
@@ -127,6 +137,7 @@ namespace Race.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+
             app.UseAuthentication();
 
             //addig swagger middleware
@@ -138,7 +149,7 @@ namespace Race.Web
                     setup.RoutePrefix = string.Empty;
                 });
 
-            app.UseCors("AllowCredentials");
+            app.UseCors("AllowCredentials");            
 
             app.UseMvc(routes =>
             {

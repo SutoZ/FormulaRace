@@ -4,12 +4,14 @@ using System.Threading.Tasks;
 using Race.Repo.Dtos.Pilots;
 using Swashbuckle.Swagger.Annotations;
 using Race.Shared.Paging;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Race.Web.Controllers
 {
-    [Route("api/pilots")]
     [ApiController]
-    public class PilotController // : ControllerBase
+    [Route("api/pilots")]
+    public class PilotController
     {
         private const string OPNAME = "Pilots";
         private const int PAGESIZE = 10;
