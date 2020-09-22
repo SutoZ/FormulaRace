@@ -1,30 +1,54 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Race.Model.Models;
 using Race.Repo.ApplicationContext;
 using Race.Repo.Interfaces;
 using Race.Repo.Repositories;
 using Race.Service.Interfaces;
 using Race.Service.Services;
+using Race.Web.Mappings;
+using System;
 
 namespace Race.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private IConfiguration configuration;
+
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            this.isDevelopment = env.IsDevelopment();
+        }
+
+        public Startup(IConfiguration configuration)
+        {
+            this.configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
+        private bool isDevelopment { get; set; }
+
+        private int passwordLength = 8;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMapperProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -49,23 +73,44 @@ namespace Race.Web
 
             services.AddScoped(typeof(IPilotRepository), typeof(PilotRepository));
             services.AddScoped(typeof(ITeamRepository), typeof(TeamRepository));
+            services.AddScoped(typeof(IRaceContext), typeof(RaceContext));
 
             services.AddTransient<ITeamService, TeamService>();
             services.AddTransient<IPilotService, PilotService>();
+            AddDbContext(services, isDevelopment);
 
-            services.AddDbContext<RaceContext>(options =>
+            services.AddDefaultIdentity<ApplicationUser>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("RaceConnection"));
-                options.EnableSensitiveDataLogging();
-            });
+                options.SignIn.RequireConfirmedEmail = true;
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = passwordLength;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<RaceContext>();
 
+            services.AddAuthorization();
             services.AddSpaStaticFiles(spa => spa.RootPath = "racefrontend");
 
             services.AddSwaggerGen();
         }
 
+        protected virtual void AddDbContext(IServiceCollection services, bool isDevelopment = false)
+        {
+            services.AddDbContext<RaceContext>(options =>
+            {
+                if (isDevelopment)
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("RaceConnection"));
+                    options.EnableSensitiveDataLogging();
+                }
+            });
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -81,6 +126,8 @@ namespace Race.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseAuthentication();
 
             //addig swagger middleware
             app.UseSwagger();

@@ -6,7 +6,14 @@ namespace Race.Service.Interfaces
 {
     public interface ITeamService
     {
-        Task<PagedList<TeamListDto>> GetAllTeamAsync(int pageIndex, int pageSize, string sortColumn, string sortOrder);
+        Task<IPagedList<TeamListDto>> GetAllTeamAsync(
+            int pageIndex,
+            int pageSize,
+            string sortColumn = null,
+            string sortOrder = null,
+            string filterColumn = null,
+            string filterQuery = null);
+
         Task<TeamDetailsDto> GetTeamByIdAsync(int id);
         Task<int> CreateTeamAsync(TeamCreateDto createDto);
         Task UpdateTeamAsync(int id, TeamUpdateDto updateDto);

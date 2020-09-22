@@ -1,5 +1,4 @@
-﻿using Race.Repo.Dtos;
-using Race.Repo.Dtos.Pilots;
+﻿using Race.Repo.Dtos.Pilots;
 using Race.Repo.Interfaces;
 using Race.Service.Interfaces;
 using Race.Shared.Paging;
@@ -16,9 +15,9 @@ namespace Race.Service.Services
             this.pilotRepository = pilotRepository;
         }
 
-        public async Task<int> CreatePilotAsync(PilotCreateDto createDto)
+        public async Task CreatePilotAsync(PilotCreateDto createDto)
         {
-            return await pilotRepository.InsertAsync(createDto);
+            await pilotRepository.CreateAsync(createDto);
         }
 
         public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(
@@ -44,6 +43,11 @@ namespace Race.Service.Services
         public async Task<int> DeletePilotAsync(int id)
         {
             return await pilotRepository.DeleteAsync(id);
+        }
+
+        public bool CheckNameExists(PilotDetailsDto pilotDto)
+        {
+            return pilotRepository.CheckNameExists(pilotDto);
         }
     }
 }

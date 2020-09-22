@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Race.Model.Models
 {
@@ -24,6 +21,15 @@ namespace Race.Model.Models
         public Pilot()
         {
 
+        }
+
+        public Pilot(string name, string number, string code, string nationality ,int teamId)
+        {
+            Name = name;
+            Number = number;
+            Code = code;
+            Nationality = nationality;
+            TeamId = teamId;
         }
     }
 }

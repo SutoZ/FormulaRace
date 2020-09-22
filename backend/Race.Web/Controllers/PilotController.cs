@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using Race.Repo.Dtos.Pilots;
 using Swashbuckle.Swagger.Annotations;
 using Race.Shared.Paging;
-using Race.Repo.Dtos;
 
 namespace Race.Web.Controllers
 {
     [Route("api/pilots")]
     [ApiController]
-    public class PilotController
+    public class PilotController // : ControllerBase
     {
         private const string OPNAME = "Pilots";
+        private const int PAGESIZE = 10;
 
         private readonly IPilotService pilotService;
 
@@ -23,31 +23,33 @@ namespace Race.Web.Controllers
 
         [HttpGet]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<IPagedList<PilotListDto>> GetAllPilot(int pageIndex,
-            int pageSize, 
+        public async Task<IPagedList<PilotListDto>> GetAllPilot(
+            int pageIndex,
+            int pageSize = PAGESIZE,
             string sortColumn = null,
-            string sortOrder = null, string filterColumn = null, string filterQuery = null)
+            string sortOrder = null,
+            string filterColumn = null,
+            string filterQuery = null)
         {
-            return await pilotService.GetAllPilotAsync(pageIndex, pageSize, sortColumn, sortOrder,filterColumn, filterQuery);
+            return await pilotService.GetAllPilotAsync(pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
 
         [HttpGet("{id}")]
         public async Task<PilotDetailsDto> GetPilot(int id)
         {
             return await pilotService.GetPilotAsync(id);
-
         }
 
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<ActionResult<int>> CreatePilot([FromQuery] PilotCreateDto createDto)
+        public async Task CreatePilot([FromBody] PilotCreateDto pilot)
         {
-            return await pilotService.CreatePilotAsync(createDto);
+            await pilotService.CreatePilotAsync(pilot);
         }
 
         [HttpPut("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task UpdatePilot(int id, [FromQuery] PilotUpdateDto updateDto)
+        public async Task UpdatePilot(int id, [FromBody] PilotUpdateDto updateDto)
         {
             await pilotService.UpdatePilotAsync(id, updateDto);
         }
@@ -56,8 +58,15 @@ namespace Race.Web.Controllers
         [SwaggerOperation(Tags = new[] { OPNAME })]
         public async Task<int> DeletePilot(int id)
         {
-          return await pilotService.DeletePilotAsync(id);
+            return await pilotService.DeletePilotAsync(id);
         }
 
+        [HttpPost]
+        [Route("IsNameExists")]
+        public bool NameExists([FromBody] PilotDetailsDto pilotDto)
+        {
+            return pilotService.CheckNameExists(pilotDto);
+         
+        }
     }
 }

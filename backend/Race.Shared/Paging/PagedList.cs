@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Linq.Dynamic.Core;     //can query throw column, which is not not at compile time, only at runtim by reflection
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Race.Shared.Paging
 {
@@ -23,7 +25,7 @@ namespace Race.Shared.Paging
         /// <summary>
         /// Total items count
         /// </summary>
-        public int Count { get; set; }
+        public int TotalCount { get; set; }
         /// <summary>
         /// Total pages count
         /// </summary>
@@ -53,7 +55,7 @@ namespace Race.Shared.Paging
             string filterQuery)
         {
             Data = data;
-            Count = count;
+            TotalCount = count;
             PageIndex = pageIndex;
             PageSize = pageSize;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
@@ -74,7 +76,7 @@ namespace Race.Shared.Paging
             }
         }
 
-        public static PagedList<T> Create(
+        public async static Task<PagedList<T>> CreateAsync(
             IQueryable<T> source,
             int pageIndex,
             int pageSize,
@@ -85,18 +87,23 @@ namespace Race.Shared.Paging
         {
             var count = source.Count();
 
-
-            if (!string.IsNullOrEmpty(sortColumn) && IsValidProperty(sortColumn) && filterQuery != "null" && IsValidProperty(filterColumn))
+            if (!string.IsNullOrEmpty(sortColumn) && IsValidProperty(sortColumn))
             {
                 sortOrder = !string.IsNullOrEmpty(sortOrder) && sortOrder.ToUpper() == "ASC" ? "ASC" : "DESC";
-                source = source.Where($"{filterColumn}.Contains(@0)", filterQuery);
                 source = source.OrderBy($"{sortColumn} {sortOrder}");
+
+                if (filterColumn != null && filterQuery != "null" && IsValidProperty(filterColumn))
+                {
+                    source = source.Where($"{filterColumn}.Contains(@0)", filterQuery);
+                }
             }
 
-            source = source.Skip(pageIndex * pageSize).Take(pageSize);
+            if (pageSize != 0) source = source.Skip(pageIndex * pageSize).Take(pageSize);
+
+            var data = await source.ToListAsync();
 
             return new PagedList<T>(
-                source.ToList(),
+                data,
                 count,
                 pageIndex,
                 pageSize,

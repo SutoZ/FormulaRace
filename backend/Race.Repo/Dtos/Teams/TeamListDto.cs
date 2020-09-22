@@ -14,7 +14,7 @@ namespace Race.Repo.Dtos.Teams
         public DateTime DateOfFoundation { get; set; }
         public string OwnerName { get; set; }
         public int ChampionShipPoints { get; set; }
-        public List<PilotListDto> Pilots { get; set; }
+        //public List<PilotListDto> Pilots { get; set; }
 
         public TeamListDto(Team team)
         {
@@ -23,7 +23,7 @@ namespace Race.Repo.Dtos.Teams
             DateOfFoundation = team.DateOfFoundation;
             OwnerName = team.OwnerName;
             ChampionShipPoints = team.ChampionShipPoints;
-            Pilots = team.Pilots?.Select(ent => new PilotListDto(ent)).ToList();
+         //   Pilots = team.Pilots?.Select(ent => new PilotListDto(ent)).ToList();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Race.Repo.Dtos;
-using Race.Repo.Dtos.Pilots;
+﻿using Race.Repo.Dtos.Pilots;
 using Race.Shared.Paging;
 using System.Threading.Tasks;
 
@@ -7,7 +6,7 @@ namespace Race.Repo.Interfaces
 {
     public interface IPilotRepository
     {
-        Task<int> InsertAsync(PilotCreateDto entity);
+        Task CreateAsync(PilotCreateDto entity);
         Task<IPagedList<PilotListDto>> GetAllPilotAsync(
             int pageIndex,
             int pageSize,
@@ -19,5 +18,6 @@ namespace Race.Repo.Interfaces
         Task<PilotDetailsDto> GetPilotAsync(int id);
         Task UpdatePilotAsync(int id, PilotUpdateDto updateDto);
         Task<int> DeleteAsync(int id);
+        bool CheckNameExists(PilotDetailsDto pilotDto);
     }
 }
