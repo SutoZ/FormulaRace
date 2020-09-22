@@ -40,7 +40,6 @@ namespace Race.Web.Controllers
             return teamService.GetTeamByIdAsync(id);
         }
 
-        [Authorize]
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
         public Task<int> CreateTeam([FromBody] TeamCreateDto createDto)

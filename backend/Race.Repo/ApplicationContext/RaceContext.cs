@@ -12,10 +12,7 @@ namespace Race.Repo.ApplicationContext
 {
     public class RaceContext : IdentityDbContext<ApplicationUser> //, IRaceContext
     {
-        public RaceContext() { }
-        public RaceContext(DbContextOptions<RaceContext> context) : base(context)
-        {
-        }
+        public RaceContext(DbContextOptions<RaceContext> context) : base(context) { }
 
         public virtual DbSet<Pilot> Pilots { get; set; }
         public virtual DbSet<Team> Teams { get; set; }

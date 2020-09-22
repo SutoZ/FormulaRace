@@ -42,7 +42,6 @@ namespace Race.Web.Controllers
             return await pilotService.GetPilotAsync(id);
         }
 
-        [Authorize]
         [HttpPost]
         [SwaggerOperation(Tags = new[] { OPNAME })]
         public async Task CreatePilot([FromBody] PilotCreateDto pilot)
@@ -50,7 +49,6 @@ namespace Race.Web.Controllers
             await pilotService.CreatePilotAsync(pilot);
         }
 
-        [Authorize]
         [HttpPut("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
         public async Task UpdatePilot(int id, [FromBody] PilotUpdateDto updateDto)
@@ -58,7 +56,6 @@ namespace Race.Web.Controllers
             await pilotService.UpdatePilotAsync(id, updateDto);
         }
 
-        [Authorize]
         [HttpDelete("{id}")]
         [SwaggerOperation(Tags = new[] { OPNAME })]
         public async Task<int> DeletePilot(int id)

@@ -16,8 +16,6 @@ import { PilotsComponent } from './pilots/components/pilot-list/pilots.component
 import { TeamsComponent } from './teams/components/team-list/teams.component';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
-import { ApiAuthorizationModule } from 'src/api-authorization/modules/api-authorization.module';
-import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 
 
 @NgModule({
@@ -40,12 +38,9 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
     MatInputModule,
     MatOptionModule,
     ReactiveFormsModule,
-    MatSelectModule,
-    ApiAuthorizationModule
+    MatSelectModule
   ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

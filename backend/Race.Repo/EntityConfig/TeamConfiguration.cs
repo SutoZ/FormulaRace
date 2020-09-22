@@ -11,6 +11,7 @@ namespace Race.Repo.EntityConfig
             builder.ToTable("Teams");
 
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.Property(x => x.Name).IsRequired();
             builder.Property(x => x.DateOfFoundation).IsRequired();
             builder.Property(x => x.OwnerName).IsRequired();

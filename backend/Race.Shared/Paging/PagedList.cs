@@ -86,7 +86,7 @@ namespace Race.Shared.Paging
             string filterColumn = null,
             string filterQuery = null)
         {
-            var count = source.Count();
+            var count = await source.CountAsync();
 
             if (!string.IsNullOrEmpty(sortColumn) && IsValidProperty(sortColumn))
             {
@@ -101,10 +101,8 @@ namespace Race.Shared.Paging
 
             if (pageSize != 0) source = source.Skip(pageIndex * pageSize).Take(pageSize);
 
-            var data = await source.ToListAsync();
-
             return new PagedList<T>(
-                data,
+                await source.ToListAsync(),
                 count,
                 pageIndex,
                 pageSize,
