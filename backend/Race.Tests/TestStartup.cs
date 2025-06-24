@@ -16,7 +16,7 @@ namespace Race.Tests
         {
         }
 
-        public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public override void Configure(IApplicationBuilder app)
         {
             var logger = app.ApplicationServices.GetRequiredService<ILogger<RaceWebApplicationFactory>>();
 
@@ -35,7 +35,7 @@ namespace Race.Tests
                 }
             }
 
-            base.Configure(app, env);
+            base.Configure(app);
         }
 
         public virtual void AddTestData(RaceContext db)
