@@ -1,25 +1,20 @@
 ﻿using Race.Model.Models;
 using Race.Repo.Dtos.Teams;
-using System;
 
-namespace Race.Repo.Dtos.Pilots
+namespace Race.Repo.Dtos.Pilots;
+
+public record PilotListDto(int Id, string Name, string Number, string Code, string Nationality, TeamListDto? TeamListDto)
 {
-    public class PilotListDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Number { get; set; }
-        public string Code { get; set; }
-        public string Nationality { get; set; }
-        
-        public PilotListDto() { }
-        public PilotListDto(Pilot pilot)
-        {
-            Id = pilot.Id;
-            Name = pilot.Name;
-            Number = pilot.Number;
-            Code = pilot.Code;
-            Nationality = pilot.Nationality;
-        }
-    }
+    public static PilotListDto FromPilot(Pilot pilot) => new(
+            pilot.Id,
+            pilot.Name,
+            pilot.Number,
+            pilot.Code,
+            pilot.Nationality,
+            pilot.Team is null ? null : new TeamListDto(
+                pilot.Team.Id,
+                pilot.Team.Name,
+                pilot.Team.DateOfFoundation,
+                pilot.Team.OwnerName,
+                pilot.Team.ChampionShipPoints));
 }
