@@ -1,11 +1,11 @@
 import { Component, OnInit, Injectable, ViewChild } from '@angular/core';
 import { PilotsService } from 'src/app/pilots/services/pilots.service';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { HttpParams } from '@angular/common/http';
 import { MatSort } from '@angular/material/sort';
 import { PagedList } from 'src/app/PagedList';
 import { IPilotsListViewModel } from '../../models/pilot.models';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-pilots',
@@ -18,7 +18,7 @@ import { IPilotsListViewModel } from '../../models/pilot.models';
 })
 
 export class PilotsComponent implements OnInit {
-  public displayedColumns: String[] = ['Id', 'Name', 'Number', 'Code', 'Nationality'];
+  public displayedColumns: string[] = ['Id', 'Name', 'Number', 'Code', 'Nationality'];
   public dataSource = new MatTableDataSource<IPilotsListViewModel>();
 
   defaultIndex = 0;
@@ -44,7 +44,7 @@ export class PilotsComponent implements OnInit {
     var event = new PageEvent();
     event.pageIndex = this.defaultIndex;
     event.pageSize = this.defaultPageSize;
-    
+
     if (query) {
       this.filterQuery = query;
     }
