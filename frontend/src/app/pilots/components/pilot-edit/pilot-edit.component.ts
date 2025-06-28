@@ -12,9 +12,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-pilot-edit',
-  templateUrl: './pilot-edit.component.html',
-  styleUrls: ['./pilot-edit.component.css']
+    selector: 'app-pilot-edit',
+    templateUrl: './pilot-edit.component.html',
+    styleUrls: ['./pilot-edit.component.css'],
+    standalone: false
 })
 export class PilotEditComponent implements OnInit {
   sortColumn: string = "Name";

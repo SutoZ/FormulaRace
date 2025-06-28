@@ -8,9 +8,10 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'app-pilots',
-  templateUrl: './pilots.component.html',
-  styleUrls: ['./pilots.component.css']
+    selector: 'app-pilots',
+    templateUrl: './pilots.component.html',
+    styleUrls: ['./pilots.component.css'],
+    standalone: false
 })
 
 @Injectable({

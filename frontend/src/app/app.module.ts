@@ -6,7 +6,6 @@ import { NavMenuComponent } from './nav-menu/components/nav-menu.component';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
-import { ReactiveFormsModule } from '@angular/forms';
 import { PilotEditComponent } from './pilots/components/pilot-edit/pilot-edit.component';
 import { HomeComponent } from './home/home.component';
 import { TeamEditComponent } from './teams/components/team-edit/team-edit/team-edit.component';
@@ -16,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({ declarations: [

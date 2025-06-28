@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ITeamListViewModel as ITeamsListViewModel, ITeamListViewModel } from 'src/app/teams/models/team.models';
 import { TeamsService } from 'src/app/teams/services/teams.service';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-team-edit',
-  templateUrl: './team-edit.component.html',
-  styleUrls: ['./team-edit.component.css']
+    selector: 'app-team-edit',
+    templateUrl: './team-edit.component.html',
+    styleUrls: ['./team-edit.component.css'],
+    standalone: false
 })
 export class TeamEditComponent implements OnInit {
 
