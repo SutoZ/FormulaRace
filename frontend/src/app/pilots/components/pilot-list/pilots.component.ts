@@ -1,7 +1,7 @@
 import { Component, OnInit, Injectable, ViewChild } from '@angular/core';
 import { PilotsService } from 'src/app/pilots/services/pilots.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { HttpParams } from '@angular/common/http';
 import { MatSort } from '@angular/material/sort';
 import { PagedList } from 'src/app/PagedList';
