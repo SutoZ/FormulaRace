@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NavMenuComponent } from './nav-menu/components/nav-menu.component';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,29 +18,22 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    PilotsComponent,
-    NavMenuComponent,
-    TeamsComponent,
-    PilotEditComponent,
-    HomeComponent,
-    TeamEditComponent,
-  ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    AppRoutingModule,
-    AngularMaterialModule,
-    BrowserAnimationsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatOptionModule,
-    ReactiveFormsModule,
-    MatSelectModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        PilotsComponent,
+        NavMenuComponent,
+        TeamsComponent,
+        PilotEditComponent,
+        HomeComponent,
+        TeamEditComponent,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        AngularMaterialModule,
+        BrowserAnimationsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatOptionModule,
+        ReactiveFormsModule,
+        MatSelectModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }
