@@ -23,6 +23,7 @@
     "@angular/router": "~10.2.5"
   },
   "devDependencies": {
+    "@angular-devkit/schematics": "^20.0.4",
     "@types/node": "^12.11.1",
     "eslint": "^9.30.0"
   }
