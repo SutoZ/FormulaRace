@@ -35,7 +35,7 @@ export class TeamsComponent implements OnInit {
   }
 
   loadData(query: string = null) {
-    var event = new PageEvent();
+    let event = new PageEvent();
     event.pageIndex = this.defaultIndex;
     event.pageSize = this.defaultPageSize;
     if (query) {
@@ -45,7 +45,7 @@ export class TeamsComponent implements OnInit {
   }
 
   getTeams(event: PageEvent): void {
-    var params = new HttpParams()      
+    let params = new HttpParams()      
     .set('pageIndex', event.pageIndex.toString())
     .set('pageSize', event.pageSize.toString())
     .set('sortColumn', (this.matSort) ? this.matSort.active : this.defaultSortColumn)

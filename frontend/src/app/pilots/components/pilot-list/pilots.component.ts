@@ -41,7 +41,7 @@ export class PilotsComponent implements OnInit {
   }
 
   loadData(query: string = null) {
-    var event = new PageEvent();
+    let event = new PageEvent();
     event.pageIndex = this.defaultIndex;
     event.pageSize = this.defaultPageSize;
 
@@ -52,7 +52,7 @@ export class PilotsComponent implements OnInit {
   }
 
   getPilots(event: PageEvent) {
-    var params = new HttpParams()
+    let params = new HttpParams()
       .set("pageIndex", event.pageIndex.toString())
       .set("pageSize", event.pageSize.toString())
       .set("sortColumn", (this.sort) ? this.sort.active : this.defaultSortColumn)
