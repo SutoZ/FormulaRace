@@ -1,23 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Race.Shared.Extensions
+namespace Race.Shared.Extensions;
+
+public static class EfExtensions
 {
-    public static class EfExtensions
+    public static Task<List<TSource>> ToListSafeAsync<TSource>(this IQueryable<TSource> source, CancellationToken token)
     {
-        public static Task<List<TSource>> ToListAsync<TSource>(this IQueryable<TSource> source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+        ArgumentNullException.ThrowIfNull(source);
 
-            if (!(source is IAsyncEnumerable<TSource>))
-                return Task.FromResult(source.ToList());
+        if (source.Provider is IAsyncQueryProvider)
+            return EntityFrameworkQueryableExtensions.ToListAsync(source, token);
 
-            return source.ToListAsync();
-        }
+        return source.ToListSafeAsync(token);
     }
 }

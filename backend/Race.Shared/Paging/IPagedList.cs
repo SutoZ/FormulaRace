@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
 
-namespace Race.Shared.Paging
+namespace Race.Shared.Paging;
+
+public interface IPagedList<T> where T : class
 {
-    public interface IPagedList<T>
-    {
-        int TotalCount { get; }
-        IList<T> Data { get; set; }
-        bool HasNextPage { get; }
-        bool HasPreviousPage { get; }
-        int PageIndex { get; set; }
-        int PageSize { get; set; }
-        int TotalPages { get; set; }
-    }
+    IReadOnlyList<T> Data { get; set; }
+    string FilterColumn { get; set; }
+    string FilterQuery { get; set; }
+    bool HasNextPage { get; }
+    bool HasPreviousPage { get; }
+    int PageIndex { get; set; }
+    int PageSize { get; set; }
+    string SortColumn { get; set; }
+    string SortOrder { get; set; }
+    int TotalCount { get; set; }
+    int TotalPages { get; set; }
 }

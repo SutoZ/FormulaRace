@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using Asp.Versioning;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,101 +14,149 @@ using Race.Repo.Repositories;
 using Race.Service.Interfaces;
 using Race.Service.Services;
 using Race.Web.Mappings;
+using Race.Web.Middleware;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.Configure<CookiePolicyOptions>(options =>
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .MinimumLevel.Debug()
+    .CreateLogger();
+
+Log.Information("Loading configuration...");
+
+try
 {
-    options.CheckConsentNeeded = context => true;
-    options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
-});
+    var builder = WebApplication.CreateBuilder(args);
+    Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(builder.Configuration)
+        .CreateLogger();
 
-builder.Services.AddControllersWithViews();
+    builder.Host.UseSerilog();
 
-builder.Services.AddCors(setup =>
-{
-    setup.AddPolicy(name: "AllowCredentials", policy =>
+    // Add services to the container.
+    builder.Services.Configure<CookiePolicyOptions>(options =>
     {
-        policy
-            .WithOrigins(builder.Configuration.GetSection("Site:ClientUrl").Value)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        options.CheckConsentNeeded = context => true;
+        options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
     });
-});
 
-builder.Services.AddHealthChecks();
 
-builder.Services.AddScoped<IPilotRepository, PilotRepository>();
-builder.Services.AddScoped<ITeamRepository, TeamRepository>();
-builder.Services.AddScoped<ITeamService, TeamService>();
-builder.Services.AddScoped<IPilotService, PilotService>();
+    builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<RaceContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("RaceConnection"));
-    options.EnableSensitiveDataLogging();
-});
+    builder.Services.AddCors(setup =>
+    {
+        setup.AddPolicy(name: "AllowCredentials", policy =>
+        {
+            policy
+                .WithOrigins(builder.Configuration.GetSection("Site:ClientUrl").Value)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+    });
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-{
-    options.SignIn.RequireConfirmedEmail = true;
-    options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 8;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-})
-.AddRoles<IdentityRole>()
-.AddEntityFrameworkStores<RaceContext>();
+    builder.Services.AddHealthChecks();
 
-builder.Services.AddAuthorization();
+    builder.Services.AddScoped<IPilotRepository, PilotRepository>();
+    builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+    builder.Services.AddScoped<ITeamService, TeamService>();
+    builder.Services.AddScoped<IPilotService, PilotService>();
 
-builder.Services.AddSpaStaticFiles(spa => spa.RootPath = "frontend");
+    builder.Services.AddDbContext<RaceContext>(options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("RaceConnection"));
+        options.EnableSensitiveDataLogging();
+    });
 
-builder.Services.AddSwaggerGen();
+    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
-var mapperConfig = new MapperConfiguration(mc =>
-{
-    mc.AddProfile(new AutoMapperProfile());
-});
+    builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedEmail = true;
+        options.Password.RequireDigit = true;
+        options.Password.RequiredLength = 8;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireNonAlphanumeric = true;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<RaceContext>();
 
-IMapper mapper = mapperConfig.CreateMapper();
-builder.Services.AddSingleton(mapper);
+    builder.Services.AddAuthorization();
 
-var app = builder.Build();
+    builder.Services.AddSpaStaticFiles(spa => spa.RootPath = "frontend");
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
+    builder.Services.AddSwaggerGen();
+
+    builder.Services.AddExceptionHandler<DBUpdateExceptionHandler>();
+    builder.Services.AddSingleton<IExceptionHandler, ExceptionHandler>();
+    builder.Services.AddExceptionHandler<ExceptionHandler>();
+
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+        options.ApiVersionReader = ApiVersionReader.Combine(
+            new QueryStringApiVersionReader("api-version"),
+            new HeaderApiVersionReader("X-Version"),
+            new UrlSegmentApiVersionReader()
+        );
+    });
+
+    var mapperConfig = new MapperConfiguration(mc =>
+    {
+        mc.AddProfile(new AutoMapperProfile());
+    });
+
+    IMapper mapper = mapperConfig.CreateMapper();
+    builder.Services.AddSingleton(mapper);
+
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+    else
+    {
+        app.UseExceptionHandler("/Home/Error");
+        app.UseHsts();
+    }
+
+    app.UseExceptionHandler();
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+    app.UseSpaStaticFiles();
+
+    app.UseCookiePolicy();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.UseSwagger();
+    app.UseSwaggerUI(setup =>
+    {
+        setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Race API");
+        setup.RoutePrefix = string.Empty;
+    });
+
+    app.UseHealthChecks("/health");
+    app.UseSession();
+
+    app.UseRouting();
+    app.UseCors("AllowCredentials");
+
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    app.Run();
+
 }
-else
+catch (System.Exception)
 {
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    await Log.CloseAndFlushAsync();
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseSpaStaticFiles();
-app.UseCookiePolicy();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseSwagger();
-app.UseSwaggerUI(setup =>
-{
-    setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Race API");
-    setup.RoutePrefix = string.Empty;
-});
-
-app.UseCors("AllowCredentials");
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.Run();
