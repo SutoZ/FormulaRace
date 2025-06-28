@@ -1,0 +1,9 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
+  "recommendations": [
+    "angular.ng-template", // Angular Language Service
+    "esbenp.prettier-vscode", // Prettier - Code formatter
+    "dbaeumer.vscode-eslint", // ESLint
+    "ms-vscode.vscode-typescript-next" // TypeScript Next (optional, for latest TS features)
+  ]
+}
