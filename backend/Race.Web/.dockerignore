@@ -1,0 +1,17 @@
+# Ignore build artifacts and user-specific files
+**/.dockerignore
+**/.env
+**/.git
+**/.gitignore
+**/.vs
+**/.vscode
+**/*.*proj.user
+**/*.dbmdl
+**/*.jfm
+**/bin
+**/obj
+**/secrets.json
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/launchSettings.json
+README.md

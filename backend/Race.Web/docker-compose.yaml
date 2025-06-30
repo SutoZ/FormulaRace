@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # The ASP.NET Core Web API service
+  race-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Map host port 8080 to container port 8080
+    environment:
+      # Override the connection string from appsettings.json
+      - ConnectionStrings__RaceConnection=Server=race-db;Database=RaceDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      - race-db
+
+  # The SQL Server database service
+  race-db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "1433:1433" # Expose the DB port to the host for management tools
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+volumes:
+  mssql-data:
