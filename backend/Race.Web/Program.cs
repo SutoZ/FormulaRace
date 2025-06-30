@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,7 @@ using Race.Service.Services;
 using Race.Web.Mappings;
 using Race.Web.Middleware;
 using Serilog;
+using System;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -33,6 +35,7 @@ try
         .CreateLogger();
 
     builder.Host.UseSerilog();
+    builder.WebHost.UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://+:8080");
 
     // Add services to the container.
     builder.Services.Configure<CookiePolicyOptions>(options =>
@@ -46,6 +49,9 @@ try
 
     builder.Services.AddControllersWithViews();
 
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
     builder.Services.AddCors(setup =>
     {
         setup.AddPolicy(name: "AllowCredentials", policy =>
@@ -57,6 +63,8 @@ try
                 .AllowCredentials();
         });
     });
+
+    builder.Services.AddSingleton(Log.Logger);
 
     builder.Services.AddScoped<IPilotRepository, PilotRepository>();
     builder.Services.AddScoped<ITeamRepository, TeamRepository>();
@@ -87,7 +95,7 @@ try
 
     builder.Services.AddSpaStaticFiles(spa => spa.RootPath = "frontend");
 
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSession();
 
     builder.Services.AddExceptionHandler<DBUpdateExceptionHandler>();
     builder.Services.AddSingleton<IExceptionHandler, ExceptionHandler>();
@@ -121,17 +129,16 @@ try
         app.UseSwagger();
         app.UseSwaggerUI(setup =>
         {
-            setup.SwaggerEndpoint("/swagger/V1/swagger.json", "Race API v1");
+            setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Race API v1");
             setup.RoutePrefix = string.Empty;
         });
     }
     else
     {
-        app.UseExceptionHandler("/Home/Error");
+        app.UseExceptionHandler();
         app.UseHsts();
     }
 
-    app.UseExceptionHandler();
     app.UseHttpsRedirection();
     app.UseStaticFiles();
     app.UseSpaStaticFiles();
@@ -141,7 +148,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.UseHealthChecks("/healthz");
+    app.MapHealthChecks("/healthz");
     app.UseSession();
 
     app.UseRouting();
@@ -154,7 +161,7 @@ try
     await app.RunAsync();
 
 }
-catch (System.Exception ex)
+catch (Exception ex)
 {
     Log.Fatal(ex, "Host terminated unexpectedly!");
 }
