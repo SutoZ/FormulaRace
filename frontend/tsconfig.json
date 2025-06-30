@@ -7,18 +7,26 @@
     "esModuleInterop": true,
     "declaration": false,
     "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2022",
     "lib": [
-      "es2018",
+      "es2022",
       "dom"
     ],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true
   },
   "angularCompilerOptions": {
-    "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInputAccessModifiers": true,    
+    "strictInjectionParameters": true,
+    "strictTemplates": true,
   }
 }
