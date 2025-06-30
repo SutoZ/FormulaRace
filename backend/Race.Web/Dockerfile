@@ -10,6 +10,7 @@ COPY Race.Web/*.csproj ./Race.Web/
 COPY Race.Service/*.csproj ./Race.Service/
 COPY Race.Repo/*.csproj ./Race.Repo/
 COPY Race.Model/*.csproj ./Race.Model/
+COPY Race.Shared/*.csproj ./Race.Shared/
 RUN dotnet restore
 
 # Copy the rest of the source code

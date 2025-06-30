@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # The ASP.NET Core Web API service
   race-api:
@@ -16,7 +14,15 @@ services:
     depends_on:
       race-db:
         condition: service_healthy # Ensure the database is healthy before starting the API
-       
+    restart: unless-stopped # Restart policy for the API service       
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - race-network # Connect the API to the custom network      
 
   # The SQL Server database service
   race-db:
@@ -35,6 +41,13 @@ services:
       - "1433:1433" # Expose the DB port to the host for management tools
     volumes:
       - mssql-data:/var/opt/mssql
+    restart: unless-stopped # Restart policy for the database service
+    networks: # Connect the database to the custom network
+      - race-network
 
 volumes:
   mssql-data:
+
+networks: # Define a custom network for the services to communicate
+  race-network:
+    driver: bridge # Use the default bridge network for communication between services          
