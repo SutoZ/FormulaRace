@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  race-api:
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  race-db:
+    ports:
+      - "1433:1433"
+    environment:
+      - SA_PASSWORD=${DB_PASSWORD}
+      - ACCEPT_EULA=Y

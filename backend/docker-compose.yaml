@@ -5,7 +5,7 @@ services:
   race-api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Race.Web/Dockerfile
     ports:
       - "8080:8080" # Map host port 8080 to container port 8080
     environment:
@@ -14,7 +14,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
     depends_on:
-      - race-db
+      race-db:
+        condition: service_healthy # Ensure the database is healthy before starting the API
+       
 
   # The SQL Server database service
   race-db:
@@ -22,6 +24,13 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+    # Check if SQL Server is ready
+     test: ["CMD-SHELL", "echo 'SELECT 1' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${DB_PASSWORD}"]
+     interval: 10s
+     timeout: 3s
+     retries: 10
+     start_period: 10s
     ports:
       - "1433:1433" # Expose the DB port to the host for management tools
     volumes:
