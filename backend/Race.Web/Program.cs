@@ -17,8 +17,8 @@ using Race.Web.Mappings;
 using Race.Web.Middleware;
 using Serilog;
 
-
 Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
     .WriteTo.Console()
     .MinimumLevel.Debug()
     .CreateLogger();
@@ -42,6 +42,8 @@ try
     });
 
 
+    builder.Services.AddHealthChecks();
+
     builder.Services.AddControllersWithViews();
 
     builder.Services.AddCors(setup =>
@@ -55,8 +57,6 @@ try
                 .AllowCredentials();
         });
     });
-
-    builder.Services.AddHealthChecks();
 
     builder.Services.AddScoped<IPilotRepository, PilotRepository>();
     builder.Services.AddScoped<ITeamRepository, TeamRepository>();
@@ -118,7 +118,12 @@ try
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
-        app.UseDeveloperExceptionPage();
+        app.UseSwagger();
+        app.UseSwaggerUI(setup =>
+        {
+            setup.SwaggerEndpoint("/swagger/V1/swagger.json", "Race API v1");
+            setup.RoutePrefix = string.Empty;
+        });
     }
     else
     {
@@ -136,14 +141,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.UseSwagger();
-    app.UseSwaggerUI(setup =>
-    {
-        setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Race API");
-        setup.RoutePrefix = string.Empty;
-    });
-
-    app.UseHealthChecks("/health");
+    app.UseHealthChecks("/healthz");
     app.UseSession();
 
     app.UseRouting();
@@ -153,10 +151,14 @@ try
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
-    app.Run();
+    await app.RunAsync();
 
 }
-catch (System.Exception)
+catch (System.Exception ex)
+{
+    Log.Fatal(ex, "Host terminated unexpectedly!");
+}
+finally
 {
     await Log.CloseAndFlushAsync();
 }
