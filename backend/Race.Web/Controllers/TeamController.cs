@@ -4,7 +4,7 @@ using Race.Repo.Dtos.Teams;
 using Race.Shared.Paging;
 using Race.Web.CQRS.Teams.Commands;
 using Race.Web.CQRS.Teams.Queries;
-using Swashbuckle.Swagger.Annotations;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Threading;
 using System.Threading.Tasks;
 

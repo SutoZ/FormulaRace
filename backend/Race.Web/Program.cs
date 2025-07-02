@@ -34,7 +34,11 @@ try
         .ReadFrom.Configuration(builder.Configuration)
         .CreateLogger();
 
+
     builder.Host.UseSerilog();
+    builder.Services.AddSingleton(Log.Logger);
+    Log.Information("Configuration loaded successfully.");
+
     builder.WebHost.UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://+:8080");
 
     // Add services to the container.
@@ -57,14 +61,13 @@ try
         setup.AddPolicy(name: "AllowCredentials", policy =>
         {
             policy
-                .WithOrigins(builder.Configuration.GetSection("Site:ClientUrl").Value)
+                .WithOrigins(builder.Configuration.GetValue<string>("Site:ClientUrl") ?? "http://localhost:4200")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
         });
     });
 
-    builder.Services.AddSingleton(Log.Logger);
 
     builder.Services.AddScoped<IPilotRepository, PilotRepository>();
     builder.Services.AddScoped<ITeamRepository, TeamRepository>();
@@ -127,11 +130,12 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
-        app.UseSwaggerUI(setup =>
-        {
-            setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Race API v1");
-            setup.RoutePrefix = string.Empty;
-        });
+        app.UseSwaggerUI();
+        //app.UseSwaggerUI(setup =>
+        //{
+        //    setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Race API v1");
+        //    setup.RoutePrefix = string.Empty;
+        //});
     }
     else
     {

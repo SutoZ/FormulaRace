@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Race.Repo.Dtos.Pilots;
-using Swashbuckle.Swagger.Annotations;
 using Race.Shared.Paging;
 using System.Threading;
 using MediatR;
 using Race.Web.CQRS.Pilots.Queries;
 using Race.Web.CQRS.Pilots.Commands;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Race.Web.Controllers;
 

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Race.Model.Models;
 
@@ -13,6 +14,8 @@ public class Pilot
     public string Number { get; set; }
     public string Code { get; set; }
     public string Nationality { get; set; }
+
+    [JsonIgnore]
     public virtual Team Team { get; set; }
 
     [ForeignKey("Team")]

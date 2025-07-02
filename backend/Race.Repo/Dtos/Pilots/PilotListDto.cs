@@ -3,7 +3,7 @@ using Race.Repo.Dtos.Teams;
 
 namespace Race.Repo.Dtos.Pilots;
 
-public record PilotListDto(int Id, string Name, string Number, string Code, string Nationality, TeamListDto? TeamListDto)
+public record PilotListDto(int Id, string Name, string Number, string Code, string Nationality, TeamListDto TeamListDto)
 {
     public static PilotListDto FromPilot(Pilot pilot) => new(
             pilot.Id,
