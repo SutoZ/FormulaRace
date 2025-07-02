@@ -62,10 +62,10 @@ try
 
     builder.Services.AddCors(setup =>
     {
-        setup.AddPolicy(name: "AllowCredentials", policy =>
+        setup.AddPolicy(name: "AllowFrontend", policy =>
         {
             policy
-                .WithOrigins(builder.Configuration.GetValue<string>("Site:ClientUrl") ?? "http://localhost:4200")
+                .WithOrigins("http://localhost:4200")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -154,7 +154,7 @@ try
     app.UseSession();
 
     app.UseRouting();
-    app.UseCors("AllowCredentials");
+    app.UseCors("AllowFrontend");
 
     app.MapGet("/", () => "API is running!");
 
