@@ -1,34 +1,14 @@
 ﻿using Race.Model.Models;
 
-namespace Race.Repo.Dtos.Pilots
+namespace Race.Repo.Dtos.Pilots;
+
+public record PilotUpdateDto(int Id, string Name, string Number, string Code, string Nationality, int TeamId)
 {
-    public class PilotUpdateDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Number { get; set; }
-        public string Code { get; set; }
-        public string Nationality { get; set; }
-        public int TeamId { get; set; }
-
-        //public PilotUpdateDto(Pilot pilot)
-        //{
-        //    Name = pilot.Name;
-        //    Id = pilot.Id;
-        //    Number = pilot.Number;
-        //    Code = pilot.Code;
-        //    Nationality = pilot.Nationality;
-        //}
-
-        public Pilot UpdateModelObject(Pilot pilot)
-        {
-            pilot.Name = Name;
-            pilot.Number = Number;
-            pilot.Code = Code;
-            pilot.Nationality = Nationality;
-            pilot.TeamId = TeamId;
-
-            return pilot;
-        }
-    }
+    public static PilotUpdateDto FromPilot(Pilot pilot) => new(
+        pilot.Id,
+        pilot.Name,
+        pilot.Number,
+        pilot.Code,
+        pilot.Nationality,
+        pilot.TeamId);
 }

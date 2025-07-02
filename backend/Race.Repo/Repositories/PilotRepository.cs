@@ -1,103 +1,130 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Race.Model.Models;
 using Race.Repo.ApplicationContext;
 using Race.Repo.Dtos.Pilots;
 using Race.Repo.Interfaces;
 using Race.Shared.Paging;
+using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Race.Repo.Repositories
+namespace Race.Repo.Repositories;
+
+public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger) : IPilotRepository
 {
-    public class PilotRepository : IPilotRepository
+    public async Task<int> DeleteAsync(int id, CancellationToken token)
     {
-        private readonly RaceContext context;
-        private readonly IMapper mapper;
-        private readonly ILogger<PilotRepository> logger;
+        if (id < 0)
+            throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than or equal to 0.");
 
-        public PilotRepository(
-            RaceContext context, IMapper mapper,
-            ILogger<PilotRepository> logger)
+        var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.Id == id, token);
+
+        if (pilot is null)
         {
-            this.context = context;
-            this.mapper = mapper;
-            this.logger = logger;
+            logger.Information("Pilot with id: {Id} not found.", id);
+            throw new KeyNotFoundException($"Pilot with id: {id} not found.");
         }
 
-        public async Task<int> DeleteAsync(int id)
+        context.Pilots.Remove(pilot);
+
+        logger.Information("Pilot with id: {Id} deleted successfully.", id);
+
+        await context.SaveChangesAsync(token);
+        return pilot.Id;
+    }
+
+    public async Task<IPagedList<PilotListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token)
+    {
+        var pilots = context
+            .Pilots
+            .Include(x => x.Team)
+            .AsNoTracking();
+
+        return await PagedList<PilotListDto>.CreateAsync(pilots.Select(ent => PilotListDto.FromPilot(ent)), pagerParameters, token);
+    }
+
+    public async Task<PilotDetailsDto> GetByIdAsync(int id, CancellationToken token)
+    {
+        if (id < 0)
         {
-            var pilot = await context.Pilots.FirstAsync(x => x.Id == id);
-            if (pilot == null) throw new Exception("Entity not found by given Id");
-
-            context.Pilots.Remove(pilot);
-
-            await context.SaveChangesAsync();
-            return pilot.Id;
+            logger.Information("Id must be greater than or equal to 0. Provided id: {Id}", id);
+            throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than or equal to 0.");
         }
 
-        public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(
-            int pageIndex,
-            int pageSize,
-            string sortColumn = null,
-            string sortOrder = null,
-            string filterColumn = null,
-            string filterQuery = "")
-        {
-            var pilots = context.Pilots.Include(x => x.Team);
+        var pilot = await context.Pilots
+            .Include(ent => ent.Team)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id, token);
 
-            return await PagedList<PilotListDto>
-                    .CreateAsync(pilots.Select(ent => new PilotListDto(ent)).AsQueryable(),
-                    pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
+        if (pilot is null)
+            logger.Information("Pilot with id: {Id} not found.", id);
+
+        return mapper.Map<PilotDetailsDto>(pilot);
+    }
+
+    public async Task<int> CreateAsync(PilotCreateDto createDto, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(createDto, nameof(createDto));
+
+        bool nameExists = await context.Pilots.AnyAsync(x => x.Name.ToLower() == createDto.Name.ToLower(), token);
+        if (nameExists)
+        {
+            logger.Information("Pilot with name: {Name} already exists.", createDto.Name);
+            throw new ArgumentException($"Pilot with name: {createDto.Name} already exists.");
         }
 
-        public async Task<PilotDetailsDto> GetPilotAsync(int id)
+        Pilot pilot = mapper.Map<Pilot>(createDto);
+
+        context.Pilots.Add(pilot);
+        await context.SaveChangesAsync(token);
+
+        logger.Information("Pilot with name: {Name} created successfully.", createDto.Name);
+
+        return pilot.Id;
+    }
+
+    public async Task UpdateAsync(int id, PilotUpdateDto updateDto, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(updateDto, nameof(updateDto));
+
+        var pilotExists = await context.Pilots.AnyAsync(x => x.Id == id, token);
+
+        if (!pilotExists)
         {
-            Pilot pilot = new Pilot();
-
-            try
-            {
-                pilot = await context.Pilots.Include(ent => ent.Team).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex.Message);
-            }
-
-            return mapper.Map<PilotDetailsDto>(pilot);
+            logger.Information("Pilot with id: {Id} not found.", id);
+            throw new KeyNotFoundException($"Pilot with id: {id} not found.");
         }
 
-        public async Task CreateAsync(PilotCreateDto createDto)
-        {
-            try
-            {
-                if (createDto == null) throw new ArgumentNullException("Entity was null");
-                var pilot = createDto.CreateModelObject();
+        var pilot = await context.Pilots.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, token);
 
-                context.Pilots.Add(pilot);
-                await context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                throw new ArgumentException(e.Message);
-            }
+        mapper.Map<PilotUpdateDto, Pilot>(updateDto);
+        await context.SaveChangesAsync(token);
+
+        logger.Information("Pilot with id: {Id} updated successfully.", id);
+    }
+
+    public async Task<int> InsertAsync(PilotCreateDto createDto, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(createDto, nameof(createDto));
+
+        bool nameExists = await context.Pilots.AnyAsync(x => x.Name.ToLower() == createDto.Name.ToLower(), token);
+
+        if (nameExists)
+        {
+            logger.Information("Pilot with name: {Name} already exists.", createDto.Name);
+            throw new ArgumentException($"Pilot with name: {createDto.Name} already exists.");
         }
 
-        public async Task UpdatePilotAsync(int id, PilotUpdateDto updateDto)
-        {
-            var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.Id == id);
-            if (pilot == null) throw new Exception($"Pilot with id: {id} not found.");
+        Pilot pilot = mapper.Map<Pilot>(createDto);
+        context.Pilots.Add(pilot);
 
-            pilot = updateDto.UpdateModelObject(pilot);
+        await context.SaveChangesAsync(token);
+        logger.Information("Pilot with name: {Name} created successfully.", createDto.Name);
 
-            await context.SaveChangesAsync();
-        }
-
-        public bool CheckNameExists(PilotDetailsDto pilotDto)
-        {
-            return context.Pilots.Any(p => p.Name.ToUpper().Trim() == pilotDto.Name.ToUpper().Trim());
-        }
+        return pilot.Id;
     }
 }

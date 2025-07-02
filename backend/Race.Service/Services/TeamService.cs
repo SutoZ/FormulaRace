@@ -2,53 +2,35 @@
 using Race.Repo.Interfaces;
 using Race.Service.Interfaces;
 using Race.Shared.Paging;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Race.Service.Services
+namespace Race.Service.Services;
+
+public class TeamService(ITeamRepository repository) : ITeamService
 {
-    public class TeamService : ITeamService
+    public async Task<int> CreateAsync(TeamCreateDto createDto, CancellationToken token)
     {
-        private readonly ITeamRepository repository;
+        return await repository.InsertAsync(createDto, token);
+    }
 
-        public TeamService(ITeamRepository repository)
-        {
-            this.repository = repository;
-        }
-        public async Task<int> CreateTeamAsync(TeamCreateDto createDto)
-        {
-            return await repository.InsertAsync(createDto);
-        }
+    public Task<int> DeleteAsync(int id, CancellationToken token)
+    {
+        return repository.DeleteAsync(id, token);
+    }
 
-        public Task<int> DeleteTeamAsync(int id)
-        {
-            return repository.DeleteAsync(id);
-        }
+    public async Task<IPagedList<TeamListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token)
+    {
+        return await repository.GetAllAsync(pagerParameters, token);
+    }
 
-        public async Task<IPagedList<TeamListDto>> GetAllTeamAsync(
-            int pageIndex,
-            int pageSize,
-            string sortColumn = null,
-            string sortOrder = null,
-            string filterColumn = null,
-            string filterQuery = null)
-        {
-            return await repository.GetAllTeamAsync(
-                pageIndex,
-                pageSize,
-                sortColumn,
-                sortOrder,
-                filterColumn,
-                filterQuery);
-        }
+    public async Task<TeamDetailsDto> GetByIdAsync(int id, CancellationToken token)
+    {
+        return await repository.GetByIdAsync(id, token);
+    }
 
-        public async Task<TeamDetailsDto> GetTeamByIdAsync(int id)
-        {
-            return await repository.GetTeamByIdAsync(id);
-        }
-
-        public async Task UpdateTeamAsync(int id, TeamUpdateDto updateDto)
-        {
-            await repository.UpdateTeamAsync(id, updateDto);
-        }
+    public async Task UpdateAsync(int id, TeamUpdateDto updateDto, CancellationToken token)
+    {
+        await repository.UpdateAsync(id, updateDto, token);
     }
 }

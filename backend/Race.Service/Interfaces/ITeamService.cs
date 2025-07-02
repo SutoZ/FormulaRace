@@ -1,22 +1,15 @@
 ﻿using Race.Repo.Dtos.Teams;
 using Race.Shared.Paging;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Race.Service.Interfaces
-{
-    public interface ITeamService
-    {
-        Task<IPagedList<TeamListDto>> GetAllTeamAsync(
-            int pageIndex,
-            int pageSize,
-            string sortColumn = null,
-            string sortOrder = null,
-            string filterColumn = null,
-            string filterQuery = null);
+namespace Race.Service.Interfaces;
 
-        Task<TeamDetailsDto> GetTeamByIdAsync(int id);
-        Task<int> CreateTeamAsync(TeamCreateDto createDto);
-        Task UpdateTeamAsync(int id, TeamUpdateDto updateDto);
-        Task<int> DeleteTeamAsync(int id);
-    }
+public interface ITeamService
+{
+    Task<IPagedList<TeamListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token);
+    Task<TeamDetailsDto> GetByIdAsync(int id, CancellationToken token);
+    Task<int> CreateAsync(TeamCreateDto createDto, CancellationToken token);
+    Task UpdateAsync(int id, TeamUpdateDto updateDto, CancellationToken token);
+    Task<int> DeleteAsync(int id, CancellationToken token);
 }

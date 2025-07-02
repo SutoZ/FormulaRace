@@ -1,15 +1,14 @@
 ﻿using Race.Model.Models;
 
-namespace Race.Repo.Dtos.Pilots
+namespace Race.Repo.Dtos.Pilots;
+
+public record PilotCreateDto(int Id, string Name, string Number, string Code, string Nationality, int TeamId)
 {
-    public class PilotCreateDto
-    {
-        public string Name { get; set; }
-        public string Number { get; set; }
-        public string Code { get; set; }
-        public string Nationality { get; set; }
-        public int TeamId { get; set; }
-        
-        public Pilot CreateModelObject() => new Pilot(Name, Number, Code, Nationality, TeamId);
-    }
+    public static PilotCreateDto FromPilot(Pilot pilot) => new(
+        pilot.Id,
+        pilot.Name,
+        pilot.Number,
+        pilot.Code,
+        pilot.Nationality,
+        pilot.TeamId);
 }

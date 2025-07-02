@@ -1,16 +1,17 @@
 import { Component, OnInit, Injectable, ViewChild } from '@angular/core';
 import { PilotsService } from 'src/app/pilots/services/pilots.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { HttpParams } from '@angular/common/http';
 import { MatSort } from '@angular/material/sort';
 import { PagedList } from 'src/app/PagedList';
 import { IPilotsListViewModel } from '../../models/pilot.models';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'app-pilots',
-  templateUrl: './pilots.component.html',
-  styleUrls: ['./pilots.component.css']
+    selector: 'app-pilots',
+    templateUrl: './pilots.component.html',
+    styleUrls: ['./pilots.component.css'],
+    standalone: false
 })
 
 @Injectable({
@@ -18,7 +19,7 @@ import { IPilotsListViewModel } from '../../models/pilot.models';
 })
 
 export class PilotsComponent implements OnInit {
-  public displayedColumns: String[] = ['Id', 'Name', 'Number', 'Code', 'Nationality'];
+  public displayedColumns: string[] = ['Id', 'Name', 'Number', 'Code', 'Nationality'];
   public dataSource = new MatTableDataSource<IPilotsListViewModel>();
 
   defaultIndex = 0;
@@ -41,10 +42,10 @@ export class PilotsComponent implements OnInit {
   }
 
   loadData(query: string = null) {
-    var event = new PageEvent();
+    let event = new PageEvent();
     event.pageIndex = this.defaultIndex;
     event.pageSize = this.defaultPageSize;
-    
+
     if (query) {
       this.filterQuery = query;
     }
@@ -52,7 +53,7 @@ export class PilotsComponent implements OnInit {
   }
 
   getPilots(event: PageEvent) {
-    var params = new HttpParams()
+    let params = new HttpParams()
       .set("pageIndex", event.pageIndex.toString())
       .set("pageSize", event.pageSize.toString())
       .set("sortColumn", (this.sort) ? this.sort.active : this.defaultSortColumn)

@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ITeamListViewModel as ITeamsListViewModel, ITeamListViewModel } from 'src/app/teams/models/team.models';
 import { TeamsService } from 'src/app/teams/services/teams.service';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-team-edit',
-  templateUrl: './team-edit.component.html',
-  styleUrls: ['./team-edit.component.css']
+    selector: 'app-team-edit',
+    templateUrl: './team-edit.component.html',
+    styleUrls: ['./team-edit.component.css'],
+    standalone: false
 })
 export class TeamEditComponent implements OnInit {
 
@@ -15,7 +16,7 @@ export class TeamEditComponent implements OnInit {
   sortOrder: string = "Asc";
   filterColumn: string = "Name";
   title: string;
-  form: FormGroup;
+  form: UntypedFormGroup;
   team: ITeamsListViewModel;
   id?: number;
 
@@ -24,12 +25,12 @@ export class TeamEditComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit(): void {
-    this.form = new FormGroup({
-      id: new FormControl(''),
-      name: new FormControl(''),
-      dateOfFoundation: new FormControl(''),
-      ownerName: new FormControl(''),
-      championShipPoints: new FormControl('')
+    this.form = new UntypedFormGroup({
+      id: new UntypedFormControl(''),
+      name: new UntypedFormControl(''),
+      dateOfFoundation: new UntypedFormControl(''),
+      ownerName: new UntypedFormControl(''),
+      championShipPoints: new UntypedFormControl('')
     });
 
     this.loadData();

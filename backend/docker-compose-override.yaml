@@ -1,0 +1,20 @@
+services:
+  race-api:
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    workdir: /source/Race.Web
+    volumes:
+    # Mount the current directory to the container for live reloading
+      - ./Race.Web:/source/Race.Web
+      - ./Race.Shared:/source/Race.Shared
+    # Override the entry point to use dotnet watch for live reloading
+    command: ["dotnet", "watch", "run", "--urls", "http://+:8080"]
+
+  race-db:
+    ports:
+      - "1433:1433"
+    environment:
+      - SA_PASSWORD=${DB_PASSWORD}
+      - ACCEPT_EULA=Y

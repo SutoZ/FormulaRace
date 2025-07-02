@@ -1,0 +1,53 @@
+services:
+  # The ASP.NET Core Web API service
+  race-api:
+    build:
+      context: .
+      dockerfile: Race.Web/Dockerfile
+    ports:
+      - "8080:8080" # Map host port 8080 to container port 8080
+    environment:
+      # Override the connection string from appsettings.json
+      - ConnectionStrings__RaceConnection=Server=race-db;Database=RaceDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      race-db:
+        condition: service_healthy # Ensure the database is healthy before starting the API
+    restart: unless-stopped # Restart policy for the API service       
+    healthcheck:
+      test: ["CMD", "curl -f http://localhost:8080/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - race-network # Connect the API to the custom network      
+
+  # The SQL Server database service
+  race-db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+    # Check if SQL Server is ready
+     test: ["CMD", "bash", "-c", "grep -q 'SQL Server is now ready for client connections' /var/opt/mssql/log/errorlog"]
+     interval: 10s
+     timeout: 3s
+     retries: 5
+     start_period: 10s
+    ports:
+      - "1433:1433" # Expose the DB port to the host for management tools
+    volumes:
+      - mssql-data:/var/opt/mssql
+    restart: unless-stopped # Restart policy for the database service
+    networks: # Connect the database to the custom network
+      - race-network
+
+volumes:
+  mssql-data:
+
+networks: # Define a custom network for the services to communicate
+  race-network:
+    driver: bridge # Use the default bridge network for communication between services          

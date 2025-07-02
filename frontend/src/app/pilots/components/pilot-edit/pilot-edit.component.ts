@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators, AsyncValidatorFn, AbstractControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators, AsyncValidatorFn, AbstractControl } from '@angular/forms';
 import { IPilotsListViewModel, IPilotDetailsViewModel } from '../../models/pilot.models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PilotsService } from '../../services/pilots.service';
@@ -12,16 +12,17 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-pilot-edit',
-  templateUrl: './pilot-edit.component.html',
-  styleUrls: ['./pilot-edit.component.css']
+    selector: 'app-pilot-edit',
+    templateUrl: './pilot-edit.component.html',
+    styleUrls: ['./pilot-edit.component.css'],
+    standalone: false
 })
 export class PilotEditComponent implements OnInit {
   sortColumn: string = "Name";
   sortOrder: string = "Asc";
   filterColumn: string = "Name";
   title: string;
-  form: FormGroup;
+  form: UntypedFormGroup;
   pilot: IPilotsListViewModel;
   teams: ITeamListViewModel[];
   id?: number;
@@ -36,12 +37,12 @@ export class PilotEditComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.form = new FormGroup({
-      name: new FormControl('', Validators.required),
-      number: new FormControl('', Validators.required),
-      code: new FormControl('', [Validators.required, Validators.maxLength(3)]),
-      nationality: new FormControl('', Validators.required),
-      teamId: new FormControl('', Validators.required)
+    this.form = new UntypedFormGroup({
+      name: new UntypedFormControl('', Validators.required),
+      number: new UntypedFormControl('', Validators.required),
+      code: new UntypedFormControl('', [Validators.required, Validators.maxLength(3)]),
+      nationality: new UntypedFormControl('', Validators.required),
+      teamId: new UntypedFormControl('', Validators.required)
    
     }, null, this.CheckNameExists());
     this.loadData();

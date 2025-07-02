@@ -1,107 +1,106 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Race.Model.Models;
-using Race.Repo.ApplicationContext;
-using System;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
+﻿//using Microsoft.AspNetCore.Identity;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.Extensions.Configuration;
+//using Race.Model.Models;
+//using Race.Repo.ApplicationContext;
+//using System;
+//using System.Collections.Concurrent;
+//using System.Threading.Tasks;
 
-namespace Race.Web.Controllers
-{
-    [Route("api/[controller]/[action]")]
-    public class AccountController
-    {
-        private readonly RoleManager<IdentityRole> roleManager;
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly IConfiguration conf;
-        private readonly RaceContext context;
+//namespace Race.Web.Controllers;
 
-        public AccountController(
-            RoleManager<IdentityRole> roleManager,
-            UserManager<ApplicationUser> userManager,
-            IConfiguration conf,
-            RaceContext context)
-        {
-            this.roleManager = roleManager;
-            this.userManager = userManager;
-            this.conf = conf;
-            this.context = context;
-        }
+//[Route("api/[controller]/[action]")]
+//public class AccountController
+//{
+//    private readonly RoleManager<IdentityRole> roleManager;
+//    private readonly UserManager<ApplicationUser> userManager;
+//    private readonly IConfiguration conf;
+//    private readonly RaceContext context;
 
-        [HttpGet]
-        public async Task<JsonResult> CreateDefaultUsers()
-        {
-            string role_registeredUser = "RegisteredUser";
-            string role_administrator = "Administrator";
+//    public AccountController(
+//        RoleManager<IdentityRole> roleManager,
+//        UserManager<ApplicationUser> userManager,
+//        IConfiguration conf,
+//        RaceContext context)
+//    {
+//        this.roleManager = roleManager;
+//        this.userManager = userManager;
+//        this.conf = conf;
+//        this.context = context;
+//    }
 
-            if (await roleManager.FindByNameAsync(role_registeredUser) == null)
-                await roleManager.CreateAsync(new IdentityRole(role_registeredUser));
+//    [HttpGet]
+//    public async Task<JsonResult> CreateDefaultUsers()
+//    {
+//        string role_registeredUser = "RegisteredUser";
+//        string role_administrator = "Administrator";
 
-            if (await roleManager.FindByNameAsync(role_administrator) == null)
-                await roleManager.CreateAsync(new IdentityRole(role_administrator));
+//        if (await roleManager.FindByNameAsync(role_registeredUser) == null)
+//            await roleManager.CreateAsync(new IdentityRole(role_registeredUser));
 
-            //https://www.learnentityframeworkcore.com/concurrency/
+//        if (await roleManager.FindByNameAsync(role_administrator) == null)
+//            await roleManager.CreateAsync(new IdentityRole(role_administrator));
 
-            var userList_concurrent = new ConcurrentBag<ApplicationUser>();
+//        //https://www.learnentityframeworkcore.com/concurrency/
 
-            var user_test = await CheckIfTestUserExists(role_registeredUser);
-            var user_admin = await CheckIfAdminExists(role_registeredUser, role_administrator);
+//        var userList_concurrent = new ConcurrentBag<ApplicationUser>();
 
-            userList_concurrent.Add(user_test);
-            userList_concurrent.Add(user_admin);
+//        var user_test = await CheckIfTestUserExists(role_registeredUser);
+//        var user_admin = await CheckIfAdminExists(role_registeredUser, role_administrator);
 
-            if (userList_concurrent.Count > 0)
-                await context.SaveChangesAsync(true, default);
+//        userList_concurrent.Add(user_test);
+//        userList_concurrent.Add(user_admin);
 
-            return new JsonResult(new
-            {
-                Count = userList_concurrent.Count,
-                Users = userList_concurrent
-            });
+//        if (userList_concurrent.Count > 0)
+//            await context.SaveChangesAsync(true, default);
 
-        }
+//        return new JsonResult(new
+//        {
+//            Count = userList_concurrent.Count,
+//            Users = userList_concurrent
+//        });
 
-        private async Task<ApplicationUser> CheckIfTestUserExists(string role_registeredUser)
-        {
-            var user_test = new ApplicationUser
-            {
-                Id = "1",
-                Email = conf.GetSection("TestUser").GetSection("Email").Value.ToString(),
-                UserName = conf.GetSection("TestUser").GetSection("UserName").Value.ToString(),
-                SecurityStamp = Guid.NewGuid().ToString()
-            };
+//    }
 
-            if (await userManager.FindByNameAsync(conf.GetSection("TestUser").GetSection("UserName").Value.ToString()) == null)
-                await userManager.CreateAsync(user_test, "Asdf12345678.");
+//    private async Task<ApplicationUser> CheckIfTestUserExists(string role_registeredUser)
+//    {
+//        var user_test = new ApplicationUser
+//        {
+//            Id = "1",
+//            Email = conf.GetSection("TestUser").GetSection("Email").Value.ToString(),
+//            UserName = conf.GetSection("TestUser").GetSection("UserName").Value.ToString(),
+//            SecurityStamp = Guid.NewGuid().ToString()
+//        };
 
-            await userManager.AddToRoleAsync(user_test, role_registeredUser);
-            user_test.EmailConfirmed = true;
-            user_test.LockoutEnabled = false;
+//        if (await userManager.FindByNameAsync(conf.GetSection("TestUser").GetSection("UserName").Value.ToString()) == null)
+//            await userManager.CreateAsync(user_test, "Asdf12345678.");
 
-            return user_test;
-        }
+//        await userManager.AddToRoleAsync(user_test, role_registeredUser);
+//        user_test.EmailConfirmed = true;
+//        user_test.LockoutEnabled = false;
 
-        private async Task<ApplicationUser> CheckIfAdminExists(string role_registeredUser, string role_administrator)
-        {
-            var user_admin = new ApplicationUser
-            {
-                Id = "2",
-                Email = conf.GetSection("Admin").GetSection("Email").Value.ToString(),
-                UserName = conf.GetSection("Admin").GetSection("UserName").Value.ToString(),
-                SecurityStamp = Guid.NewGuid().ToString()
-            };
+//        return user_test;
+//    }
 
-            if (await userManager.FindByNameAsync(conf.GetSection("Admin").GetSection("UserName").Value.ToString()) == null)
-                await userManager.CreateAsync(user_admin, "MySecr3t.");
+//    private async Task<ApplicationUser> CheckIfAdminExists(string role_registeredUser, string role_administrator)
+//    {
+//        var user_admin = new ApplicationUser
+//        {
+//            Id = "2",
+//            Email = conf.GetSection("Admin").GetSection("Email").Value.ToString(),
+//            UserName = conf.GetSection("Admin").GetSection("UserName").Value.ToString(),
+//            SecurityStamp = Guid.NewGuid().ToString()
+//        };
 
-            await userManager.AddToRoleAsync(user_admin, role_registeredUser);
-            await userManager.AddToRoleAsync(user_admin, role_administrator);
+//        if (await userManager.FindByNameAsync(conf.GetSection("Admin").GetSection("UserName").Value.ToString()) == null)
+//            await userManager.CreateAsync(user_admin, "MySecr3t.");
 
-            user_admin.EmailConfirmed = true;
-            user_admin.LockoutEnabled = false;
+//        await userManager.AddToRoleAsync(user_admin, role_registeredUser);
+//        await userManager.AddToRoleAsync(user_admin, role_administrator);
 
-            return user_admin;
-        }
-    }
-}
+//        user_admin.EmailConfirmed = true;
+//        user_admin.LockoutEnabled = false;
+
+//        return user_admin;
+//    }
+//}

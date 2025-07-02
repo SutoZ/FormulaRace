@@ -1,16 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { HttpParams } from '@angular/common/http';
 import { PagedList } from 'src/app/PagedList';
 import { ITeamListViewModel } from '../../models/team.models';
 import { TeamsService } from '../../services/teams.service';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'app-teams',
-  templateUrl: './teams.component.html',
-  styleUrls: ['./teams.component.css']
+    selector: 'app-teams',
+    templateUrl: './teams.component.html',
+    styleUrls: ['./teams.component.css'],
+    standalone: false
 })
 export class TeamsComponent implements OnInit {
 
@@ -35,7 +36,7 @@ export class TeamsComponent implements OnInit {
   }
 
   loadData(query: string = null) {
-    var event = new PageEvent();
+    let event = new PageEvent();
     event.pageIndex = this.defaultIndex;
     event.pageSize = this.defaultPageSize;
     if (query) {
@@ -45,7 +46,7 @@ export class TeamsComponent implements OnInit {
   }
 
   getTeams(event: PageEvent): void {
-    var params = new HttpParams()      
+    let params = new HttpParams()      
     .set('pageIndex', event.pageIndex.toString())
     .set('pageSize', event.pageSize.toString())
     .set('sortColumn', (this.matSort) ? this.matSort.active : this.defaultSortColumn)

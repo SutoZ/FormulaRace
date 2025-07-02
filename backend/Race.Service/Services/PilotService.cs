@@ -2,52 +2,35 @@
 using Race.Repo.Interfaces;
 using Race.Service.Interfaces;
 using Race.Shared.Paging;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Race.Service.Services
+namespace Race.Service.Services;
+
+public class PilotService(IPilotRepository pilotRepository) : IPilotService
 {
-    public class PilotService : IPilotService
+    public async Task<int> CreateAsync(PilotCreateDto createDto, CancellationToken token)
     {
-        private readonly IPilotRepository pilotRepository;
+        var result = await pilotRepository.CreateAsync(createDto, token);
+        return result;
+    }
 
-        public PilotService(IPilotRepository pilotRepository)
-        {
-            this.pilotRepository = pilotRepository;
-        }
+    public async Task<IPagedList<PilotListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token)
+    {
+        return await pilotRepository.GetAllAsync(pagerParameters, token);
+    }
 
-        public async Task CreatePilotAsync(PilotCreateDto createDto)
-        {
-            await pilotRepository.CreateAsync(createDto);
-        }
+    public async Task<PilotDetailsDto> GetByIdAsync(int id, CancellationToken token)
+    {
+        return await pilotRepository.GetByIdAsync(id, token);
+    }
 
-        public async Task<IPagedList<PilotListDto>> GetAllPilotAsync(
-            int pageIndex,
-            int pageSize,
-            string sortColumn = null,
-            string sortOrder = null,
-            string filterColumn = null,
-            string filterQuery = null)
-        {
-            return await pilotRepository.GetAllPilotAsync(pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
-        }
-
-        public async Task<PilotDetailsDto> GetPilotAsync(int id)
-        {
-            return await pilotRepository.GetPilotAsync(id);
-        }
-
-        public async Task UpdatePilotAsync(int id, PilotUpdateDto updateDto)
-        {
-            await pilotRepository.UpdatePilotAsync(id, updateDto);
-        }
-        public async Task<int> DeletePilotAsync(int id)
-        {
-            return await pilotRepository.DeleteAsync(id);
-        }
-
-        public bool CheckNameExists(PilotDetailsDto pilotDto)
-        {
-            return pilotRepository.CheckNameExists(pilotDto);
-        }
+    public async Task UpdateAsync(int id, PilotUpdateDto updateDto, CancellationToken token)
+    {
+        await pilotRepository.UpdateAsync(id, updateDto, token);
+    }
+    public async Task<int> DeleteAsync(int id, CancellationToken token)
+    {
+        return await pilotRepository.DeleteAsync(id, token);
     }
 }

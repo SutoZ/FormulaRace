@@ -1,74 +1,76 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Race.Service.Interfaces;
 using System.Threading.Tasks;
 using Race.Repo.Dtos.Pilots;
-using Swashbuckle.Swagger.Annotations;
 using Race.Shared.Paging;
-using Microsoft.AspNetCore.Authorization;
+using System.Threading;
+using MediatR;
+using Race.Web.CQRS.Pilots.Queries;
+using Race.Web.CQRS.Pilots.Commands;
+using Swashbuckle.AspNetCore.Annotations;
 
+namespace Race.Web.Controllers;
 
-namespace Race.Web.Controllers
+[ApiController]
+[Route("api/pilots")]
+public class PilotController(IMediator mediator) : ControllerBase
 {
-    [ApiController]
-    [Route("api/pilots")]
-    public class PilotController
+    private const string OPNAME = "Pilots";
+
+    [HttpGet]
+    [SwaggerOperation(Tags = new[] { OPNAME })]
+    [SwaggerResponse(200, "Returns a paginated list of pilots.")]
+    [SwaggerResponse(400, "Invalid pagination parameters.")]
+    public async Task<ActionResult<PagedList<PilotListDto>>> GetAll([FromQuery] PagerParameters pagerParameters, CancellationToken token)
     {
-        private const string OPNAME = "Pilots";
-        private const int PAGESIZE = 10;
+        var result = await mediator.Send(new GetAllPilotsQuery(pagerParameters), token);
+        return Ok(result);
+    }
 
-        private readonly IPilotService pilotService;
+    [HttpGet("{id}")]
+    [SwaggerOperation(Tags = new[] { OPNAME })]
+    [SwaggerResponse(200, "Returns the pilot details.")]
+    [SwaggerResponse(404, "Pilot not found.")]
+    [SwaggerResponse(400, "Invalid request.")]
+    public async Task<IActionResult> GetById(int id, CancellationToken token)
+    {
+        var result = await mediator.Send(new GetPilotByIdQuery(id), token);
 
-        public PilotController(IPilotService pilotService)
-        {
-            this.pilotService = pilotService;
-        }
+        return result.Match<IActionResult>(
+            success => Ok(success),
+            notFound => NotFound(),
+            error => BadRequest("An error occurred.")
+        );
+    }
 
-        [HttpGet]
-        [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<IPagedList<PilotListDto>> GetAllPilot(
-            int pageIndex,
-            int pageSize = PAGESIZE,
-            string sortColumn = null,
-            string sortOrder = null,
-            string filterColumn = null,
-            string filterQuery = null)
-        {
-            return await pilotService.GetAllPilotAsync(pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
-        }
+    [HttpPost]
+    [SwaggerOperation(Tags = new[] { OPNAME })]
+    [SwaggerResponse(201, "Pilot created successfully.")]
+    [SwaggerResponse(400, "Invalid pilot data.")]
+    public async Task<IActionResult> Create([FromBody] PilotCreateDto pilot, CancellationToken token)
+    {
+        await mediator.Send(new CreatePilotCommand(pilot), token);
+        return CreatedAtAction(nameof(GetById), new { id = pilot.Id }, pilot);
+    }
 
-        [HttpGet("{id}")]
-        public async Task<PilotDetailsDto> GetPilot(int id)
-        {
-            return await pilotService.GetPilotAsync(id);
-        }
+    [HttpPut("{id}")]
+    [SwaggerOperation(Tags = new[] { OPNAME })]
+    [SwaggerResponse(204, "Pilot updated successfully.")]
+    [SwaggerResponse(400, "Invalid pilot data.")]
+    [SwaggerResponse(404, "Pilot not found.")]
+    public async Task<IActionResult> Update(int id, [FromBody] PilotUpdateDto updateDto, CancellationToken token)
+    {
+        await mediator.Send(new UpdatePilotCommand(id, updateDto), token);
+        return NoContent();
+    }
 
-        [HttpPost]
-        [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task CreatePilot([FromBody] PilotCreateDto pilot)
-        {
-            await pilotService.CreatePilotAsync(pilot);
-        }
-
-        [HttpPut("{id}")]
-        [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task UpdatePilot(int id, [FromBody] PilotUpdateDto updateDto)
-        {
-            await pilotService.UpdatePilotAsync(id, updateDto);
-        }
-
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Tags = new[] { OPNAME })]
-        public async Task<int> DeletePilot(int id)
-        {
-            return await pilotService.DeletePilotAsync(id);
-        }
-
-        [HttpPost]
-        [Route("IsNameExists")]
-        public bool NameExists([FromBody] PilotDetailsDto pilotDto)
-        {
-            return pilotService.CheckNameExists(pilotDto);
-         
-        }
+    [HttpDelete("{id}")]
+    [SwaggerOperation(Tags = new[] { OPNAME })]
+    [SwaggerResponse(204, "Pilot deleted successfully.")]
+    [SwaggerResponse(404, "Pilot not found.")]
+    [SwaggerResponse(400, "Invalid request.")]
+    public async Task<IActionResult> Delete(int id, CancellationToken token)
+    {
+        await mediator.Send(new DeletePilotCommand(id), token);
+        return NoContent();
     }
 }
