@@ -26,6 +26,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 ENV ASPNETCORE_ENVIRONMENT=Production
 
+# Install curl for healthcheck
+RUN apt-get update && apt-get install -y curl
+
 # Expose the port the app will run on
 # Expose port 80 for HTTP traffic
 EXPOSE 8080
