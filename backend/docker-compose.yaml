@@ -15,12 +15,12 @@ services:
       race-db:
         condition: service_healthy # Ensure the database is healthy before starting the API
     restart: unless-stopped # Restart policy for the API service       
-    # healthcheck:
-    #   test: ["CMD", "curl -f http://localhost:8080/healthz || exit 1"]
-    #   interval: 15s
-    #   timeout: 5s
-    #   retries: 5
-    #   start_period: 30s
+    healthcheck:
+      test: ["CMD", "curl -f http://localhost:8080/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - race-network # Connect the API to the custom network      
 

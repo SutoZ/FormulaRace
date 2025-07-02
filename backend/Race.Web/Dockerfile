@@ -27,11 +27,14 @@ WORKDIR /app
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Expose the port the app will run on
+# Expose port 80 for HTTP traffic
 EXPOSE 8080
-EXPOSE 443
+# Epose port 443 if you plan to use HTTPS
+#EXPOSE 443
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl --fail http://localhost:8080/healthz || exit 1
 
+  # Set the user to a non-root user for security
 USER app
 
 # Copy the published output from the build stage

@@ -47,7 +47,7 @@ public class PilotSeed
                 Id = 5,
                 Code = "RUS",
                 Number = "19",
-                Name = "Gerogre Russel",
+                Name = "George Russel",
                 TeamId = 5,
                 Nationality = "English"
             },

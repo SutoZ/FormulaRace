@@ -39,7 +39,10 @@ try
     builder.Services.AddSingleton(Log.Logger);
     Log.Information("Configuration loaded successfully.");
 
-    builder.WebHost.UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://+:8080");
+    builder.WebHost.UseKestrel(options =>
+    {
+        options.ListenAnyIP(8080);
+    });
 
     // Add services to the container.
     builder.Services.Configure<CookiePolicyOptions>(options =>
@@ -49,7 +52,8 @@ try
     });
 
 
-    builder.Services.AddHealthChecks();
+    builder.Services.AddHealthChecks()
+        .AddSqlServer(builder.Configuration.GetConnectionString("RaceConnection"));
 
     builder.Services.AddControllersWithViews();
 
@@ -67,7 +71,6 @@ try
                 .AllowCredentials();
         });
     });
-
 
     builder.Services.AddScoped<IPilotRepository, PilotRepository>();
     builder.Services.AddScoped<ITeamRepository, TeamRepository>();
@@ -131,11 +134,6 @@ try
     {
         app.UseSwagger();
         app.UseSwaggerUI();
-        //app.UseSwaggerUI(setup =>
-        //{
-        //    setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Race API v1");
-        //    setup.RoutePrefix = string.Empty;
-        //});
     }
     else
     {
@@ -158,9 +156,15 @@ try
     app.UseRouting();
     app.UseCors("AllowCredentials");
 
+    app.MapGet("/", () => "API is running!");
+
     app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<RaceContext>();
+    await db.Database.EnsureCreatedAsync();
 
     await app.RunAsync();
 
