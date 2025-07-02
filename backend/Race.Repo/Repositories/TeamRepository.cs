@@ -23,7 +23,7 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger)
         var teams = context.Teams.AsNoTracking();
         var pagedList = await PagedList<TeamListDto>.CreateAsync(teams.Select(ent => TeamListDto.FromTeam(ent)).AsQueryable(), pagerParameters, token);
 
-        logger.Information("Retrieved {Count} teams with pagination parameters: {PagerParameters}", pagerParameters.PageSize, pagerParameters.PageIndex);
+        logger.Information("Retrieved {PageSize} teams on page {PageIndex}", pagerParameters.PageSize, pagerParameters.PageIndex);
 
         return pagedList;
     }
