@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IPilotsListViewModel } from '../models/pilot.models';
 import { environment } from 'src/environments/environment';
@@ -9,29 +9,27 @@ import { environment } from 'src/environments/environment';
 })
 
 export class PilotsService {
-  environment: string;
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
-  header = new HttpHeaders({ 'Content-Type': 'application/json' });
+  private readonly baseUrl = environment.BASE_URL;
 
   getPilots<PagedList>(parameters: HttpParams): Observable<PagedList> {
-    return this.http.request<PagedList>('get', environment.BASE_URL + 'api/pilots', { headers: this.header, params: parameters });
+    return this.http.get<PagedList>(`${this.baseUrl}/api/pilots`, { params: parameters });
   };
 
   getPilotById(id: number): Observable<IPilotsListViewModel> {
-    return this.http.request<IPilotsListViewModel>('get', environment.BASE_URL + 'api/pilots/' + id, { headers: this.header });
+    return this.http.get<IPilotsListViewModel>(`${this.baseUrl}/api/pilots/${id}`);
   };
 
-  postPilot<IPilotsListViewModel>(pilot: IPilotsListViewModel): Observable<IPilotsListViewModel> | null {
-    return this.http.post<IPilotsListViewModel>(environment.BASE_URL + 'api/pilots/', pilot, { headers: this.header });
+  postPilot(pilot: IPilotsListViewModel): Observable<IPilotsListViewModel> {
+    return this.http.post<IPilotsListViewModel>(`${this.baseUrl}/api/pilots`, pilot);
   };
 
-  putPilot<IPilotsListViewModel>(id: number, pilot: IPilotsListViewModel): Observable<IPilotsListViewModel> | null {
-    return this.http.put<IPilotsListViewModel>(environment.BASE_URL + 'api/pilots/' + id, pilot, { headers: this.header });
+  putPilot(id: number, pilot: IPilotsListViewModel): Observable<IPilotsListViewModel> {
+    return this.http.put<IPilotsListViewModel>(`${this.baseUrl}/api/pilots/${id}`, pilot);
   };
 
-  checkNameExists<IPilotDetailsViewModel>(pilot: IPilotDetailsViewModel) {
-    return this.http.post<boolean>(environment.BASE_URL + 'api/pilots/IsNameExists', pilot, { headers: this.header });
+  checkNameExists(pilot: IPilotsListViewModel): Observable<boolean> {
+    return this.http.post<boolean>(`${this.baseUrl}/api/pilots/IsNameExists`, pilot);
   }
 }
-

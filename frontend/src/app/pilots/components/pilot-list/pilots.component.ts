@@ -1,4 +1,4 @@
-import { Component, OnInit, Injectable, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { PilotsService } from 'src/app/pilots/services/pilots.service';
 import { HttpParams } from '@angular/common/http';
 import { MatSort } from '@angular/material/sort';
@@ -8,14 +8,10 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-    selector: 'app-pilots',
-    templateUrl: './pilots.component.html',
-    styleUrls: ['./pilots.component.css'],
-    standalone: false
-})
-
-@Injectable({
-  providedIn: 'root'
+  selector: 'app-pilots',
+  templateUrl: './pilots.component.html',
+  styleUrls: ['./pilots.component.css'],
+  standalone: false
 })
 
 export class PilotsComponent implements OnInit {
@@ -26,22 +22,27 @@ export class PilotsComponent implements OnInit {
   defaultPageSize = 10;
 
   public defaultSortColumn: string = "Name";
-  public defaultSortOder: string = "asc";
+  public defaultSortOrder: string = "asc";
   public defaultFilterColumn = "Name";
 
-  filterQuery: string = null;
+  filterQuery: string = '';
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private pilotsService: PilotsService) { }
+  constructor(private readonly pilotsService: PilotsService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.dataSource.paginator = this.paginator;
-    this.loadData(null);
+    this.loadData();
   }
 
-  loadData(query: string = null) {
+  ngafterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  loadData(query: string = '') {
     let event = new PageEvent();
     event.pageIndex = this.defaultIndex;
     event.pageSize = this.defaultPageSize;
@@ -57,17 +58,19 @@ export class PilotsComponent implements OnInit {
       .set("pageIndex", event.pageIndex.toString())
       .set("pageSize", event.pageSize.toString())
       .set("sortColumn", (this.sort) ? this.sort.active : this.defaultSortColumn)
-      .set("sortOrder", (this.sort) ? this.sort.direction : this.defaultSortOder)
+      .set("sortOrder", (this.sort) ? this.sort.direction : this.defaultSortOrder)
       .set("filterColumn", this.defaultFilterColumn)
       .set("filterQuery", this.filterQuery);
 
-    this.pilotsService.getPilots<PagedList<IPilotsListViewModel>>(params).subscribe(result => {
-      this.paginator.length = result.totalPages;
-      this.paginator.pageIndex = result.pageIndex;
-      this.paginator.pageSize = result.pageSize;
-      this.dataSource = new MatTableDataSource<IPilotsListViewModel>(result.data);
-      this.dataSource.paginator = this.paginator;
-
-    }, error => console.error(error));
+    this.pilotsService.getPilots<PagedList<IPilotsListViewModel>>(params).subscribe({
+      next: result => {
+        this.paginator.length = result.totalCount;
+        this.paginator.pageIndex = result.pageIndex;
+        this.paginator.pageSize = result.pageSize;
+        this.dataSource.data = result.data;
+        this.dataSource.paginator = this.paginator;
+      },
+      error: error => console.error(error)
+    });
   }
 }
