@@ -8,10 +8,10 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-    selector: 'app-teams',
-    templateUrl: './teams.component.html',
-    styleUrls: ['./teams.component.css'],
-    standalone: false
+  selector: 'app-teams',
+  templateUrl: './teams.component.html',
+  styleUrls: ['./teams.component.css'],
+  standalone: false
 })
 export class TeamsComponent implements OnInit {
 
@@ -21,21 +21,21 @@ export class TeamsComponent implements OnInit {
   public defaultSortOder: string = "asc";
 
   public defaultFilterColumn: string = "Name";
-  filterQuery: string = "null";  
+  filterQuery: string = "null";
 
   defaultIndex = 0;
-  defaultPageSize = 10;  
+  defaultPageSize = 10;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) matSort: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) matSort!: MatSort;
 
-  constructor(private teamsSerivce: TeamsService) { }
+  constructor(private readonly teamsSerivce: TeamsService) { }
 
-  ngOnInit(): void {
-    this.loadData(null);
+  ngOnInit() {
+    this.loadData();
   }
 
-  loadData(query: string = null) {
+  loadData(query: string = '') {
     let event = new PageEvent();
     event.pageIndex = this.defaultIndex;
     event.pageSize = this.defaultPageSize;
@@ -45,20 +45,23 @@ export class TeamsComponent implements OnInit {
     this.getTeams(event);
   }
 
-  getTeams(event: PageEvent): void {
-    let params = new HttpParams()      
-    .set('pageIndex', event.pageIndex.toString())
-    .set('pageSize', event.pageSize.toString())
-    .set('sortColumn', (this.matSort) ? this.matSort.active : this.defaultSortColumn)
-    .set('sortOrder', (this.matSort) ? this.matSort.direction : this.defaultSortOder)
-    .set('filterColumn', this.defaultFilterColumn)
-    .set('filterQuery', this.filterQuery);
+  getTeams(event: PageEvent) {
+    let params = new HttpParams()
+      .set('pageIndex', event.pageIndex.toString())
+      .set('pageSize', event.pageSize.toString())
+      .set('sortColumn', (this.matSort) ? this.matSort.active : this.defaultSortColumn)
+      .set('sortOrder', (this.matSort) ? this.matSort.direction : this.defaultSortOder)
+      .set('filterColumn', this.defaultFilterColumn)
+      .set('filterQuery', this.filterQuery);
 
-    this.teamsSerivce.getTeams<PagedList<ITeamListViewModel>>(params).subscribe(result => {
-      this.paginator.pageSize = result.pageSize;
-      this.paginator.pageIndex = result.pageIndex;
-      this.paginator.length = result.totalPages;
-      this.dataSource = new MatTableDataSource<ITeamListViewModel>(result.data);
-    }, error => console.log(error))
+    this.teamsSerivce.getTeams<PagedList<ITeamListViewModel>>(params).subscribe({
+      next: result => {
+        this.paginator.pageSize = result.pageSize;
+        this.paginator.pageIndex = result.pageIndex;
+        this.paginator.length = result.totalPages;
+        this.dataSource = new MatTableDataSource<ITeamListViewModel>(result.data);
+      },
+      error: error => console.log(error)
+    });
   }
 }

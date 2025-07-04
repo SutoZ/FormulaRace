@@ -6,7 +6,6 @@ import { NavMenuComponent } from './nav-menu/components/nav-menu.component';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
-import { PilotEditComponent } from './pilots/components/pilot-edit/pilot-edit.component';
 import { HomeComponent } from './home/home.component';
 import { TeamEditComponent } from './teams/components/team-edit/team-edit/team-edit.component';
 import { PilotsComponent } from './pilots/components/pilot-list/pilots.component';
@@ -16,6 +15,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({ declarations: [
@@ -23,7 +23,6 @@ import { ReactiveFormsModule } from '@angular/forms';
         PilotsComponent,
         NavMenuComponent,
         TeamsComponent,
-        PilotEditComponent,
         HomeComponent,
         TeamEditComponent,
     ],
@@ -33,6 +32,7 @@ import { ReactiveFormsModule } from '@angular/forms';
         BrowserAnimationsModule,
         MatFormFieldModule,
         MatInputModule,
+        MatPaginatorModule,
         MatOptionModule,
         ReactiveFormsModule,
         MatSelectModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
