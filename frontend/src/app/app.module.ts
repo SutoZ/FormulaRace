@@ -7,9 +7,9 @@ import { AngularMaterialModule } from './angular-material/angular-material.modul
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
-import { TeamEditComponent } from './teams/components/team-edit/team-edit/team-edit.component';
+// import { TeamEditComponent } from './teams/components/team-edit/team-edit/team-edit.component';
 import { PilotsComponent } from './pilots/components/pilot-list/pilots.component';
-import { TeamsComponent } from './teams/components/team-list/teams.component';
+// import { TeamsComponent } from './teams/components/team-list/teams.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
@@ -22,9 +22,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
         AppComponent,
         PilotsComponent,
         NavMenuComponent,
-        TeamsComponent,
+        // TeamsComponent,
         HomeComponent,
-        TeamEditComponent,
+        // TeamEditComponent,
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
@@ -33,6 +33,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
         MatFormFieldModule,
         MatInputModule,
         MatPaginatorModule,
+        MatFormFieldModule,
+        MatInputModule,
         MatOptionModule,
         ReactiveFormsModule,
         MatSelectModule], providers: [provideHttpClient(withInterceptorsFromDi())] })

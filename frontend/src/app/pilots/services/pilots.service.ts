@@ -11,25 +11,25 @@ import { environment } from 'src/environments/environment';
 export class PilotsService {
   constructor(private readonly http: HttpClient) { }
 
-  private readonly baseUrl = environment.BASE_URL;
+  private readonly baseUrl = `${environment.BASE_URL}/api/pilots`;
 
   getPilots<PagedList>(parameters: HttpParams): Observable<PagedList> {
-    return this.http.get<PagedList>(`${this.baseUrl}/api/pilots`, { params: parameters });
+    return this.http.get<PagedList>(this.baseUrl, { params: parameters });
   };
 
   getPilotById(id: number): Observable<IPilotsListViewModel> {
-    return this.http.get<IPilotsListViewModel>(`${this.baseUrl}/api/pilots/${id}`);
+    return this.http.get<IPilotsListViewModel>(`${this.baseUrl}/${id}`);
   };
 
   postPilot(pilot: IPilotsListViewModel): Observable<IPilotsListViewModel> {
-    return this.http.post<IPilotsListViewModel>(`${this.baseUrl}/api/pilots`, pilot);
+    return this.http.post<IPilotsListViewModel>(this.baseUrl, pilot);
   };
 
   putPilot(id: number, pilot: IPilotsListViewModel): Observable<IPilotsListViewModel> {
-    return this.http.put<IPilotsListViewModel>(`${this.baseUrl}/api/pilots/${id}`, pilot);
+    return this.http.put<IPilotsListViewModel>(`${this.baseUrl}/${id}`, pilot);
   };
 
   checkNameExists(pilot: IPilotsListViewModel): Observable<boolean> {
-    return this.http.post<boolean>(`${this.baseUrl}/api/pilots/IsNameExists`, pilot);
+    return this.http.post<boolean>(`${this.baseUrl}/IsNameExists`, pilot);
   }
 }

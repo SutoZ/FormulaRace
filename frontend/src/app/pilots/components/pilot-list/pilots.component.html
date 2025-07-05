@@ -2,13 +2,13 @@
 
 <ng-container *ngIf="dataSource.data.length > 0">
     <mat-form-field>
-        <input matInput placeholder="Filter by Name..." (keyup)="loadData($event.target.value!)">
+        <input matInput #filterInput placeholder="Filter by Name..." (keyup)="loadData(filterInput.value)">
     </mat-form-field>
 
     <button *ngIf="dataSource" class="btn btn-secondary float-right" [routerLink]="['/pilot']">Add new Pilot</button>
 
     <table mat-table *ngIf="dataSource.data.length > 0" matSort (matSortChange)="loadData()"
-        matSortActive="{{defaultSortColumn}}" matSortDirection="{{defaultSortOrder}}" [dataSource]="dataSource"
+        [matSortActive]="defaultSortColumn" [matSortDirection]="defaultSortOrder" [dataSource]="dataSource"
         class="mat-elevation-z8">
 
         <ng-container matColumnDef="Id">

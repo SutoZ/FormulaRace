@@ -9,22 +9,24 @@ import { environment } from 'src/environments/environment';
 export class TeamsService {
   header = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-  constructor(private http: HttpClient) { }
+  private readonly baseUrl = `${environment.BASE_URL}/api/teams`;
+
+  constructor(private readonly http: HttpClient) { }
 
   getTeams<PagedList>(parameters: HttpParams): Observable<PagedList> {
-    return this.http.request<PagedList>('get', environment.BASE_URL + 'api/teams', { headers: this.header, params: parameters });
+    return this.http.get<PagedList>(this.baseUrl, { headers: this.header, params: parameters });
   }
 
   getTeamById<ITeamListViewModel>(id: number): Observable<ITeamListViewModel> {
-    return this.http.request<ITeamListViewModel>('get', environment.BASE_URL + 'api/teams/' + id, { headers: this.header });
+    return this.http.get<ITeamListViewModel>(`${this.baseUrl}/${id}`, { headers: this.header });
   }
 
   postTeam<ITeamListViewModel>(team: ITeamListViewModel): Observable<ITeamListViewModel> {
-    return this.http.post<ITeamListViewModel>(environment.BASE_URL + 'api/teams/', team, { headers: this.header });
+    return this.http.post<ITeamListViewModel>(this.baseUrl, team, { headers: this.header });
   };
 
   putTeam<ITeamListViewModel>(id: number, team: ITeamListViewModel): Observable<ITeamListViewModel> {
-    return this.http.put<ITeamListViewModel>(environment.BASE_URL + 'api/teams/' + id, team, { headers: this.header });
+    return this.http.put<ITeamListViewModel>(`${this.baseUrl}/${id}`, team, { headers: this.header });
   };
 
 }
