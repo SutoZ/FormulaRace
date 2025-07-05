@@ -2,12 +2,14 @@
 using Race.Repo.Interfaces;
 using Race.Service.Interfaces;
 using Race.Shared.Paging;
+using Serilog;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Race.Service.Services;
 
-public class PilotService(IPilotRepository pilotRepository) : IPilotService
+public class PilotService(IPilotRepository pilotRepository, ILogger logger) : IPilotService
 {
     public async Task<int> CreateAsync(PilotCreateDto createDto, CancellationToken token)
     {
@@ -17,6 +19,9 @@ public class PilotService(IPilotRepository pilotRepository) : IPilotService
 
     public async Task<IPagedList<PilotListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token)
     {
+        ArgumentNullException.ThrowIfNull(pagerParameters, nameof(pagerParameters));
+
+        logger.Information("Fetching all pilots with pagination parameters: {@PagerParameters}", pagerParameters);
         return await pilotRepository.GetAllAsync(pagerParameters, token);
     }
 

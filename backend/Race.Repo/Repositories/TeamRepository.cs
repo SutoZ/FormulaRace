@@ -8,7 +8,7 @@ using Race.Shared.Paging;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,8 +20,18 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(pagerParameters, nameof(pagerParameters));
 
-        var teams = context.Teams.AsNoTracking();
-        var pagedList = await PagedList<TeamListDto>.CreateAsync(teams.Select(ent => TeamListDto.FromTeam(ent)).AsQueryable(), pagerParameters, token);
+        logger.Information("Retrieving teams with pagination parameters: {@PagerParameters}", pagerParameters);
+
+        var query = context.Teams.AsNoTracking();
+
+        Expression<Func<Team, TeamListDto>> projection = ent => new TeamListDto(
+            ent.Id,
+            ent.Name,
+            ent.DateOfFoundation,
+            ent.OwnerName,
+            ent.ChampionShipPoints);
+
+        var pagedList = await PagedList<TeamListDto>.CreateAsync(query, pagerParameters, projection, token);
 
         logger.Information("Retrieved {PageSize} teams on page {PageIndex}", pagerParameters.PageSize, pagerParameters.PageIndex);
 

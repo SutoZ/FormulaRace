@@ -29,20 +29,21 @@ Log.Information("Loading configuration...");
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
     Log.Logger = new LoggerConfiguration()
-        .ReadFrom.Configuration(builder.Configuration)
+        .ReadFrom.Configuration(new ConfigurationBuilder().AddJsonFile("appsettings.json")
+        .Build())
         .CreateLogger();
 
+    var builder = WebApplication.CreateBuilder(args);
 
     builder.Host.UseSerilog();
     builder.Services.AddSingleton(Log.Logger);
     Log.Information("Configuration loaded successfully.");
 
-    builder.WebHost.UseKestrel(options =>
-    {
-        options.ListenAnyIP(8080);
-    });
+    //builder.WebHost.UseKestrel(options =>
+    //{
+    //    options.ListenAnyIP(8080);
+    //});
 
     // Add services to the container.
     builder.Services.Configure<CookiePolicyOptions>(options =>

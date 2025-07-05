@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Race.Shared.Extensions;
 using System.Threading;
+using System.Linq.Expressions;
 
 namespace Race.Shared.Paging;
 
@@ -41,7 +42,13 @@ public class PagedList<T> : IPagedList<T> where T : class
     /// </summary>
     public bool HasNextPage => PageIndex + 1 <= TotalPages;
 
-    public async static Task<PagedList<T>> CreateAsync(IQueryable<T> source, PagerParameters pagerParameters, CancellationToken token)
+    public async static Task<PagedList<TDto>> CreateAsync<TEntity, TDto>(
+        IQueryable<TEntity> source,
+        PagerParameters pagerParameters,
+        Expression<Func<TEntity, TDto>> selector,
+        CancellationToken token)
+        where TEntity : class
+        where TDto : class
     {
         ArgumentNullException.ThrowIfNull(pagerParameters, nameof(pagerParameters));
 
@@ -56,16 +63,23 @@ public class PagedList<T> : IPagedList<T> where T : class
 
 
         //Filtering before sorting and paging for efficiency
-        if (filterColumn is not null && filterQuery is not "null" && IsValidProperty(filterColumn))
+        if (!string.IsNullOrWhiteSpace(filterColumn) &&
+            !string.IsNullOrWhiteSpace(filterQuery)
+            && IsValidProperty(filterColumn))
             source = source.Where($"{filterColumn}.Contains(@0)", filterQuery);
 
+        //Sorting
         if (!string.IsNullOrEmpty(pagerParameters.SortColumn) && IsValidProperty(pagerParameters.SortColumn))
             source = source.OrderBy($"{sortColumn} {sortOrder}", token);
 
+        //Paging
         if (pageSize != 0)
             source = source.Skip(pageIndex * pageSize).Take(pageSize);
 
-        return new PagedList<T>(await source.ToListSafeAsync(token), count, pagerParameters);
+        //Projection to DTO
+        var result = await source.Select(selector).ToListSafeAsync(token);
+
+        return new PagedList<TDto>(result, count, pagerParameters);
     }
 
     /// <summary>
@@ -82,5 +96,5 @@ public class PagedList<T> : IPagedList<T> where T : class
             throw new NotSupportedException($"Property --> {propertyName} <-- does not exist!");
 
         return prop is not null;
-    }    
+    }
 }

@@ -7,12 +7,13 @@ using MediatR;
 using Race.Web.CQRS.Pilots.Queries;
 using Race.Web.CQRS.Pilots.Commands;
 using Swashbuckle.AspNetCore.Annotations;
+using Serilog;
 
 namespace Race.Web.Controllers;
 
 [ApiController]
 [Route("api/pilots")]
-public class PilotController(IMediator mediator) : ControllerBase
+public class PilotController(IMediator mediator, ILogger logger) : ControllerBase
 {
     private const string OPNAME = "Pilots";
 
@@ -22,7 +23,12 @@ public class PilotController(IMediator mediator) : ControllerBase
     [SwaggerResponse(400, "Invalid pagination parameters.")]
     public async Task<ActionResult<PagedList<PilotListDto>>> GetAll([FromQuery] PagerParameters pagerParameters, CancellationToken token)
     {
+        logger.Information("Fetching all pilots with pagination parameters: {@PagerParameters}", pagerParameters);
         var result = await mediator.Send(new GetAllPilotsQuery(pagerParameters), token);
+
+        logger.Information("Retrieved {Count} pilots on page {PageIndex} with page size {PageSize}", 
+            result.TotalCount, pagerParameters.PageIndex, pagerParameters.PageSize);
+
         return Ok(result);
     }
 
@@ -33,7 +39,17 @@ public class PilotController(IMediator mediator) : ControllerBase
     [SwaggerResponse(400, "Invalid request.")]
     public async Task<IActionResult> GetById(int id, CancellationToken token)
     {
+        logger.Information("Fetching pilot with ID: {Id}", id);
+
+        if (id <= 0)
+        {
+            logger.Warning("Invalid pilot ID: {Id}", id);
+            return BadRequest("Invalid pilot ID.");
+        }
+
         var result = await mediator.Send(new GetPilotByIdQuery(id), token);
+
+        logger.Information("Pilot retrieval result for ID {Id}: {@Result}", id, result);
 
         return result.Match<IActionResult>(
             success => Ok(success),
