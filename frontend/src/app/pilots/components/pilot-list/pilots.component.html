@@ -43,6 +43,6 @@
     </table>
 
     <mat-paginator *ngIf="dataSource.data.length > 0" (page)="getPilots($event)"
-        [pageSize]="paginator.pageSize" [pageIndex]="paginator.pageIndex" [length]="paginator.length"
+        [pageSize]="paginator?.pageSize" [pageIndex]="paginator?.pageIndex" [length]="paginator?.length"
         [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
 </ng-container>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { PilotsService } from 'src/app/pilots/services/pilots.service';
 import { HttpParams } from '@angular/common/http';
 import { MatSort, SortDirection } from '@angular/material/sort';
@@ -18,12 +18,13 @@ export class PilotsComponent {
   public displayedColumns: string[] = ['Id', 'Name', 'Number', 'Code', 'Nationality'];
   public dataSource = new MatTableDataSource<IPilotsListViewModel>();
 
-  defaultIndex = 0;
-  defaultPageSize = 10;
+  pageIndex = 0;
+  pageSize = 10;
+  length = 0;
 
-  defaultSortColumn: string = "Name";
+  defaultSortColumn: string = 'Name';
   defaultSortOrder: SortDirection = 'asc'; // or 'desc' or ''
-  defaultFilterColumn = "Name";
+  defaultFilterColumn = 'Name';
 
   filterQuery: string = '';
 
@@ -40,8 +41,8 @@ export class PilotsComponent {
 
   loadData(query: string = '') {
     let event = new PageEvent();
-    event.pageIndex = this.defaultIndex;
-    event.pageSize = this.defaultPageSize;
+    event.pageIndex = this.pageIndex;
+    event.pageSize = this.pageSize;
 
     if (query) {
       this.filterQuery = query;
@@ -68,7 +69,7 @@ export class PilotsComponent {
           this.paginator.pageSize = result.pageSize;
         }
         console.log('API result:', result);
-        
+
         this.dataSource.data = result.data;
         this.dataSource.paginator = this.paginator;
       },
