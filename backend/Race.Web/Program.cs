@@ -56,7 +56,11 @@ try
     builder.Services.AddHealthChecks()
         .AddSqlServer(builder.Configuration.GetConnectionString("RaceConnection"));
 
-    builder.Services.AddControllersWithViews();
+    builder.Services.AddControllersWithViews().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
+
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();

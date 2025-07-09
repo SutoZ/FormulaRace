@@ -29,7 +29,11 @@ export class PilotsService {
     return this.http.put<IPilotsListViewModel>(`${this.baseUrl}/${id}`, pilot);
   };
 
-  checkNameExists(pilot: IPilotsListViewModel): Observable<boolean> {
-    return this.http.post<boolean>(`${this.baseUrl}/IsNameExists`, pilot);
+  deletePilot(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  // checkNameExists(pilot: IPilotsListViewModel): Observable<boolean> {
+  //   return this.http.post<boolean>(`${this.baseUrl}/IsNameExists`, pilot);
+  // }
 }
