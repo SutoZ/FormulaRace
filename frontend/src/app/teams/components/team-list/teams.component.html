@@ -1,11 +1,11 @@
-<p hidden="!dataSource">Loading...</p>
+<!-- <p hidden="!dataSource">Loading...</p>
 
 <mat-form-field [hidden]="!dataSource">
     <input matInput placeHolder="Filter by Name..." (keyup)="loadData($event.target.value)">
 </mat-form-field>
 
 <table [hidden]="!dataSource" mat-table matSort (matSortChange)="loadData()" matSortActive="{{defaultSortColumn}}"
-    matSortDirection="{{defaultSortOder}}" [dataSource]="dataSource" class="mat-elevation-z8">
+    matSortDirection="{{defaultSortOrder}}" [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="Id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
@@ -38,4 +38,4 @@
 </table>
 
 <mat-paginator [hidden]="!dataSource" [pageSize]="10" [pageSizeOptions]="[10, 20, 50]" (page)="getTeams($event)">
-</mat-paginator>
+</mat-paginator> -->

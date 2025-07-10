@@ -3,12 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Race.Model.Models;
 using Race.Repo.ApplicationContext;
 using Race.Repo.Dtos.Pilots;
+using Race.Repo.Dtos.Teams;
 using Race.Repo.Interfaces;
 using Race.Shared.Paging;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,12 +41,18 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
 
     public async Task<IPagedList<PilotListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token)
     {
-        var pilots = context
+        var query = context
             .Pilots
             .Include(x => x.Team)
             .AsNoTracking();
 
-        return await PagedList<PilotListDto>.CreateAsync(pilots.Select(ent => PilotListDto.FromPilot(ent)), pagerParameters, token);
+        logger.Information("Retrieving pilots with pagination parameters: {@PagerParameters}", pagerParameters);
+
+        Expression<Func<Pilot, PilotListDto>> projection = x => new PilotListDto(
+            x.Id, x.Name, x.Number, x.Code, x.Nationality, x.Team == null ? null : new TeamListDto(
+                x.Team.Id, x.Team.Name, x.Team.DateOfFoundation, x.Team.OwnerName, x.Team.ChampionShipPoints));
+
+        return await PagedList<PilotListDto>.CreateAsync(query, pagerParameters, projection, token);
     }
 
     public async Task<PilotDetailsDto> GetByIdAsync(int id, CancellationToken token)

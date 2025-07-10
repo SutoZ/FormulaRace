@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+*.tsbuildinfo
 # Only exists if Bazel was run
 /bazel-out
 
@@ -40,7 +41,12 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+.angular/cache/
 
 # System Files
 .DS_Store
 Thumbs.db
+
+# Angular build cache
+angular-compiler.db
+angular-compiler.db-lock

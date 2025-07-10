@@ -10,13 +10,13 @@ namespace Race.Shared.Extensions;
 
 public static class EfExtensions
 {
-    public static Task<List<TSource>> ToListSafeAsync<TSource>(this IQueryable<TSource> source, CancellationToken token)
+    public static async Task<IReadOnlyList<TSource>> ToListSafeAsync<TSource>(this IQueryable<TSource> source, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(source);
 
         if (source.Provider is IAsyncQueryProvider)
-            return EntityFrameworkQueryableExtensions.ToListAsync(source, token);
+            return await EntityFrameworkQueryableExtensions.ToListAsync(source, token);
 
-        return source.ToListSafeAsync(token);
+        return await source.ToListAsync(token);
     }
 }

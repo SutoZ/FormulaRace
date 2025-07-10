@@ -29,20 +29,21 @@ Log.Information("Loading configuration...");
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
     Log.Logger = new LoggerConfiguration()
-        .ReadFrom.Configuration(builder.Configuration)
+        .ReadFrom.Configuration(new ConfigurationBuilder().AddJsonFile("appsettings.json")
+        .Build())
         .CreateLogger();
 
+    var builder = WebApplication.CreateBuilder(args);
 
     builder.Host.UseSerilog();
     builder.Services.AddSingleton(Log.Logger);
     Log.Information("Configuration loaded successfully.");
 
-    builder.WebHost.UseKestrel(options =>
-    {
-        options.ListenAnyIP(8080);
-    });
+    //builder.WebHost.UseKestrel(options =>
+    //{
+    //    options.ListenAnyIP(8080);
+    //});
 
     // Add services to the container.
     builder.Services.Configure<CookiePolicyOptions>(options =>
@@ -55,17 +56,21 @@ try
     builder.Services.AddHealthChecks()
         .AddSqlServer(builder.Configuration.GetConnectionString("RaceConnection"));
 
-    builder.Services.AddControllersWithViews();
+    builder.Services.AddControllersWithViews().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
+
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
     builder.Services.AddCors(setup =>
     {
-        setup.AddPolicy(name: "AllowCredentials", policy =>
+        setup.AddPolicy(name: "AllowFrontend", policy =>
         {
             policy
-                .WithOrigins(builder.Configuration.GetValue<string>("Site:ClientUrl") ?? "http://localhost:4200")
+                .WithOrigins("http://localhost:4200")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -154,7 +159,7 @@ try
     app.UseSession();
 
     app.UseRouting();
-    app.UseCors("AllowCredentials");
+    app.UseCors("AllowFrontend");
 
     app.MapGet("/", () => "API is running!");
 

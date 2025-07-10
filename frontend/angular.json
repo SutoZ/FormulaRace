@@ -32,7 +32,6 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ],
             "browser": "src/main.ts"
@@ -47,8 +46,7 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
+              "sourceMap": true,
               "namedChunks": false,
               "extractLicenses": true,
               "budgets": [
@@ -128,5 +126,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
