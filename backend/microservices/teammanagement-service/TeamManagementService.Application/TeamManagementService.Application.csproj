@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\shared\Race.Shared\Race.Shared.Utilities\Race.Shared.Utilities.csproj" />
+    <ProjectReference Include="..\..\shared\Race.Shared.Utilities\Race.Shared.Utilities.csproj" />
     <ProjectReference Include="..\TeamManagementService.Domain\TeamManagementService.Domain.csproj" />
   </ItemGroup>
 
