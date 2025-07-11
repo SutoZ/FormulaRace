@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
-using Serilog;
 using Race.Shared.Utilities.Paging;
 using TeamManagementService.Application.Dtos.Pilots;
 using TeamManagementService.Application.CQRS.Pilots.Queries;
@@ -11,7 +10,7 @@ namespace TeamManagementService.API.Controllers;
 
 [ApiController]
 [Route("api/pilots")]
-public class PilotController(IMediator mediator, ILogger logger) : ControllerBase
+public class PilotController(IMediator mediator, Serilog.ILogger logger) : ControllerBase
 {
     private const string OPNAME = "Pilots";
 

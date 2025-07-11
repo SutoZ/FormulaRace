@@ -1,13 +1,8 @@
 ﻿using Asp.Versioning;
 using AutoMapper;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 using TeamManagementService.Application.Interfaces.Repositories;
 using TeamManagementService.Application.Interfaces.Services;
@@ -79,7 +74,7 @@ try
     builder.Services.AddScoped<IPilotRepository, PilotRepository>();
     builder.Services.AddScoped<ITeamRepository, TeamRepository>();
     builder.Services.AddScoped<ITeamService, TeamService>();
-    builder.Services.AddScoped<IPilotService, TeamManagementService.Application.Services.PilotService>();
+    builder.Services.AddScoped<IPilotService, PilotService>();
 
     builder.Services.AddDbContext<RaceContext>(options =>
     {
