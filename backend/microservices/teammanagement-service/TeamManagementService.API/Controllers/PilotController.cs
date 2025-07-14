@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
-using Race.Shared.Utilities.Paging;
 using TeamManagementService.Application.Dtos.Pilots;
 using TeamManagementService.Application.CQRS.Pilots.Queries;
 using TeamManagementService.Application.CQRS.Pilots.Commands;
+using Race.Shared.Utilities.Paging;
 
 namespace TeamManagementService.API.Controllers;
 
@@ -59,10 +59,10 @@ public class PilotController(IMediator mediator, Serilog.ILogger logger) : Contr
     [SwaggerOperation(Tags = new[] { OPNAME })]
     [SwaggerResponse(201, "Pilot created successfully.")]
     [SwaggerResponse(400, "Invalid pilot data.")]
-    public async Task<IActionResult> Create([FromBody] PilotCreateDto pilot, CancellationToken token)
+    public async Task<IActionResult> Create([FromBody] PilotCreateDto pilotToCreate, CancellationToken token)
     {
-        await mediator.Send(new CreatePilotCommand(pilot), token);
-        return CreatedAtAction(nameof(GetById), new { id = pilot.Id }, pilot);
+        var createdPilot = await mediator.Send(new CreatePilotCommand(pilotToCreate), token);
+        return CreatedAtAction(nameof(GetById), new { id = createdPilot.Id }, createdPilot);
     }
 
     [HttpPut("{id}")]

@@ -8,10 +8,10 @@ namespace TeamManagementService.Application.Services;
 
 public class PilotService(IPilotRepository pilotRepository, ILogger logger) : IPilotService
 {
-    public async Task<int> CreateAsync(PilotCreateDto createDto, CancellationToken token)
+    public async Task<PilotListDto> CreateAsync(PilotCreateDto createDto, CancellationToken token)
     {
         var result = await pilotRepository.CreateAsync(createDto, token);
-        return result;
+        return PilotListDto.FromPilot(result);
     }
 
     public async Task<IPagedList<PilotListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token)

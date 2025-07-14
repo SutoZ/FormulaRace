@@ -4,14 +4,14 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy all .csproj files and restore dependencies first to leverage Docker layer caching
-COPY ["TeamManagementService.API/TeamManagementService.API.csproj", "TeamManagementService.API/"]
-COPY ["TeamManagementService.Application/TeamManagementService.Application.csproj", "TeamManagementService.Application/"]
-COPY ["TeamManagementService.Domain/TeamManagementService.Domain.csproj", "TeamManagementService.Domain/"]
-COPY ["TeamManagementService.Infrastructure/TeamManagementService.Infrastructure.csproj", "TeamManagementService.Infrastructure/"]
+COPY ["teammanagement-service/TeamManagementService.API/TeamManagementService.API.csproj", "TeamManagementService.API/"]
+COPY ["teammanagement-service/TeamManagementService.Application/TeamManagementService.Application.csproj", "TeamManagementService.Application/"]
+COPY ["teammanagement-service/TeamManagementService.Domain/TeamManagementService.Domain.csproj", "TeamManagementService.Domain/"]
+COPY ["teammanagement-service/TeamManagementService.Infrastructure/TeamManagementService.Infrastructure.csproj", "TeamManagementService.Infrastructure/"]
 # If you have other projects (like shared libraries), copy them here as well
-# COPY ["shared/Race.Shared/Race.Shared.Utilities/Race.Shared.Utilities.csproj", "shared/Race.Shared/Race.Shared.Utilities/"]
+COPY ["shared/Race.Shared.Utilities/Race.Shared.Utilities.csproj", "shared/Race.Shared.Utilities/"]
 
-RUN dotnet restore "TeamManagementService.API/TeamManagementService.API.csproj"
+RUN dotnet restore TeamManagementService.API/TeamManagementService.API.csproj
 
 # Copy the rest of the source code
 COPY . .

@@ -69,7 +69,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
         return mapper.Map<PilotDetailsDto>(pilot);
     }
 
-    public async Task<int> CreateAsync(PilotCreateDto createDto, CancellationToken token)
+    public async Task<Pilot> CreateAsync(PilotCreateDto createDto, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(createDto, nameof(createDto));
 
@@ -87,7 +87,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
 
         logger.Information("Pilot with name: {Name} created successfully.", createDto.Name);
 
-        return pilot.Id;
+        return pilot;
     }
 
     public async Task UpdateAsync(int id, PilotUpdateDto updateDto, CancellationToken token)

@@ -1,11 +1,12 @@
 ﻿using Race.Shared.Utilities.Paging;
 using TeamManagementService.Application.Dtos.Pilots;
+using TeamManagementService.Domain.Models;
 
 namespace TeamManagementService.Application.Interfaces.Repositories;
 
 public interface IPilotRepository
 {
-    Task<int> CreateAsync(PilotCreateDto entity, CancellationToken token);
+    Task<Pilot> CreateAsync(PilotCreateDto entity, CancellationToken token);
     Task<IPagedList<PilotListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token);
     Task<PilotDetailsDto> GetByIdAsync(int id, CancellationToken token);
     Task UpdateAsync(int id, PilotUpdateDto updateDto, CancellationToken token);

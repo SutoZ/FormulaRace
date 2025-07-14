@@ -2,9 +2,9 @@ services:
   # The ASP.NET Core Web API service
   api:
     build:
-      context: ./backend
+      context: ./backend/microservices
       # Specify the Dockerfile for the API service
-      dockerfile: Race.Web/Dockerfile
+      dockerfile: teammanagement-service/TeamManagementService.API/Dockerfile
     ports:
       - "8080:8080" # Map host port 8080 to container port 8080
     environment:
