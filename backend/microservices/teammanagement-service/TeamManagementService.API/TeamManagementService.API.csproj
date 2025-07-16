@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\shared\Race.Shared.Utilities\Race.Shared.Utilities.csproj" />
     <ProjectReference Include="..\TeamManagementService.Application\TeamManagementService.Application.csproj" />
     <ProjectReference Include="..\TeamManagementService.Infrastructure\TeamManagementService.Infrastructure.csproj" />
   </ItemGroup>

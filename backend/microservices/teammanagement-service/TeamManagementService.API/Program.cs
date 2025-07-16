@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Race.Shared.Utilities.Paging;
 using Serilog;
 using TeamManagementService.Application.Interfaces.Repositories;
 using TeamManagementService.Application.Interfaces.Services;
@@ -74,6 +75,7 @@ builder.Services.AddScoped<IPilotRepository, PilotRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IPilotService, PilotService>();
+builder.Services.AddScoped(typeof(IPagedList<>), typeof(PagedList<>));
 
 builder.Services.AddDbContext<RaceContext>(optionsBuilder =>
 {

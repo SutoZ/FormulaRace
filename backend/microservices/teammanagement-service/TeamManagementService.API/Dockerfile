@@ -4,18 +4,19 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy all .csproj files and restore dependencies first to leverage Docker layer caching
-COPY ["teammanagement-service/TeamManagementService.API/TeamManagementService.API.csproj", "TeamManagementService.API/"]
-COPY ["teammanagement-service/TeamManagementService.Application/TeamManagementService.Application.csproj", "TeamManagementService.Application/"]
-COPY ["teammanagement-service/TeamManagementService.Domain/TeamManagementService.Domain.csproj", "TeamManagementService.Domain/"]
-COPY ["teammanagement-service/TeamManagementService.Infrastructure/TeamManagementService.Infrastructure.csproj", "TeamManagementService.Infrastructure/"]
+COPY ["teammanagement-service/TeamManagementService.API/TeamManagementService.API.csproj", "teammanagement-service/TeamManagementService.API/"]
+COPY ["teammanagement-service/TeamManagementService.Application/TeamManagementService.Application.csproj", "teammanagement-service/TeamManagementService.Application/"]
+COPY ["teammanagement-service/TeamManagementService.Domain/TeamManagementService.Domain.csproj", "teammanagement-service/TeamManagementService.Domain/"]
+COPY ["teammanagement-service/TeamManagementService.Infrastructure/TeamManagementService.Infrastructure.csproj", "teammanagement-service/TeamManagementService.Infrastructure/"]
 # If you have other projects (like shared libraries), copy them here as well
 COPY ["shared/Race.Shared.Utilities/Race.Shared.Utilities.csproj", "shared/Race.Shared.Utilities/"]
 
-RUN dotnet restore TeamManagementService.API/TeamManagementService.API.csproj
+# Restore dependencies from the main project, which will restore all its references
+RUN dotnet restore "teammanagement-service/TeamManagementService.API/TeamManagementService.API.csproj"
 
 # Copy the rest of the source code
 COPY . .
-WORKDIR "/src/TeamManagementService.API"
+WORKDIR "/src/teammanagement-service/TeamManagementService.API"
 
 # Build the project in Release configuration
 RUN dotnet build "TeamManagementService.API.csproj" -c Release -o /app/build

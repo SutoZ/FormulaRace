@@ -14,14 +14,36 @@ spec:
     spec:
       containers:
       - name: team-management-service
-      # my resgistry: team-management
         image: team-management/team-management-service:v1 # The image you pushed
+        
+        resources:
+          requests:
+            cpu: "100m"    # Request 0.1 CPU core
+            memory: "128Mi" # Request 128 Mebibytes of memory
+          limits:
+            cpu: "500m"    # Limit to 0.5 CPU core
+            memory: "512Mi" # Limit to 512 Mebibytes of memory
+
         ports:
-        - containerPort: 8080 # The port exposed in your Dockerfile
+        - containerPort: 8080
+        
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 15 # Give the app time to start
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5 # Check sooner if it's ready for traffic
+          periodSeconds: 10
+
         env:
         - name: ASPNETCORE_URLS
           value: "http://+:8080"
-        # Best practice: Use Kubernetes Secrets for connection strings and other sensitive data
+        # Best Practice: Use Kubernetes Secrets for connection strings and other sensitive data
         # - name: ConnectionStrings__RaceConnection
         #   valueFrom:
         #     secretKeyRef:
