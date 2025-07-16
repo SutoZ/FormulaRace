@@ -1,8 +1,8 @@
-﻿using System.Reflection;
-using System.Linq.Dynamic.Core;     //can query throw column, which is not at compile time, only at runtime by reflection
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
 using Race.Shared.Utilities.Extensions;
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Race.Shared.Utilities.Paging;
 

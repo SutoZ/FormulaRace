@@ -10,7 +10,7 @@ public static class EfExtensions
         ArgumentNullException.ThrowIfNull(source);
 
         if (source.Provider is IAsyncQueryProvider)
-            return await source.ToListAsync(token);
+            return await EntityFrameworkQueryableExtensions.ToListAsync(source, token);
 
         return await source.ToListAsync(token);
     }
