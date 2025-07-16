@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Race.Shared.Utilities.Paging;
 using Serilog;
+using TeamManagementService.Application.CQRS.Pilots.Handlers;
 using TeamManagementService.Application.Interfaces.Repositories;
 using TeamManagementService.Application.Interfaces.Services;
 using TeamManagementService.Application.Mappings;
@@ -76,6 +77,7 @@ builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IPilotService, PilotService>();
 builder.Services.AddScoped(typeof(IPagedList<>), typeof(PagedList<>));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 builder.Services.AddDbContext<RaceContext>(optionsBuilder =>
 {
@@ -83,7 +85,13 @@ builder.Services.AddDbContext<RaceContext>(optionsBuilder =>
     optionsBuilder.EnableSensitiveDataLogging();
 });
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly); // Register current assembly
+    cfg.RegisterServicesFromAssembly(typeof(GetAllPilotsHandler).Assembly); // Register Application assembly
+});
+
+
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {

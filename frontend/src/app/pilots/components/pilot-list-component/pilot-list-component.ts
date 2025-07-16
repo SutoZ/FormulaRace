@@ -15,7 +15,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { catchError, map, merge, startWith, Subject, switchMap } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { catchError, map, merge, startWith, Subject, switchMap, takeUntil } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
@@ -39,7 +40,7 @@ import { MatInputModule } from '@angular/material/input';
 
 export class PilotListComponent implements AfterViewInit, OnDestroy {
   public displayedColumns: string[] = ['Id', 'Name', 'Number', 'Code', 'Nationality', 'actions'];
-  public dataSource = new MatTableDataSource<IPilotsListViewModel>();
+  public dataSource = new MatTableDataSource<IPilotsListViewModel>([]);
 
   pageIndex = 0;
   pageSize = 10;
@@ -60,7 +61,11 @@ export class PilotListComponent implements AfterViewInit, OnDestroy {
   filterQuery: string = '';
 
 
-  constructor(private readonly dialog: MatDialog, private readonly pilotsService: PilotsService) { }
+  constructor(
+    private readonly dialog: MatDialog,
+    private readonly pilotsService: PilotsService,
+    private readonly snackBar: MatSnackBar
+  ) { }
 
 
   ngAfterViewInit() {
@@ -88,9 +93,12 @@ export class PilotListComponent implements AfterViewInit, OnDestroy {
       catchError(() => {
         this.isLoading = false;
         // Handle error and return an empty array, show a snackbar, or log the error
-        console.error('Error loading pilots data');
+        this.snackBar.open('Error loading pilots data', 'Close', {
+          duration: 3000,
+        });
         return [];
-      })
+      }),
+      takeUntil(this.componentDestroyed$)
     ).subscribe(data => {
       this.dataSource.data = data;
     });

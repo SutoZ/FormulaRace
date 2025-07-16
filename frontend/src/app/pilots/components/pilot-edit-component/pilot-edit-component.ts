@@ -86,12 +86,12 @@ export class PilotEditComponent implements OnInit {
 
     if (this.id) {
       this.pilotService.putPilot(this.id, pilotData).subscribe({
-        next: () => this.router.navigate(['/pilots']),
+        next: () => { this.router.navigate(['/pilots']); },
         error: err => console.error(err)
       });
     } else {
       this.pilotService.postPilot(pilotData).subscribe({
-        next: () => this.router.navigate(['/pilots']),
+        next: () => { this.router.navigate(['/pilots']); },
         error: err => console.error(err)
       });
     }
