@@ -1,12 +1,12 @@
-﻿using Race.Shared.Utilities.Paging;
-using Serilog;
+﻿using Microsoft.Extensions.Logging;
+using Race.Shared.Utilities.Paging;
 using TeamManagementService.Application.Dtos.Pilots;
 using TeamManagementService.Application.Interfaces.Repositories;
 using TeamManagementService.Application.Interfaces.Services;
 
 namespace TeamManagementService.Application.Services;
 
-public class PilotService(IPilotRepository pilotRepository, ILogger logger) : IPilotService
+public class PilotService(IPilotRepository pilotRepository, ILogger<PilotService> logger) : IPilotService
 {
     public async Task<PilotListDto> CreateAsync(PilotCreateDto createDto, CancellationToken token)
     {
@@ -18,21 +18,27 @@ public class PilotService(IPilotRepository pilotRepository, ILogger logger) : IP
     {
         ArgumentNullException.ThrowIfNull(pagerParameters, nameof(pagerParameters));
 
-        logger.Information("Fetching all pilots with pagination parameters: {@PagerParameters}", pagerParameters);
+        logger.LogInformation("Fetching all pilots with pagination parameters: {@PagerParameters}", pagerParameters);
         return await pilotRepository.GetAllAsync(pagerParameters, token);
     }
 
     public async Task<PilotDetailsDto> GetByIdAsync(int id, CancellationToken token)
     {
+        logger.LogInformation("Fetching pilot with ID: {Id}", id);
+
         return await pilotRepository.GetByIdAsync(id, token);
     }
 
     public async Task UpdateAsync(int id, PilotUpdateDto updateDto, CancellationToken token)
     {
+        logger.LogInformation("Updating pilot with ID: {Id}", id);
+
         await pilotRepository.UpdateAsync(id, updateDto, token);
     }
     public async Task<int> DeleteAsync(int id, CancellationToken token)
     {
+        logger.LogInformation("Deleting pilot with ID: {Id}", id);
+
         return await pilotRepository.DeleteAsync(id, token);
     }
 }

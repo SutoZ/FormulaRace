@@ -33,7 +33,7 @@ public class TeamController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new GetTeamByIdQuery(id), token);
         return result.Match<IActionResult>(
-            success => Ok(success),
+            Ok,
             notFound => NotFound(),
             error => BadRequest("An error occurred while retrieving the team.")
         );

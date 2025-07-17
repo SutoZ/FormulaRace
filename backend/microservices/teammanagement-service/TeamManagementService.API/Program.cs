@@ -23,7 +23,6 @@ Log.Logger = new LoggerConfiguration()
 
 Log.Information("Loading configuration...");
 
-
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(new ConfigurationBuilder().AddJsonFile("appsettings.json")
     .Build())
@@ -33,6 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog();
 builder.Services.AddSingleton(Log.Logger);
+
 Log.Information("Configuration loaded successfully.");
 
 //builder.WebHost.UseKestrel(options =>
@@ -145,7 +145,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler();
+    app.UseExceptionHandler(opt => { });
     app.UseHsts();
 }
 

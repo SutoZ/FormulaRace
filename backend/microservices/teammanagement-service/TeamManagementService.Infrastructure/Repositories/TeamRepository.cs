@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Race.Shared.Utilities.Paging;
-using Serilog;
 using System.Linq.Expressions;
 using TeamManagementService.Application.Dtos.Teams;
 using TeamManagementService.Application.Interfaces.Repositories;
@@ -10,13 +10,13 @@ using TeamManagementService.Infrastructure.ApplicationContext;
 
 namespace TeamManagementService.Infrastructure.Repositories;
 
-public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger) : ITeamRepository
+public class TeamRepository(RaceContext context, IMapper mapper, ILogger<TeamRepository> logger) : ITeamRepository
 {
     public async Task<IPagedList<TeamListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(pagerParameters, nameof(pagerParameters));
 
-        logger.Information("Retrieving teams with pagination parameters: {@PagerParameters}", pagerParameters);
+        logger.LogInformation("Retrieving teams with pagination parameters: {@PagerParameters}", pagerParameters);
 
         var query = context.Teams.AsNoTracking();
 
@@ -29,7 +29,7 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger)
 
         var pagedList = await PagedList<TeamListDto>.CreateAsync(query, pagerParameters, projection, token);
 
-        logger.Information("Retrieved {PageSize} teams on page {PageIndex}", pagerParameters.PageSize, pagerParameters.PageIndex);
+        logger.LogInformation("Retrieved {PageSize} teams on page {PageIndex}", pagerParameters.PageSize, pagerParameters.PageIndex);
 
         return pagedList;
     }
@@ -45,7 +45,7 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger)
             .FirstOrDefaultAsync(ent => ent.Id == id, token);
 
         if (team is null)
-            logger.Information("Team with id: {Id} not found.", id);
+            logger.LogInformation("Team with id: {Id} not found.", id);
 
         return mapper.Map<TeamDetailsDto>(team);
     }
@@ -59,13 +59,13 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger)
 
         if (team is null)
         {
-            logger.Information("Team with id: {Id} not found.", id);
+            logger.LogInformation("Team with id: {Id} not found.", id);
             throw new KeyNotFoundException($"Team with id: {id} not found.");
         }
 
         context.Teams.Remove(team);
 
-        logger.Information("Team with id: {Id} deleted successfully.", id);
+        logger.LogInformation("Team with id: {Id} deleted successfully.", id);
 
         await context.SaveChangesAsync(token);
         return team.Id;
@@ -79,14 +79,14 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger)
 
         if (nameExists)
         {
-            logger.Information("Team with name: {Name} already exists.", createDto.Name);
+            logger.LogInformation("Team with name: {Name} already exists.", createDto.Name);
             throw new InvalidOperationException($"Team with name: {createDto.Name} already exists.");
         }
 
         Team newTeam = mapper.Map<Team>(createDto);
         context.Teams.Add(newTeam);
 
-        logger.Information("Team with name: {Name} created successfully.", newTeam.Name);
+        logger.LogInformation("Team with name: {Name} created successfully.", newTeam.Name);
 
         await context.SaveChangesAsync(token);
         return newTeam.Id;
@@ -100,7 +100,7 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger)
 
         if (!teamExists)
         {
-            logger.Information("Team with id: {Id} not found.", id);
+            logger.LogInformation("Team with id: {Id} not found.", id);
             throw new KeyNotFoundException($"Team with id: {id} not found.");
         }
 
@@ -110,7 +110,7 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger)
         mapper.Map<TeamUpdateDto, Team>(updateDto);
         await context.SaveChangesAsync(token);
 
-        logger.Information("Team with id: {Id} updated successfully.", id);
+        logger.LogInformation("Team with id: {Id} updated successfully.", id);
     }
 
     public async Task<int> CreateAsync(TeamCreateDto createDto, CancellationToken token)
@@ -123,7 +123,7 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger)
 
         if (nameExists)
         {
-            logger.Information("Team with name: {Name} already exists.", createDto.Name);
+            logger.LogInformation("Team with name: {Name} already exists.", createDto.Name);
             throw new InvalidOperationException($"Team with name: {createDto.Name} already exists.");
         }
 
@@ -132,7 +132,7 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger logger)
         context.Teams.Add(team);
         await context.SaveChangesAsync(token);
 
-        logger.Information("Team with name: {Name} created successfully.", createDto.Name);
+        logger.LogInformation("Team with name: {Name} created successfully.", createDto.Name);
 
         return team.Id;
     }

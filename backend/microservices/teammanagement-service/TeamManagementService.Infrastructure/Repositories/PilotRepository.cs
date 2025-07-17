@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Race.Shared.Utilities.Paging;
-using Serilog;
 using System.Linq.Expressions;
 using TeamManagementService.Application.Dtos.Pilots;
 using TeamManagementService.Application.Dtos.Teams;
@@ -11,7 +11,7 @@ using TeamManagementService.Infrastructure.ApplicationContext;
 
 namespace TeamManagementService.Infrastructure.Repositories;
 
-public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger) : IPilotRepository
+public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotRepository> logger) : IPilotRepository
 {
     public async Task<int> DeleteAsync(int id, CancellationToken token)
     {
@@ -22,13 +22,13 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
 
         if (pilot is null)
         {
-            logger.Information("Pilot with id: {Id} not found.", id);
+            logger.LogInformation("Pilot with id: {Id} not found.", id);
             throw new KeyNotFoundException($"Pilot with id: {id} not found.");
         }
 
         context.Pilots.Remove(pilot);
 
-        logger.Information("Pilot with id: {Id} deleted successfully.", id);
+        logger.LogInformation("Pilot with id: {Id} deleted successfully.", id);
 
         await context.SaveChangesAsync(token);
         return pilot.Id;
@@ -41,7 +41,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
             .Include(x => x.Team)
             .AsNoTracking();
 
-        logger.Information("Retrieving pilots with pagination parameters: {@PagerParameters}", pagerParameters);
+        logger.LogInformation("Retrieving pilots with pagination parameters: {@PagerParameters}", pagerParameters);
 
         Expression<Func<Pilot, PilotListDto>> projection = x => new PilotListDto(
             x.Id, x.Name, x.Number, x.Code, x.Nationality, x.Team == null ? null : new TeamListDto(
@@ -54,7 +54,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
     {
         if (id < 0)
         {
-            logger.Information("Id must be greater than or equal to 0. Provided id: {Id}", id);
+            logger.LogInformation("Id must be greater than or equal to 0. Provided id: {Id}", id);
             throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than or equal to 0.");
         }
 
@@ -64,7 +64,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
             .FirstOrDefaultAsync(x => x.Id == id, token);
 
         if (pilot is null)
-            logger.Information("Pilot with id: {Id} not found.", id);
+            logger.LogInformation("Pilot with id: {Id} not found.", id);
 
         return mapper.Map<PilotDetailsDto>(pilot);
     }
@@ -76,7 +76,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
         bool nameExists = await context.Pilots.AnyAsync(x => x.Name.ToLower() == createDto.Name.ToLower(), token);
         if (nameExists)
         {
-            logger.Information("Pilot with name: {Name} already exists.", createDto.Name);
+            logger.LogInformation("Pilot with name: {Name} already exists.", createDto.Name);
             throw new ArgumentException($"Pilot with name: {createDto.Name} already exists.");
         }
 
@@ -85,7 +85,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
         context.Pilots.Add(pilot);
         await context.SaveChangesAsync(token);
 
-        logger.Information("Pilot with name: {Name} created successfully.", createDto.Name);
+        logger.LogInformation("Pilot with name: {Name} created successfully.", createDto.Name);
 
         return pilot;
     }
@@ -98,7 +98,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
 
         if (!pilotExists)
         {
-            logger.Information("Pilot with id: {Id} not found.", id);
+            logger.LogInformation("Pilot with id: {Id} not found.", id);
             throw new KeyNotFoundException($"Pilot with id: {id} not found.");
         }
 
@@ -107,7 +107,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
         mapper.Map<PilotUpdateDto, Pilot>(updateDto);
         await context.SaveChangesAsync(token);
 
-        logger.Information("Pilot with id: {Id} updated successfully.", id);
+        logger.LogInformation("Pilot with id: {Id} updated successfully.", id);
     }
 
     public async Task<int> InsertAsync(PilotCreateDto createDto, CancellationToken token)
@@ -118,7 +118,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
 
         if (nameExists)
         {
-            logger.Information("Pilot with name: {Name} already exists.", createDto.Name);
+            logger.LogInformation("Pilot with name: {Name} already exists.", createDto.Name);
             throw new ArgumentException($"Pilot with name: {createDto.Name} already exists.");
         }
 
@@ -126,7 +126,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger logger
         context.Pilots.Add(pilot);
 
         await context.SaveChangesAsync(token);
-        logger.Information("Pilot with name: {Name} created successfully.", createDto.Name);
+        logger.LogInformation("Pilot with name: {Name} created successfully.", createDto.Name);
 
         return pilot.Id;
     }

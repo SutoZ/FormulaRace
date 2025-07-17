@@ -2,21 +2,21 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace TeamManagementService.Application.Middleware;
 
-public class DBUpdateExceptionHandler(ILogger logger) : IExceptionHandler
+public class DBUpdateExceptionHandler(ILogger<DBUpdateExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        logger.Error(exception, "Unhandled exception occurred while processing request.");
+        logger.LogError(exception, "Unhandled exception occurred while processing request.");
 
         httpContext.Response.ContentType = "application/json";
 
         if (exception is DbUpdateException)
         {
-            logger.Error(exception, "Database update exception occurred. {Message}", exception.Message);
+            logger.LogError(exception, "Database update exception occurred. {Message}", exception.Message);
 
             ProblemDetails problemDetails = new()
             {
