@@ -15,11 +15,14 @@ public class PilotConfiguration : IEntityTypeConfiguration<Pilot>
         builder.ToTable("Pilots");
 
         builder.HasKey(x => x.Id);
-
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
+
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(NameMaxLength);
+
+        builder.Property(x => x.CreatedAt).IsRequired();
+        builder.Property(x => x.Active).IsRequired();
 
         builder.Property(x => x.Nationality)
             .IsRequired()
@@ -32,7 +35,7 @@ public class PilotConfiguration : IEntityTypeConfiguration<Pilot>
             .HasMaxLength(CodeMaxLength);
 
         builder.HasIndex(x => x.Name);
-        builder.HasIndex(x => x.Code).IsUnique();
+        builder.HasIndex(x => x.Code).IsUnique().HasDatabaseName("IX_Pilot_Code");
 
         builder.HasOne(x => x.Team)
             .WithMany(x => x.Pilots)

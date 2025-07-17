@@ -14,11 +14,14 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
         builder.ToTable("Teams");
 
         builder.HasKey(x => x.Id);
-
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
+
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(NameMaxLength);
+
+        builder.Property(x => x.CreatedAt).IsRequired();
+        builder.Property(x => x.Active).IsRequired();
 
         builder.Property(x => x.DateOfFoundation).IsRequired();
 
@@ -28,7 +31,7 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
 
         builder.Property(x => x.ChampionShipPoints).IsRequired();
 
-        builder.HasIndex(x => x.Name);
+        builder.HasIndex(x => x.Name).IsUnique().HasDatabaseName("IX_Team_Name");
 
         builder
             .HasMany(x => x.Pilots)

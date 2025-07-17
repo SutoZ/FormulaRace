@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 namespace TeamManagementService.Application.Middleware;
 
 //Refactor to be general and not specific
-public class ExceptionHandler(ILogger logger) : IExceptionHandler
+public class ExceptionHandler(ILogger<ExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        logger.Error(exception, "Unhandled exception occurred while processing request.");
+        logger.LogError(exception, "Unhandled exception occurred while processing request.");
 
         httpContext.Response.ContentType = "application/json";
         httpContext.Response.StatusCode = exception switch

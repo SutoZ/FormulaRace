@@ -1,16 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace TeamManagementService.Domain.Models;
 
-public class Pilot
+public class Pilot : Entity
 {
-    [Key]
-    [Required]
-    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-    public int Id { get; set; }
-    public string Name { get; set; }
     public string Number { get; set; }
     public string Code { get; set; }
     public string Nationality { get; set; }

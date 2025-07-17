@@ -47,9 +47,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -u admin:${SEQ_ADMIN_PASSWORD} http://localhost:80/api/diagnostics/status"]
       interval: 30s
-      timeout: 10s
+      timeout: 5s
       retries: 5
-      start_period: 120s
+      start_period: 30s
     networks:
       - race-network # Connect Seq to the custom network
   

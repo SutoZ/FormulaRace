@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Race.Shared.Utilities.Paging;
 using Serilog;
+using System.Text;
 using TeamManagementService.Application.CQRS.Pilots.Handlers;
 using TeamManagementService.Application.Interfaces.Repositories;
 using TeamManagementService.Application.Interfaces.Services;
@@ -13,6 +14,7 @@ using TeamManagementService.Application.Middleware;
 using TeamManagementService.Application.Services;
 using TeamManagementService.Domain.Models;
 using TeamManagementService.Infrastructure.ApplicationContext;
+using TeamManagementService.Infrastructure.Interceptors;
 using TeamManagementService.Infrastructure.Repositories;
 
 Log.Logger = new LoggerConfiguration()
@@ -35,16 +37,10 @@ builder.Services.AddSingleton(Log.Logger);
 
 Log.Information("Configuration loaded successfully.");
 
-//builder.WebHost.UseKestrel(options =>
-//{
-//    options.ListenAnyIP(8080);
-//});
-
-// Add services to the container.
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.CheckConsentNeeded = context => true;
-    options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
 
@@ -72,17 +68,24 @@ builder.Services.AddCors(setup =>
     });
 });
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+
 builder.Services.AddScoped<IPilotRepository, PilotRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IPilotService, PilotService>();
 builder.Services.AddScoped(typeof(IPagedList<>), typeof(PagedList<>));
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 builder.Services.AddDbContext<RaceContext>(optionsBuilder =>
 {
-    optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("RaceConnection"));
-    optionsBuilder.EnableSensitiveDataLogging();
+    string conn = new StringBuilder(builder.Configuration.GetConnectionString("RaceConnection")).ToString();
+    optionsBuilder.UseSqlServer(conn)
+    .AddInterceptors(new SoftDeleteInterceptor(builder.Services.BuildServiceProvider().GetRequiredService<ILogger<SoftDeleteInterceptor>>()))
+    .AddInterceptors(new AuditableInterceptor(builder.Services.BuildServiceProvider().GetRequiredService<ILogger<AuditableInterceptor>>()))
+        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+        .EnableDetailedErrors()
+        .EnableSensitiveDataLogging();
 });
 
 builder.Services.AddMediatR(cfg =>
@@ -90,7 +93,6 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly); // Register current assembly
     cfg.RegisterServicesFromAssembly(typeof(GetAllPilotsHandler).Assembly); // Register Application assembly
 });
-
 
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
