@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 using TeamManagementService.Domain.Models;
 using TeamManagementService.Domain.Seed.Pilots;
 using TeamManagementService.Domain.Seed.Teams;
@@ -7,14 +9,37 @@ using TeamManagementService.Infrastructure.EntityConfig;
 
 namespace TeamManagementService.Infrastructure.ApplicationContext;
 
-public class RaceContext(DbContextOptions<RaceContext> context) : IdentityDbContext<ApplicationUser>(context)
+public class RaceContext : IdentityDbContext<ApplicationUser>
 {
+    private readonly ILogger<RaceContext>? logger;
+
     public virtual DbSet<Pilot> Pilots { get; set; }
     public virtual DbSet<Team> Teams { get; set; }
+
+    public RaceContext(DbContextOptions<RaceContext> options, ILogger<RaceContext>? logger = null) : base(options)
+    {
+        this.logger = logger;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        var softDeleteInterface = typeof(Domain.Interfaces.ISoftDelete);
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            var clrType = entityType.ClrType;
+            if (softDeleteInterface.IsAssignableFrom(clrType))
+            {
+                // Build the lambda: e => e.Active
+                var parameter = Expression.Parameter(clrType, "e");
+                var property = Expression.Property(parameter, "Active");
+                var lambda = Expression.Lambda(property, parameter);
+
+                entityType.SetQueryFilter(lambda);
+            }
+        }
 
         modelBuilder.ApplyConfiguration(new PilotConfiguration());
         modelBuilder.ApplyConfiguration(new TeamConfiguration());
@@ -72,8 +97,35 @@ public class RaceContext(DbContextOptions<RaceContext> context) : IdentityDbCont
         await context.SaveChangesAsync();
     }
 
+    public async Task SeedAllAsync()
+    {
+        await using var transaction = await Database.BeginTransactionAsync();
+        try
+        {
+            logger?.LogInformation("Seeding Teams at {Timestamp}", DateTimeOffset.UtcNow);
+            await SeedTeamsAsync(this);
+
+            logger?.LogInformation("Seeding Pilots at {Timestamp}", DateTimeOffset.UtcNow);
+            await SeedPilotsAsync(this);
+
+            await transaction.CommitAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            await transaction.RollbackAsync();
+            logger?.LogError(ex, "An error occurred while seeding the database: {Message}", ex.Message);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            logger?.LogError(ex, "An error occurred while seeding the database: {Message}", ex.Message);
+            throw;
+        }
+    }
+
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
         return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-    }    
+    }
 }

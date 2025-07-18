@@ -129,8 +129,7 @@ app.MapControllerRoute(
 
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<RaceContext>();
-await db.Database.EnsureCreatedAsync();
-await RaceContext.SeedTeamsAsync(db);
-await RaceContext.SeedPilotsAsync(db);
+await db.Database.MigrateAsync();
+await db.SeedAllAsync();
 
 await app.RunAsync();
