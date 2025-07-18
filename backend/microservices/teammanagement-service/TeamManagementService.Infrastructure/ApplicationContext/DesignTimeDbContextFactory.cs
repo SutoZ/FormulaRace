@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace TeamManagementService.Infrastructure.ApplicationContext;
 
+// used for design-time database context creation for migrations DO NOT DELETE!!!
 public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<RaceContext>
 {
     public RaceContext CreateDbContext(string[] args)
