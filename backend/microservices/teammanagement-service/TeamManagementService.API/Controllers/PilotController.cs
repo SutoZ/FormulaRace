@@ -23,7 +23,7 @@ public class PilotController(IMediator mediator, ILogger<PilotController> logger
         logger.LogInformation("Fetching all pilots with pagination parameters: {@PagerParameters}", pagerParameters);
         var result = await mediator.Send(new GetAllPilotsQuery(pagerParameters), token);
 
-        logger.LogInformation("Retrieved {Count} pilots on page {PageIndex} with page size {PageSize}", 
+        logger.LogInformation("Retrieved {Count} pilots on page {PageIndex} with page size {PageSize}",
             result.TotalCount, pagerParameters.PageIndex, pagerParameters.PageSize);
 
         return Ok(result);
@@ -83,8 +83,13 @@ public class PilotController(IMediator mediator, ILogger<PilotController> logger
     [SwaggerResponse(400, "Invalid request.")]
     public async Task<IActionResult> Delete(int id, CancellationToken token)
     {
-        await mediator.Send(new DeletePilotCommand(id), token);
-        return NoContent();
+        var result = await mediator.Send(new DeletePilotCommand(id), token);
+
+        return result.Match<IActionResult>(
+            deletedId => NoContent(),
+            notFound => NotFound(new { error = notFound.ToString() }),
+            error => BadRequest(new { error = error.ToString() })
+        );
     }
 
     //[HttpPost("batch")]

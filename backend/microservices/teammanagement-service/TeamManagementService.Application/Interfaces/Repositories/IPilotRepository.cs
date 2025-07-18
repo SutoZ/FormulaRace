@@ -1,4 +1,6 @@
-﻿using Race.Shared.Utilities.Paging;
+﻿using OneOf;
+using OneOf.Types;
+using Race.Shared.Utilities.Paging;
 using TeamManagementService.Application.Dtos.Pilots;
 using TeamManagementService.Domain.Models;
 
@@ -10,6 +12,6 @@ public interface IPilotRepository
     Task<IPagedList<PilotListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token);
     Task<PilotDetailsDto> GetByIdAsync(int id, CancellationToken token);
     Task UpdateAsync(int id, PilotUpdateDto updateDto, CancellationToken token);
-    Task<int> DeleteAsync(int id, CancellationToken token);
+    Task<OneOf<int, NotFound, Error>> DeleteAsync(int id, CancellationToken token);
     Task<int> InsertAsync(PilotCreateDto createDto, CancellationToken token);
 }

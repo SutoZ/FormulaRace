@@ -8,6 +8,7 @@ using TeamManagementService.Infrastructure.ApplicationContext;
 
 namespace TeamManagementService.Infrastructure.Interceptors;
 
+// Interceptor to automatically set audit properties on entities implementing IAuditable
 public sealed class AuditableInterceptor(ILogger<AuditableInterceptor> logger) : SaveChangesInterceptor
 {
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)

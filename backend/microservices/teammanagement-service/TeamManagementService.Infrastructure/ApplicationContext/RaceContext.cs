@@ -18,16 +18,60 @@ public class RaceContext(DbContextOptions<RaceContext> context) : IdentityDbCont
 
         modelBuilder.ApplyConfiguration(new PilotConfiguration());
         modelBuilder.ApplyConfiguration(new TeamConfiguration());
-
-        SeedInitialDatas(modelBuilder);
     }
 
-    private static void SeedInitialDatas(ModelBuilder modelBuilder)
+    public static async Task SeedTeamsAsync(RaceContext context)
     {
-        //use reflection to get all seed classes in the assembly
-        modelBuilder.Entity<Pilot>().HasData(new PilotSeed().Entities);
-        modelBuilder.Entity<Team>().HasData(new TeamSeed().Entities);
+        // Idempotent: Only add teams if they don't exist (by unique Name)
+        var seedTeams = new TeamSeed().Entities;
+        foreach (var seedTeam in seedTeams)
+        {
+            if (!context.Teams.Any(t => t.Name == seedTeam.Name))
+            {
+                context.Teams.Add(new Team
+                {
+                    Name = seedTeam.Name,
+                    ChampionShipPoints = seedTeam.ChampionShipPoints,
+                    DateOfFoundation = seedTeam.DateOfFoundation,
+                    OwnerName = seedTeam.OwnerName,
+                    CreatedBy = seedTeam.CreatedBy,
+                    CreatedAt = seedTeam.CreatedAt,
+                    Active = seedTeam.Active
+                });
+            }
+        }
+
+        await context.SaveChangesAsync();
     }
+
+    public static async Task SeedPilotsAsync(RaceContext context)
+    {
+        // Idempotent: Only add pilots if they don't exist (by unique Code)
+        var seedPilots = new PilotSeed().Entities;
+
+        var mercedesId = context.Teams.Single(t => t.Name == "Mercedes").Id;
+
+        foreach (var seedPilot in seedPilots)
+        {
+            if (!context.Pilots.Any(p => p.Code == seedPilot.Code))
+            {
+                context.Pilots.Add(new Pilot
+                {
+                    Name = seedPilot.Name,
+                    Number = seedPilot.Number,
+                    Code = seedPilot.Code,
+                    Nationality = seedPilot.Nationality,
+                    TeamId = mercedesId,
+                    CreatedBy = seedPilot.CreatedBy,
+                    CreatedAt = seedPilot.CreatedAt,
+                    Active = seedPilot.Active
+                });
+            }
+        }
+
+        await context.SaveChangesAsync();
+    }
+
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
         return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);

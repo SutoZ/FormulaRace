@@ -1,7 +1,5 @@
 using MediatR;
 using OneOf;
-using System.Threading;
-using System.Threading.Tasks;
 using OneOf.Types;
 using TeamManagementService.Application.CQRS.Pilots.Commands;
 using TeamManagementService.Application.Interfaces.Services;
@@ -15,9 +13,10 @@ public class DeletePilotHandler(IPilotService pilotService) : IRequestHandler<De
     {
         var result = await pilotService.DeleteAsync(request.Id, cancellationToken);
 
-        if (result is 0)
-            return new NotFound();
-
-        return result;
+        return result.Match<OneOf<int, NotFound, Error>>(
+            id => id,
+            notFound => notFound,
+            error => error
+        );
     }
 }

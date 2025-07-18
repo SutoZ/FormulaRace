@@ -8,7 +8,6 @@ public class TeamSeed
     [
         new Team
         {
-            Id = 1,
             ChampionShipPoints = 20,
             Name = "Ferrari",
             DateOfFoundation= new DateTime(1950,04,04),
@@ -19,7 +18,6 @@ public class TeamSeed
         },
         new Team
         {
-            Id = 2,
             ChampionShipPoints = 30,
             Name = "Mercedes",
             DateOfFoundation= new DateTime(1970,04,04),
@@ -30,7 +28,6 @@ public class TeamSeed
         },
         new Team
         {
-            Id = 3,
             Name = "McLaren",
             ChampionShipPoints = 80,
             OwnerName = "Andreas Seidl",
@@ -41,7 +38,6 @@ public class TeamSeed
         },
         new Team
         {
-            Id = 4,
             OwnerName = "Cyril Abiteboul",
             ChampionShipPoints = 20,
             Name = "Reanult",
@@ -52,7 +48,6 @@ public class TeamSeed
         },
         new Team
         {
-            Id = 5,
             Name = "Williams Racing",
             DateOfFoundation = new DateTime(1990,03,05),
             OwnerName = "Frank Williams",
@@ -63,7 +58,6 @@ public class TeamSeed
         },
         new Team
         {
-            Id = 6,
             Name = "Alpha Tauri",
             DateOfFoundation = new DateTime(1990,09,05),
             OwnerName = "Franz Tost",

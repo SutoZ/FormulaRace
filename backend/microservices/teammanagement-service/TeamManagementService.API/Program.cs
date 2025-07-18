@@ -1,21 +1,12 @@
-﻿using Asp.Versioning;
-using AutoMapper;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Race.Shared.Utilities.Paging;
 using Serilog;
-using System.Text;
-using TeamManagementService.Application.CQRS.Pilots.Handlers;
-using TeamManagementService.Application.Interfaces.Repositories;
-using TeamManagementService.Application.Interfaces.Services;
+using TeamManagementService.API.Extensions;
 using TeamManagementService.Application.Mappings;
 using TeamManagementService.Application.Middleware;
-using TeamManagementService.Application.Services;
-using TeamManagementService.Domain.Models;
+using TeamManagementService.Application.Validators;
 using TeamManagementService.Infrastructure.ApplicationContext;
-using TeamManagementService.Infrastructure.Interceptors;
-using TeamManagementService.Infrastructure.Repositories;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -43,9 +34,12 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
+ArgumentException.ThrowIfNullOrEmpty(builder.Configuration.GetConnectionString("RaceConnection"));
+
+var conn = builder.Configuration.GetConnectionString("RaceConnection");
 
 builder.Services.AddHealthChecks()
-    .AddSqlServer(builder.Configuration.GetConnectionString("RaceConnection"));
+    .AddSqlServer(conn!);
 
 builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 {
@@ -68,44 +62,16 @@ builder.Services.AddCors(setup =>
     });
 });
 
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddValidatorsFromAssembly(typeof(PilotDeleteValidator).Assembly);
 
-builder.Services.AddScoped<IPilotRepository, PilotRepository>();
-builder.Services.AddScoped<ITeamRepository, TeamRepository>();
-builder.Services.AddScoped<ITeamService, TeamService>();
-builder.Services.AddScoped<IPilotService, PilotService>();
-builder.Services.AddScoped(typeof(IPagedList<>), typeof(PagedList<>));
+builder.Services.AddScopedServices();
+builder.Services.AddSingletonServices();
 
-builder.Services.AddDbContext<RaceContext>(optionsBuilder =>
-{
-    string conn = new StringBuilder(builder.Configuration.GetConnectionString("RaceConnection")).ToString();
-    optionsBuilder.UseSqlServer(conn)
-    .AddInterceptors(new SoftDeleteInterceptor(builder.Services.BuildServiceProvider().GetRequiredService<ILogger<SoftDeleteInterceptor>>()))
-    .AddInterceptors(new AuditableInterceptor(builder.Services.BuildServiceProvider().GetRequiredService<ILogger<AuditableInterceptor>>()))
-        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-        .EnableDetailedErrors()
-        .EnableSensitiveDataLogging();
-});
+builder.Services.AddDatabaseContext(builder.Configuration);
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly); // Register current assembly
-    cfg.RegisterServicesFromAssembly(typeof(GetAllPilotsHandler).Assembly); // Register Application assembly
-});
+builder.Services.AddMediatRServices();
 
-
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-{
-    options.SignIn.RequireConfirmedEmail = true;
-    options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 8;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-})
-.AddRoles<IdentityRole>()
-.AddEntityFrameworkStores<RaceContext>();
+builder.Services.AddIdentityService();
 
 builder.Services.AddAuthorization();
 
@@ -114,20 +80,9 @@ builder.Services.AddSpaStaticFiles(spa => spa.RootPath = "frontend");
 builder.Services.AddSession();
 
 builder.Services.AddExceptionHandler<DBUpdateExceptionHandler>();
-builder.Services.AddSingleton<IExceptionHandler, ExceptionHandler>();
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 
-builder.Services.AddApiVersioning(options =>
-{
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.ReportApiVersions = true;
-    options.ApiVersionReader = ApiVersionReader.Combine(
-        new QueryStringApiVersionReader("api-version"),
-        new HeaderApiVersionReader("X-Version"),
-        new UrlSegmentApiVersionReader()
-    );
-});
+builder.Services.AddWebApiVersioning();
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
@@ -175,5 +130,7 @@ app.MapControllerRoute(
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<RaceContext>();
 await db.Database.EnsureCreatedAsync();
+await RaceContext.SeedTeamsAsync(db);
+await RaceContext.SeedPilotsAsync(db);
 
 await app.RunAsync();

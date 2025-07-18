@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using OneOf;
+using OneOf.Types;
 using Race.Shared.Utilities.Paging;
 using System.Linq.Expressions;
 using TeamManagementService.Application.Dtos.Pilots;
@@ -13,7 +15,7 @@ namespace TeamManagementService.Infrastructure.Repositories;
 
 public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotRepository> logger) : IPilotRepository
 {
-    public async Task<int> DeleteAsync(int id, CancellationToken token)
+    public async Task<OneOf<int, NotFound, Error>> DeleteAsync(int id, CancellationToken token)
     {
         if (id < 0)
             throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than or equal to 0.");
@@ -23,14 +25,14 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
         if (pilot is null)
         {
             logger.LogInformation("Pilot with id: {Id} not found.", id);
-            throw new KeyNotFoundException($"Pilot with id: {id} not found.");
+            return new NotFound();
         }
 
         context.Pilots.Remove(pilot);
 
+        await context.SaveChangesAsync(token);
         logger.LogInformation("Pilot with id: {Id} deleted successfully.", id);
 
-        await context.SaveChangesAsync(token);
         return pilot.Id;
     }
 

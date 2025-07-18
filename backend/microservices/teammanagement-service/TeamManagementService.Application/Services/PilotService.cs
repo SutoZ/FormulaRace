@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using FluentValidation;
+using Microsoft.Extensions.Logging;
+using OneOf;
+using OneOf.Types;
 using Race.Shared.Utilities.Paging;
 using TeamManagementService.Application.Dtos.Pilots;
 using TeamManagementService.Application.Interfaces.Repositories;
@@ -6,7 +9,7 @@ using TeamManagementService.Application.Interfaces.Services;
 
 namespace TeamManagementService.Application.Services;
 
-public class PilotService(IPilotRepository pilotRepository, ILogger<PilotService> logger) : IPilotService
+public class PilotService(IPilotRepository pilotRepository, ILogger<PilotService> logger, IValidator<PilotDeleteDto> pilotValidator) : IPilotService
 {
     public async Task<PilotListDto> CreateAsync(PilotCreateDto createDto, CancellationToken token)
     {
@@ -35,9 +38,13 @@ public class PilotService(IPilotRepository pilotRepository, ILogger<PilotService
 
         await pilotRepository.UpdateAsync(id, updateDto, token);
     }
-    public async Task<int> DeleteAsync(int id, CancellationToken token)
+
+    public async Task<OneOf<int, NotFound, Error>> DeleteAsync(int id, CancellationToken token)
     {
-        logger.LogInformation("Deleting pilot with ID: {Id}", id);
+        var pilotDeleteDto = new PilotDeleteDto(id, string.Empty, string.Empty, string.Empty, string.Empty, 0);        
+        await pilotValidator.ValidateAndThrowAsync(pilotDeleteDto, token);
+
+        logger.LogInformation("Attempting to delete pilot with ID: {Id}", id);
 
         return await pilotRepository.DeleteAsync(id, token);
     }
