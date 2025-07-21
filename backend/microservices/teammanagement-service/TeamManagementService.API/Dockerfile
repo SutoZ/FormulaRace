@@ -11,6 +11,9 @@ COPY ["teammanagement-service/TeamManagementService.Infrastructure/TeamManagemen
 # If you have other projects (like shared libraries), copy them here as well
 COPY ["shared/Race.Shared.Utilities/Race.Shared.Utilities.csproj", "shared/Race.Shared.Utilities/"]
 
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
 # Restore dependencies from the main project, which will restore all its references
 RUN dotnet restore "teammanagement-service/TeamManagementService.API/TeamManagementService.API.csproj"
 

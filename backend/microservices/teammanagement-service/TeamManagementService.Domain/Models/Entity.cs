@@ -5,7 +5,7 @@ namespace TeamManagementService.Domain.Models;
 public class Entity : IEntity, ISoftDelete, IAuditable
 {
     public int Id { get; set; }
-    public required string Name { get; set; }
+    public string Name { get; set; }
 
     // IAuditable properties
     public DateTimeOffset CreatedAt { get; set; }

@@ -11,8 +11,8 @@ public class PagedList<T> : IPagedList<T> where T : class
     public IReadOnlyList<T> Data { get; set; }
     public int PageIndex { get; set; }
     public int PageSize { get; set; }
-    public int TotalCount { get; set; }
-    public int TotalPages { get; set; }
+    public int Count { get; set; }
+    public int Pages { get; set; }
     public bool HasPreviousPage => PageIndex > 0;
     public string SortColumn { get; set; }
     public string SortOrder { get; set; }
@@ -22,10 +22,10 @@ public class PagedList<T> : IPagedList<T> where T : class
     private PagedList(IReadOnlyList<T> data, int count, PagerParameters pagerParameters)
     {
         Data = data;
-        TotalCount = count;
+        Count = count;
         PageIndex = pagerParameters.PageIndex;
         PageSize = pagerParameters.PageSize;
-        TotalPages = (int)Math.Ceiling(count / (double)pagerParameters.PageSize);
+        Pages = (int)Math.Ceiling(count / (double)pagerParameters.PageSize);
         SortColumn = pagerParameters.SortColumn;
         SortOrder = pagerParameters.SortOrder;
         FilterColumn = pagerParameters.FilterColumn;
@@ -35,7 +35,7 @@ public class PagedList<T> : IPagedList<T> where T : class
     /// <summary>
     /// True if the current page has a next page
     /// </summary>
-    public bool HasNextPage => PageIndex + 1 <= TotalPages;
+    public bool HasNextPage => PageIndex + 1 <= Pages;
 
     public async static Task<PagedList<TDto>> CreateAsync<TEntity, TDto>(
         IQueryable<TEntity> source,

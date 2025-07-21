@@ -22,7 +22,7 @@ public class DBUpdateExceptionHandler(ILogger<DBUpdateExceptionHandler> logger) 
             {
                 Title = "Database Update Error",
                 Detail = exception.Message,
-                Status = StatusCodes.Status500InternalServerError
+                Status = httpContext.Response.StatusCode
             };
 
             httpContext.Response.StatusCode = problemDetails.Status.Value;

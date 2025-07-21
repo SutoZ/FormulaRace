@@ -11,6 +11,6 @@ public interface IPagedList<T> where T : class
     int PageSize { get; set; }
     string SortColumn { get; set; }
     string SortOrder { get; set; }
-    int TotalCount { get; set; }
-    int TotalPages { get; set; }
+    int Count { get; set; }
+    int Pages { get; set; }
 }

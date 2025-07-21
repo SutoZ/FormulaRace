@@ -12,7 +12,7 @@ using TeamManagementService.Infrastructure.ApplicationContext;
 namespace TeamManagementService.Infrastructure.Migrations
 {
     [DbContext(typeof(RaceContext))]
-    [Migration("20250718155237_InitialCreate")]
+    [Migration("20250721133903_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

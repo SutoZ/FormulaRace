@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq.Expressions;
 using TeamManagementService.Domain.Models;
 using TeamManagementService.Domain.Seed.Pilots;
 using TeamManagementService.Domain.Seed.Teams;
@@ -24,22 +23,6 @@ public class RaceContext : IdentityDbContext<ApplicationUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        var softDeleteInterface = typeof(Domain.Interfaces.ISoftDelete);
-
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-        {
-            var clrType = entityType.ClrType;
-            if (softDeleteInterface.IsAssignableFrom(clrType))
-            {
-                // Build the lambda: e => e.Active
-                var parameter = Expression.Parameter(clrType, "e");
-                var property = Expression.Property(parameter, "Active");
-                var lambda = Expression.Lambda(property, parameter);
-
-                entityType.SetQueryFilter(lambda);
-            }
-        }
 
         modelBuilder.ApplyConfiguration(new PilotConfiguration());
         modelBuilder.ApplyConfiguration(new TeamConfiguration());

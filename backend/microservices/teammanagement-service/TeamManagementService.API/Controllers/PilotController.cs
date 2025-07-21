@@ -18,15 +18,14 @@ public class PilotController(IMediator mediator, ILogger<PilotController> logger
     [SwaggerOperation(Tags = new[] { OPNAME })]
     [SwaggerResponse(200, "Returns a paginated list of pilots.")]
     [SwaggerResponse(400, "Invalid pagination parameters.")]
-    public async Task<ActionResult<PagedList<PilotListDto>>> GetAll([FromQuery] PagerParameters pagerParameters, CancellationToken token)
+    public async Task<IActionResult> GetAll([FromQuery] PagerParameters pagerParameters, [FromQuery] PilotFilterDto filterDto, CancellationToken token)
     {
-        logger.LogInformation("Fetching all pilots with pagination parameters: {@PagerParameters}", pagerParameters);
-        var result = await mediator.Send(new GetAllPilotsQuery(pagerParameters), token);
+        var result = await mediator.Send(new GetAllPilotsQuery(pagerParameters, filterDto), token);
 
-        logger.LogInformation("Retrieved {Count} pilots on page {PageIndex} with page size {PageSize}",
-            result.TotalCount, pagerParameters.PageIndex, pagerParameters.PageSize);
-
-        return Ok(result);
+        return result.Match<IActionResult>(
+            Ok,
+            notFound => NotFound(new { message = "Pilot not found"}),
+            error => BadRequest(StatusCodes.Status500InternalServerError));
     }
 
     [HttpGet("{id}")]
@@ -36,17 +35,8 @@ public class PilotController(IMediator mediator, ILogger<PilotController> logger
     [SwaggerResponse(400, "Invalid request.")]
     public async Task<IActionResult> GetById(int id, CancellationToken token)
     {
-        logger.LogInformation("Fetching pilot with ID: {Id}", id);
-
-        if (id <= 0)
-        {
-            logger.LogWarning("Invalid pilot ID: {Id}", id);
-            return BadRequest("Invalid pilot ID.");
-        }
-
+        logger.LogInformation("Request received");
         var result = await mediator.Send(new GetPilotByIdQuery(id), token);
-
-        logger.LogInformation("Pilot retrieval result for ID {Id}: {@Result}", id, result);
 
         return result.Match<IActionResult>(
             Ok,
@@ -83,6 +73,7 @@ public class PilotController(IMediator mediator, ILogger<PilotController> logger
     [SwaggerResponse(400, "Invalid request.")]
     public async Task<IActionResult> Delete(int id, CancellationToken token)
     {
+        logger.LogInformation("Request received");
         var result = await mediator.Send(new DeletePilotCommand(id), token);
 
         return result.Match<IActionResult>(

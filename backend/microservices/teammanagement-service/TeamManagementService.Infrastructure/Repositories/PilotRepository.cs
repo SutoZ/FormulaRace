@@ -17,9 +17,6 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
 {
     public async Task<OneOf<int, NotFound, Error>> DeleteAsync(int id, CancellationToken token)
     {
-        if (id < 0)
-            throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than or equal to 0.");
-
         var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.Id == id, token);
 
         if (pilot is null)
@@ -36,11 +33,11 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
         return pilot.Id;
     }
 
-    public async Task<IPagedList<PilotListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token)
+    public async Task<OneOf<IPagedList<PilotListDto>, NotFound, Error>> GetAllAsync(PagerParameters pagerParameters, Expression<Func<Pilot, bool>> predicate, CancellationToken token)
     {
-        var query = context
-            .Pilots
+        var query = context.Pilots
             .Include(x => x.Team)
+            .Where(predicate)
             .AsNoTracking();
 
         logger.LogInformation("Retrieving pilots with pagination parameters: {@PagerParameters}", pagerParameters);
@@ -49,26 +46,31 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
             x.Id, x.Name, x.Number, x.Code, x.Nationality, x.Team == null ? null : new TeamListDto(
                 x.Team.Id, x.Team.Name, x.Team.DateOfFoundation, x.Team.OwnerName, x.Team.ChampionShipPoints));
 
-        return await PagedList<PilotListDto>.CreateAsync(query, pagerParameters, projection, token);
+        var result = await PagedList<PilotListDto>.CreateAsync(query, pagerParameters, projection, token);
+
+        if (result is null)
+            return new NotFound();
+
+        logger.LogInformation("Retrieved {Count} pilots successfully.", result.Count);
+
+        return result;
     }
 
-    public async Task<PilotDetailsDto> GetByIdAsync(int id, CancellationToken token)
+    public async Task<OneOf<PilotDetailsDto, NotFound, Error>> GetByIdAsync(int id, CancellationToken token)
     {
-        if (id < 0)
-        {
-            logger.LogInformation("Id must be greater than or equal to 0. Provided id: {Id}", id);
-            throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than or equal to 0.");
-        }
-
         var pilot = await context.Pilots
             .Include(ent => ent.Team)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, token);
 
         if (pilot is null)
+        {
             logger.LogInformation("Pilot with id: {Id} not found.", id);
+            return new NotFound();
+        }
 
-        return mapper.Map<PilotDetailsDto>(pilot);
+        var result = mapper.Map<PilotDetailsDto>(pilot);
+        return result;
     }
 
     public async Task<Pilot> CreateAsync(PilotCreateDto createDto, CancellationToken token)
@@ -101,6 +103,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
         if (!pilotExists)
         {
             logger.LogInformation("Pilot with id: {Id} not found.", id);
+            //return new NotFound();
             throw new KeyNotFoundException($"Pilot with id: {id} not found.");
         }
 

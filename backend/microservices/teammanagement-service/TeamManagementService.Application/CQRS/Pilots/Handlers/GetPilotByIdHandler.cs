@@ -12,11 +12,6 @@ public class GetPilotByIdHandler(IPilotService pilotService) : IRequestHandler<G
 {
     public async Task<OneOf<PilotDetailsDto, NotFound, Error>> Handle(GetPilotByIdQuery request, CancellationToken cancellationToken)
     {
-        var result = await pilotService.GetByIdAsync(request.Id, cancellationToken);
-
-        if (result is null)
-            return new NotFound();
-
-        return result;
+        return await pilotService.GetByIdAsync(request.Id, cancellationToken);
     }
 }

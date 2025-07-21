@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Polly;
 using Serilog;
 using TeamManagementService.API.Extensions;
 using TeamManagementService.Application.Mappings;
@@ -127,9 +129,50 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Apply migrations and seed data with a retry policy
+
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<RaceContext>();
 await db.Database.MigrateAsync();
-await db.SeedAllAsync();
+//await db.SeedAllAsync();
+
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var logger = services.GetRequiredService<ILogger<Program>>();
+//    var db = services.GetRequiredService<RaceContext>();
+
+//    try
+//    {
+//        logger.LogInformation("Attempting to apply database migrations...");
+
+//        var retryPolicy = Policy
+//            .Handle<SqlException>()
+//            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+//                (exception, timeSpan, retryCount, context) =>
+//                {
+//                    logger.LogWarning(exception, "Error connecting to database. Retrying in {timeSpan}. Attempt {retryCount}", timeSpan, retryCount);
+//                });
+
+//        await retryPolicy.ExecuteAsync(async () =>
+//        {
+//            await db.Database.MigrateAsync();
+//            logger.LogInformation("Database migrations applied successfully.");
+//        });
+
+//        logger.LogInformation("Attempting to seed data...");
+//        await db.SeedAllAsync();
+//        logger.LogInformation("Data seeding completed successfully.");
+//    }
+//    catch (Exception ex)
+//    {
+//        logger.LogError(ex, "An error occurred during database migration or seeding.");
+//    }
+//    finally
+//    {
+//        await Log.CloseAndFlushAsync();
+//    }
+//}
 
 await app.RunAsync();
