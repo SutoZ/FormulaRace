@@ -131,48 +131,48 @@ app.MapControllerRoute(
 
 // Apply migrations and seed data with a retry policy
 
-using var scope = app.Services.CreateScope();
-var db = scope.ServiceProvider.GetRequiredService<RaceContext>();
-await db.Database.MigrateAsync();
+//using var scope = app.Services.CreateScope();
+//var db = scope.ServiceProvider.GetRequiredService<RaceContext>();
+//await db.Database.MigrateAsync();
 //await db.SeedAllAsync();
 
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var logger = services.GetRequiredService<ILogger<Program>>();
-//    var db = services.GetRequiredService<RaceContext>();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    var db = services.GetRequiredService<RaceContext>();
 
-//    try
-//    {
-//        logger.LogInformation("Attempting to apply database migrations...");
+    try
+    {
+        logger.LogInformation("Attempting to apply database migrations...");
 
-//        var retryPolicy = Policy
-//            .Handle<SqlException>()
-//            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-//                (exception, timeSpan, retryCount, context) =>
-//                {
-//                    logger.LogWarning(exception, "Error connecting to database. Retrying in {timeSpan}. Attempt {retryCount}", timeSpan, retryCount);
-//                });
+        var retryPolicy = Policy
+            .Handle<SqlException>()
+            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                (exception, timeSpan, retryCount, context) =>
+                {
+                    logger.LogWarning(exception, "Error connecting to database. Retrying in {timeSpan}. Attempt {retryCount}", timeSpan, retryCount);
+                });
 
-//        await retryPolicy.ExecuteAsync(async () =>
-//        {
-//            await db.Database.MigrateAsync();
-//            logger.LogInformation("Database migrations applied successfully.");
-//        });
+        await retryPolicy.ExecuteAsync(async () =>
+        {
+            await db.Database.MigrateAsync();
+            logger.LogInformation("Database migrations applied successfully.");
+        });
 
-//        logger.LogInformation("Attempting to seed data...");
-//        await db.SeedAllAsync();
-//        logger.LogInformation("Data seeding completed successfully.");
-//    }
-//    catch (Exception ex)
-//    {
-//        logger.LogError(ex, "An error occurred during database migration or seeding.");
-//    }
-//    finally
-//    {
-//        await Log.CloseAndFlushAsync();
-//    }
-//}
+        logger.LogInformation("Attempting to seed data...");
+        await SeedData.SeedAllAsync(db, logger);
+        logger.LogInformation("Data seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred during database migration or seeding.");
+    }
+    finally
+    {
+        await Log.CloseAndFlushAsync();
+    }
+}
 
 await app.RunAsync();

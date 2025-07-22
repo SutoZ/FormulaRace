@@ -20,6 +20,8 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
             .IsRequired()
             .HasMaxLength(NameMaxLength);
 
+        builder.HasQueryFilter(x => x.Active);
+
         builder.Property(x => x.CreatedAt).IsRequired();
         builder.Property(x => x.Active).IsRequired();
 
