@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using TeamManagementService.Domain.Models;
 using TeamManagementService.Infrastructure.EntityConfig;
 
@@ -17,6 +18,17 @@ public class RaceContext : IdentityDbContext<ApplicationUser>
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PilotConfiguration).Assembly);
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+        // This configures EF Core to log the warning instead of throwing an exception.
+        optionsBuilder.ConfigureWarnings(warnings =>
+        {
+            warnings.Log(RelationalEventId.PendingModelChangesWarning);
+        });
     }
 
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)

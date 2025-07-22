@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Polly;
 using Serilog;
 using TeamManagementService.API.Extensions;
+using TeamManagementService.API.Monitoring;
 using TeamManagementService.Application.Mappings;
 using TeamManagementService.Application.Middleware;
 using TeamManagementService.Application.Validators;
@@ -147,19 +148,37 @@ using (var scope = app.Services.CreateScope())
     {
         logger.LogInformation("Attempting to apply database migrations...");
 
-        var retryPolicy = Policy
-            .Handle<SqlException>()
-            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                (exception, timeSpan, retryCount, context) =>
-                {
-                    logger.LogWarning(exception, "Error connecting to database. Retrying in {timeSpan}. Attempt {retryCount}", timeSpan, retryCount);
-                });
+        var stopWatch = System.Diagnostics.Stopwatch.StartNew();
+        var pendingMigrations = await db.Database.GetPendingMigrationsAsync();
+        var migrationsCount = pendingMigrations.Count();
 
-        await retryPolicy.ExecuteAsync(async () =>
+        if (pendingMigrations.Any())
         {
-            await db.Database.MigrateAsync();
-            logger.LogInformation("Database migrations applied successfully.");
-        });
+            logger.LogInformation("Pending migrations found: {Count}. Applying migrations...{Migrations}", migrationsCount, pendingMigrations);
+
+            var retryPolicy = Policy
+                .Handle<SqlException>()
+                .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                    (exception, timeSpan, retryCount, context) =>
+                    {
+                        logger.LogWarning(exception, "Error connecting to database. Retrying in {timeSpan}. Attempt {retryCount}", timeSpan, retryCount);
+                    });
+
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                await db.Database.MigrateAsync();
+                logger.LogInformation("Database migrations applied successfully.");
+            });
+        }
+        else
+        {
+            logger.LogInformation("Database schema is up-to-date. No migrations to apply.");
+        }
+
+        stopWatch.Stop();
+        logger.LogInformation("Database migration completed in {ElapsedMilliseconds} ms.", stopWatch.ElapsedMilliseconds);
+
+        DatabaseMetrics.RecordMigration(stopWatch.ElapsedMilliseconds, migrationsCount);
 
         logger.LogInformation("Attempting to seed data...");
         await SeedData.SeedAllAsync(db, logger);
