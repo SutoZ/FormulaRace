@@ -30,9 +30,4 @@ public class RaceContext : IdentityDbContext<ApplicationUser>
             warnings.Log(RelationalEventId.PendingModelChangesWarning);
         });
     }
-
-    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-    {
-        return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-    }
 }

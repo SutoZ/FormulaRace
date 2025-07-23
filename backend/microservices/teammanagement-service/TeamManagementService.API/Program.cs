@@ -10,6 +10,7 @@ using TeamManagementService.Application.Mappings;
 using TeamManagementService.Application.Middleware;
 using TeamManagementService.Application.Validators;
 using TeamManagementService.Infrastructure.ApplicationContext;
+using TeamManagementService.Infrastructure.Interceptors;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -37,12 +38,48 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
-ArgumentException.ThrowIfNullOrEmpty(builder.Configuration.GetConnectionString("RaceConnection"));
 
+var dbProvider = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
 var conn = builder.Configuration.GetConnectionString("RaceConnection");
 
-builder.Services.AddHealthChecks()
-    .AddSqlServer(conn!);
+ArgumentException.ThrowIfNullOrEmpty(conn);
+
+switch (dbProvider.ToLowerInvariant())
+{
+    case "sqlserver":
+        builder.Services.AddDbContext<RaceContext>((serviceProvider, options) =>
+            options.UseSqlServer(conn, sqlOptions =>
+            {
+                sqlOptions.EnableRetryOnFailure();
+                sqlOptions.MigrationsAssembly("TeamManagementService.Infrastructure");
+            })
+                   .AddInterceptors(new SoftDeleteInterceptor(serviceProvider.GetRequiredService<ILogger<SoftDeleteInterceptor>>()))
+                   .AddInterceptors(new AuditableInterceptor(serviceProvider.GetRequiredService<ILogger<AuditableInterceptor>>()))
+                   .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                   .EnableDetailedErrors()
+                   .EnableSensitiveDataLogging());
+
+        builder.Services.AddHealthChecks().AddSqlServer(conn!);
+        break;
+    case "postgres":
+        builder.Services.AddDbContext<RaceContext>((serviceProvider, options) =>
+            options.UseNpgsql(conn, npgsqlOptions =>
+            {
+                npgsqlOptions.EnableRetryOnFailure();
+                npgsqlOptions.MigrationsAssembly("TeamManagementService.Infrastructure");
+            })
+                   .AddInterceptors(new SoftDeleteInterceptor(serviceProvider.GetRequiredService<ILogger<SoftDeleteInterceptor>>()))
+                   .AddInterceptors(new AuditableInterceptor(serviceProvider.GetRequiredService<ILogger<AuditableInterceptor>>()))
+                   .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                   .EnableDetailedErrors()
+                   .EnableSensitiveDataLogging());
+
+        builder.Services.AddHealthChecks().AddNpgSql(conn!);
+        break;
+    default:
+        throw new NotSupportedException($"Database provider '{dbProvider}' is not supported.");
+}
+
 
 builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 {
@@ -70,7 +107,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(PilotDeleteValidator).Assembly
 builder.Services.AddScopedServices();
 builder.Services.AddSingletonServices();
 
-builder.Services.AddDatabaseContext(builder.Configuration);
+//builder.Services.AddDatabaseContext(builder.Configuration);
 
 builder.Services.AddMediatRServices();
 
@@ -129,14 +166,6 @@ app.MapGet("/", () => "API is running!");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-// Apply migrations and seed data with a retry policy
-
-//using var scope = app.Services.CreateScope();
-//var db = scope.ServiceProvider.GetRequiredService<RaceContext>();
-//await db.Database.MigrateAsync();
-//await db.SeedAllAsync();
-
 
 using (var scope = app.Services.CreateScope())
 {

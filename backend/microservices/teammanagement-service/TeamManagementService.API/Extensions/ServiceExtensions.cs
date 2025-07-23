@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Race.Shared.Utilities.Paging;
 using System.Text;
 using TeamManagementService.Application.CQRS.Pilots.Commands;
+using TeamManagementService.Application.Interfaces;
 using TeamManagementService.Application.Interfaces.Repositories;
 using TeamManagementService.Application.Interfaces.Services;
 using TeamManagementService.Application.Middleware;
@@ -13,6 +14,7 @@ using TeamManagementService.Domain.Models;
 using TeamManagementService.Infrastructure.ApplicationContext;
 using TeamManagementService.Infrastructure.Interceptors;
 using TeamManagementService.Infrastructure.Repositories;
+using TeamManagementService.Infrastructure.UoW;
 
 namespace TeamManagementService.API.Extensions;
 
@@ -25,6 +27,7 @@ public static class ServiceExtensions
         services.AddScoped<ITeamRepository, TeamRepository>();
         services.AddScoped<ITeamService, TeamService>();
         services.AddScoped<IPilotService, PilotService>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<SoftDeleteInterceptor>();
         services.AddScoped<AuditableInterceptor>();
         services.AddScoped(typeof(IPagedList<>), typeof(PagedList<>));

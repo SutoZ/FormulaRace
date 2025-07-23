@@ -26,8 +26,6 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
         }
 
         context.Pilots.Remove(pilot);
-
-        await context.SaveChangesAsync(token);
         logger.LogInformation("Pilot with id: {Id} deleted successfully.", id);
 
         return pilot.Id;
@@ -75,8 +73,6 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
 
     public async Task<Pilot> CreateAsync(PilotCreateDto createDto, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(createDto, nameof(createDto));
-
         bool nameExists = await context.Pilots.AnyAsync(x => x.Name.ToLower() == createDto.Name.ToLower(), token);
         if (nameExists)
         {
@@ -87,8 +83,6 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
         Pilot pilot = mapper.Map<Pilot>(createDto);
 
         context.Pilots.Add(pilot);
-        await context.SaveChangesAsync(token);
-
         logger.LogInformation("Pilot with name: {Name} created successfully.", createDto.Name);
 
         return pilot;
@@ -96,8 +90,6 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
 
     public async Task UpdateAsync(int id, PilotUpdateDto updateDto, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(updateDto, nameof(updateDto));
-
         var pilotExists = await context.Pilots.AnyAsync(x => x.Id == id, token);
 
         if (!pilotExists)
@@ -109,30 +101,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
 
         var pilot = await context.Pilots.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, token);
 
-        mapper.Map<PilotUpdateDto, Pilot>(updateDto);
-        await context.SaveChangesAsync(token);
-
+        mapper.Map(updateDto, pilot);
         logger.LogInformation("Pilot with id: {Id} updated successfully.", id);
-    }
-
-    public async Task<int> InsertAsync(PilotCreateDto createDto, CancellationToken token)
-    {
-        ArgumentNullException.ThrowIfNull(createDto, nameof(createDto));
-
-        bool nameExists = await context.Pilots.AnyAsync(x => x.Name.ToLower() == createDto.Name.ToLower(), token);
-
-        if (nameExists)
-        {
-            logger.LogInformation("Pilot with name: {Name} already exists.", createDto.Name);
-            throw new ArgumentException($"Pilot with name: {createDto.Name} already exists.");
-        }
-
-        Pilot pilot = mapper.Map<Pilot>(createDto);
-        context.Pilots.Add(pilot);
-
-        await context.SaveChangesAsync(token);
-        logger.LogInformation("Pilot with name: {Name} created successfully.", createDto.Name);
-
-        return pilot.Id;
     }
 }

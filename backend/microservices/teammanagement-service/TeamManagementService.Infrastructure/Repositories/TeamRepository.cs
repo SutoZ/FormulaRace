@@ -64,32 +64,9 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger<TeamRep
         }
 
         context.Teams.Remove(team);
-
         logger.LogInformation("Team with id: {Id} deleted successfully.", id);
 
-        await context.SaveChangesAsync(token);
         return team.Id;
-    }
-
-    public async Task<int> InsertAsync(TeamCreateDto createDto, CancellationToken token)
-    {
-        ArgumentNullException.ThrowIfNull(createDto, nameof(createDto));
-
-        bool nameExists = await context.Teams.AnyAsync(x => x.Name.ToLower() == createDto.Name.ToLower(), token);
-
-        if (nameExists)
-        {
-            logger.LogInformation("Team with name: {Name} already exists.", createDto.Name);
-            throw new InvalidOperationException($"Team with name: {createDto.Name} already exists.");
-        }
-
-        Team newTeam = mapper.Map<Team>(createDto);
-        context.Teams.Add(newTeam);
-
-        logger.LogInformation("Team with name: {Name} created successfully.", newTeam.Name);
-
-        await context.SaveChangesAsync(token);
-        return newTeam.Id;
     }
 
     public async Task UpdateAsync(int id, TeamUpdateDto updateDto, CancellationToken token)
@@ -104,12 +81,10 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger<TeamRep
             throw new KeyNotFoundException($"Team with id: {id} not found.");
         }
 
-        var team = await context.Teams.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, token);
+        var team = await context.Teams.FirstOrDefaultAsync(x => x.Id == id, token);
 
 
         mapper.Map<TeamUpdateDto, Team>(updateDto);
-        await context.SaveChangesAsync(token);
-
         logger.LogInformation("Team with id: {Id} updated successfully.", id);
     }
 
@@ -130,8 +105,6 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger<TeamRep
         var team = mapper.Map<Team>(createDto);
 
         context.Teams.Add(team);
-        await context.SaveChangesAsync(token);
-
         logger.LogInformation("Team with name: {Name} created successfully.", createDto.Name);
 
         return team.Id;

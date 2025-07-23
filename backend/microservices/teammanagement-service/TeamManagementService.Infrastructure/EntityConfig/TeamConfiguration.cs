@@ -17,7 +17,7 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.Property(x => x.Name)
-            .IsRequired()
+          //  .IsRequired()
             .HasMaxLength(NameMaxLength);
 
         builder.HasQueryFilter(x => x.Active);
@@ -25,13 +25,13 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
         builder.Property(x => x.CreatedAt).IsRequired();
         builder.Property(x => x.Active).IsRequired();
 
-        builder.Property(x => x.DateOfFoundation).IsRequired();
+        builder.Property(x => x.DateOfFoundation); //.IsRequired();
 
         builder.Property(x => x.OwnerName)
-            .IsRequired()
+          //  .IsRequired()
             .HasMaxLength(OwnerNameMaxLength);
 
-        builder.Property(x => x.ChampionShipPoints).IsRequired();
+        builder.Property(x => x.ChampionShipPoints); //.IsRequired();
 
         builder.HasIndex(x => x.Name).IsUnique().HasDatabaseName("IX_Team_Name");
 

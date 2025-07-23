@@ -14,5 +14,4 @@ public interface IPilotRepository
     Task<OneOf<PilotDetailsDto, NotFound, Error>> GetByIdAsync(int id, CancellationToken token);
     Task UpdateAsync(int id, PilotUpdateDto updateDto, CancellationToken token);
     Task<OneOf<int, NotFound, Error>> DeleteAsync(int id, CancellationToken token);
-    Task<int> InsertAsync(PilotCreateDto createDto, CancellationToken token);
 }

@@ -10,23 +10,29 @@ public static class SeedData
 {
     public static async Task SeedAllAsync(RaceContext context, ILogger logger)
     {
-        await using var transaction = await context.Database.BeginTransactionAsync();
-        try
-        {
-            logger.LogInformation("Seeding Teams at {Timestamp}", DateTimeOffset.UtcNow);
-            await SeedTeamsAsync(context);
+        var strategy = context.Database.CreateExecutionStrategy();
 
-            logger.LogInformation("Seeding Pilots at {Timestamp}", DateTimeOffset.UtcNow);
-            await SeedPilotsAsync(context);
-
-            await transaction.CommitAsync();
-        }
-        catch (Exception ex)
+        await strategy.ExecuteAsync(async () =>
         {
-            await transaction.RollbackAsync();
-            logger.LogError(ex, "An error occurred while seeding the database: {Message}", ex.Message);
-            throw;
-        }
+            await using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                logger.LogInformation("Seeding Teams at {Timestamp}", DateTimeOffset.UtcNow);
+                await SeedTeamsAsync(context);
+
+                logger.LogInformation("Seeding Pilots at {Timestamp}", DateTimeOffset.UtcNow);
+                await SeedPilotsAsync(context);
+
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                logger.LogError(ex, "An error occurred while seeding the database: {Message}", ex.Message);
+                throw;
+            }
+        });
     }
 
     private static async Task SeedTeamsAsync(RaceContext context)
@@ -34,6 +40,7 @@ public static class SeedData
         if (await context.Teams.AnyAsync()) return; // Don't seed if data exists
 
         var seedTeams = new TeamSeed().Entities;
+
         foreach (var seedTeam in seedTeams)
         {
             context.Teams.Add(new Team
@@ -47,7 +54,6 @@ public static class SeedData
                 Active = seedTeam.Active
             });
         }
-        await context.SaveChangesAsync();
     }
 
     private static async Task SeedPilotsAsync(RaceContext context)
@@ -73,6 +79,5 @@ public static class SeedData
                 Active = seedPilot.Active
             });
         }
-        await context.SaveChangesAsync();
     }
 }

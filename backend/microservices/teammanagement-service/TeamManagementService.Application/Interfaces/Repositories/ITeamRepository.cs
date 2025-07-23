@@ -5,7 +5,6 @@ namespace TeamManagementService.Application.Interfaces.Repositories;
 
 public interface ITeamRepository
 {
-    Task<int> InsertAsync(TeamCreateDto entity, CancellationToken token);
     Task<IPagedList<TeamListDto>> GetAllAsync(PagerParameters pagerParameters, CancellationToken token);
     Task<TeamDetailsDto> GetByIdAsync(int id, CancellationToken token);
     Task UpdateAsync(int id, TeamUpdateDto updateDto, CancellationToken token);

@@ -44,7 +44,7 @@ public class TeamController(IMediator mediator) : ControllerBase
     [SwaggerResponse(201, "Team created successfully.")]
     [SwaggerResponse(400, "Invalid team data.")]
     [SwaggerResponse(409, "Team with the same name already exists.")]
-    public async Task<ActionResult<int>> Create([FromBody] TeamCreateDto createDto, CancellationToken token)
+    public async Task<ActionResult<int>> Post([FromBody] TeamCreateDto createDto, CancellationToken token)
     {
         var result = await mediator.Send(new CreateTeamCommand(createDto), token);
         return CreatedAtAction(nameof(GetById), new { id = createDto.Id }, result);

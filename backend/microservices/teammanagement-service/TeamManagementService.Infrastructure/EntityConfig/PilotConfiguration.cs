@@ -18,22 +18,22 @@ public class PilotConfiguration : IEntityTypeConfiguration<Pilot>
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.Property(x => x.Name)
-            .IsRequired()
+            //.IsRequired()
             .HasMaxLength(NameMaxLength);
 
         builder.HasQueryFilter(x => x.Active);
 
-        builder.Property(x => x.CreatedAt).IsRequired();
-        builder.Property(x => x.Active).IsRequired();
+        builder.Property(x => x.CreatedAt); //.IsRequired();
+        builder.Property(x => x.Active); //.IsRequired();
 
         builder.Property(x => x.Nationality)
-            .IsRequired()
+           // .IsRequired()
             .HasMaxLength(NationalityMaxLength);
 
-        builder.Property(x => x.Number).IsRequired();
+        builder.Property(x => x.Number); //.IsRequired();
 
         builder.Property(x => x.Code)
-            .IsRequired()
+           // .IsRequired()
             .HasMaxLength(CodeMaxLength);
 
         builder.HasIndex(x => x.Name);

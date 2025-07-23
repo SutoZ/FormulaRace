@@ -49,7 +49,7 @@ public class PilotController(IMediator mediator, ILogger<PilotController> logger
     [SwaggerOperation(Tags = new[] { OPNAME })]
     [SwaggerResponse(201, "Pilot created successfully.")]
     [SwaggerResponse(400, "Invalid pilot data.")]
-    public async Task<IActionResult> Create([FromBody] PilotCreateDto pilotToCreate, CancellationToken token)
+    public async Task<IActionResult> Post([FromBody] PilotCreateDto pilotToCreate, CancellationToken token)
     {
         var createdPilot = await mediator.Send(new CreatePilotCommand(pilotToCreate), token);
         return CreatedAtAction(nameof(GetById), new { id = createdPilot.Id }, createdPilot);
