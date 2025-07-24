@@ -1,0 +1,31 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/gateway/pilots/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamPathTemplate": "/api/pilots/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200 // The port your PilotService.API is running on
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/teams/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamPathTemplate": "/api/teams/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200 // The port your PilotService.API is running on
+        }
+      ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5000" // The address where the API Gateway will run
+  }
+}

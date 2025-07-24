@@ -2,22 +2,25 @@ services:
   # The ASP.NET Core Web API service
   api:
     build:
-      context: ./backend
+      context: ./backend/microservices
       # Specify the Dockerfile for the API service
-      dockerfile: Race.Web/Dockerfile
+      dockerfile: teammanagement-service/TeamManagementService.API/Dockerfile
     ports:
       - "8080:8080" # Map host port 8080 to container port 8080
     environment:
       # Override the connection string from appsettings.json
       - ConnectionStrings__RaceConnection=Server=database;Database=RaceDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE__ENVIRONMENT=${ASPNETCORE_ENVIRONMENT} # Set the environment for ASP.NET Core
+      - ASPNETCORE__URLS=${ASPNETCORE_URLS} # Set the URLs for ASP.NET Core
+      - Seq__ServerUrl=${Seq_ServerUrl} # URL for Seq logging
     depends_on:
+      seq:
+        condition: service_healthy # Ensure Seq is healthy before starting the API
       database:
         condition: service_healthy # Ensure the database is healthy before starting the API
     restart: unless-stopped # Restart policy for the API service       
     healthcheck:
-      test: ["CMD", "curl -f http://localhost:8080/healthz || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -26,7 +29,30 @@ services:
     networks:
       - race-network # Connect the API to the custom network      
 
-
+  seq:
+    image: datalust/seq:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5' # Limit CPU usage to 50%
+          memory: 2GB # Limit memory usage to 2GB
+    ports:
+      - "5341:80" # Map host port 5341 to container port 80 for Seq UI
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_ADMIN_PASSWORD} # Set the Seq admin password
+    volumes:
+      - seq-data:/data # Persist Seq data
+    restart: unless-stopped # Restart policy for the Seq service
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u admin:${SEQ_ADMIN_PASSWORD} http://localhost:80/api/diagnostics/status"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - race-network # Connect Seq to the custom network
+  
   frontend:
     build:
       context: ./frontend
@@ -37,7 +63,7 @@ services:
    # Automatically restart the container if it stops, unless manually stopped
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/", "||", "exit", "1"]
+      test: ["CMD-SHELL", "curl -f http://localhost/"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -69,6 +95,7 @@ services:
 
 volumes:
   mssql-data:
+  seq-data:
 
 networks: # Define a custom network for the services to communicate
   race-network:

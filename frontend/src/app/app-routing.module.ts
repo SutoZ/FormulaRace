@@ -1,15 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { PilotListComponent } from './pilots/components/pilot-list-component/pilot-list-component';
-// import { TeamsComponent } from './teams/components/team-list/teams.component';
-// import { TeamEditComponent } from './teams/components/team-edit/team-edit/team-edit.component';
+import { PilotListComponent } from './race-administration/pilots/pilot-list-component/pilot-list-component';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'pilots',
@@ -36,6 +34,6 @@ const routes: Routes = [
 @NgModule({
   declarations: [],
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
