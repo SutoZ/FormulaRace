@@ -7,13 +7,12 @@ if (environment.production) {
   enableProdMode();
 }
 
-const providers = [
-  { provide: 'BASE_URL', useFactory: getBaseUrl, deps: [] }
-];
+const providers = [{ provide: 'BASE_URL', useFactory: getBaseUrl, deps: [] }];
 
 export function getBaseUrl() {
   return document.getElementsByTagName('base')[0].href;
 }
 
-platformBrowser(providers).bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+platformBrowser(providers)
+  .bootstrapModule(AppModule)
+  .catch((err) => console.error(err));

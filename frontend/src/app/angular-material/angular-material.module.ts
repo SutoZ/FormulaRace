@@ -17,7 +17,7 @@ import { MatTableModule } from '@angular/material/table';
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   exports: [
     MatTableModule,
@@ -26,7 +26,7 @@ import { MatTableModule } from '@angular/material/table';
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatSelectModule
-  ]
+    MatSelectModule,
+  ],
 })
-export class AngularMaterialModule { }
+export class AngularMaterialModule {}
