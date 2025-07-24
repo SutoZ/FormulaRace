@@ -55,8 +55,8 @@ export class PilotListComponent implements AfterViewInit, OnDestroy {
   defaultFilterQuery = '';
 
   private dataSub?: Subscription;
-  private filter$ = new Subject<string>();
-  private componentDestroyed$ = new Subject<void>();
+  private readonly filter$ = new Subject<string>();
+  private readonly componentDestroyed$ = new Subject<void>();
 
   constructor(
     private readonly pilotsService: PilotsService,
