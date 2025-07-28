@@ -3,18 +3,22 @@ using TeamManagementService.Domain.Models;
 
 namespace TeamManagementService.Application.Dtos.Pilots;
 
-public record PilotListDto(int Id, string Name, string Number, string Code, string Nationality, TeamListDto TeamListDto)
+public record PilotListDto
 {
-    public static PilotListDto FromPilot(Pilot pilot) => new(
-            pilot.Id,
-            pilot.Name,
-            pilot.Number,
-            pilot.Code,
-            pilot.Nationality,
-            pilot.Team is null ? null : new TeamListDto(
-                pilot.Team.Id,
-                pilot.Team.Name,
-                pilot.Team.DateOfFoundation,
-                pilot.Team.OwnerName,
-                pilot.Team.ChampionShipPoints));
+    public int? Id { get; set; }
+    public string? Name { get; init; }
+    public string? Number { get; init; }
+    public string? Code { get; init; }
+    public string? Nationality { get; set; }
+    public TeamListDto? TeamListDto { get; set; }
+
+    public static PilotListDto FromPilot(Pilot pilot) => new()
+    {
+        Id = pilot.Id,
+        Name = pilot.Name,
+        Number = pilot.Number,
+        Code = pilot.Code,
+        Nationality = pilot.Nationality,
+        TeamListDto = pilot.Team is null ? null : TeamListDto.FromTeam(pilot.Team)
+    };
 }

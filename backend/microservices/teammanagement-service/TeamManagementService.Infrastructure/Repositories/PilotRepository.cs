@@ -40,9 +40,14 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
 
         logger.LogInformation("Retrieving pilots with pagination parameters: {@PagerParameters}", pagerParameters);
 
-        Expression<Func<Pilot, PilotListDto>> projection = x => new PilotListDto(
-            x.Id, x.Name, x.Number, x.Code, x.Nationality, x.Team == null ? null : new TeamListDto(
-                x.Team.Id, x.Team.Name, x.Team.DateOfFoundation, x.Team.OwnerName, x.Team.ChampionShipPoints));
+        Expression<Func<Pilot, PilotListDto>> projection = x => new PilotListDto
+        {
+            Code = x.Code,
+            Name = x.Name,
+            Nationality = x.Nationality,
+            Number = x.Number,
+            TeamListDto = new TeamListDto { ChampionShipPoints = x.Team.ChampionShipPoints, DateOfFoundation = x.Team.DateOfFoundation, Name = x.Team.Name, OwnerName = x.Team.OwnerName }
+        };
 
         var result = await PagedList<PilotListDto>.CreateAsync(query, pagerParameters, projection, token);
 

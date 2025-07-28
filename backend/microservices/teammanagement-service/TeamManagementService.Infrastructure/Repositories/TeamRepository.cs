@@ -20,12 +20,13 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger<TeamRep
 
         var query = context.Teams.AsNoTracking();
 
-        Expression<Func<Team, TeamListDto>> projection = ent => new TeamListDto(
-            ent.Id,
-            ent.Name,
-            ent.DateOfFoundation,
-            ent.OwnerName,
-            ent.ChampionShipPoints);
+        Expression<Func<Team, TeamListDto>> projection = ent => new TeamListDto
+        {
+            Name = ent.Name,
+            DateOfFoundation = ent.DateOfFoundation,
+            OwnerName = ent.OwnerName,
+            ChampionShipPoints = ent.ChampionShipPoints
+        };
 
         var pagedList = await PagedList<TeamListDto>.CreateAsync(query, pagerParameters, projection, token);
 

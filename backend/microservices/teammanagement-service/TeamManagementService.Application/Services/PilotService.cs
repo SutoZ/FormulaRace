@@ -27,8 +27,6 @@ public class PilotService(
     public async Task<OneOf<IPagedList<PilotListDto>, NotFound, Error>> GetAllAsync(PagerParameters pagerParameters, PilotFilterDto filterDto, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(pagerParameters, nameof(pagerParameters));
-        //await getByIdValidator.ValidateAndThrowAsync(filterDto, token);
-
         var query = PilotFilterSpecifiation.AsExpression(filterDto);
 
         logger.LogInformation("Fetching all pilots with pagination parameters: {@PagerParameters}", pagerParameters);
@@ -61,7 +59,7 @@ public class PilotService(
     {
         logger.LogInformation("Attempting to delete pilot with ID: {Id}", id);
 
-        var pilotDeleteDto = new PilotDeleteDto(id, string.Empty, string.Empty, string.Empty, string.Empty, 0);
+        var pilotDeleteDto = new PilotDeleteDto(id);
         await deleteValidator.ValidateAndThrowAsync(pilotDeleteDto, token);
 
         var result = await uow.Pilot.DeleteAsync(id, token);

@@ -42,7 +42,8 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 var dbProvider = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
 var conn = builder.Configuration.GetConnectionString("RaceConnection");
 
-ArgumentException.ThrowIfNullOrEmpty(conn);
+if (builder.Environment.EnvironmentName is not "Test")
+    ArgumentException.ThrowIfNullOrEmpty(conn);
 
 switch (dbProvider.ToLowerInvariant())
 {
