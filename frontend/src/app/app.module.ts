@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
@@ -24,7 +23,6 @@ import { NavMenuComponent } from './layout-module/nav-menu/nav-menu-component/na
   imports: [
     BrowserModule,
     AppRoutingModule,
-    AngularMaterialModule,
     BrowserAnimationsModule,
     MatFormFieldModule,
     RouterModule,

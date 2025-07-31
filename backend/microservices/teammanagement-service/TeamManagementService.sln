@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamManagement.Application.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamManagementService.API.E2ETests", "TeamManagementService.API.E2ETests\TeamManagementService.API.E2ETests.csproj", "{508A8E78-2811-4C25-B384-9FD094C74440}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamManagement.Application.Helper", "TeamManagement.Application.Helper\TeamManagement.Application.Helper.csproj", "{82108787-0458-48F1-A2A6-5D0A6D1DDB10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{508A8E78-2811-4C25-B384-9FD094C74440}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{508A8E78-2811-4C25-B384-9FD094C74440}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{508A8E78-2811-4C25-B384-9FD094C74440}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82108787-0458-48F1-A2A6-5D0A6D1DDB10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82108787-0458-48F1-A2A6-5D0A6D1DDB10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82108787-0458-48F1-A2A6-5D0A6D1DDB10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82108787-0458-48F1-A2A6-5D0A6D1DDB10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{B4AB76A0-8943-4483-B683-8945FFE127FF} = {BB2FC199-0E2B-4DD6-9174-8AD63E619FB0}
 		{5DE84944-B63E-4D1A-A1CF-338E58B773D5} = {BB2FC199-0E2B-4DD6-9174-8AD63E619FB0}
 		{508A8E78-2811-4C25-B384-9FD094C74440} = {BB2FC199-0E2B-4DD6-9174-8AD63E619FB0}
+		{82108787-0458-48F1-A2A6-5D0A6D1DDB10} = {BB2FC199-0E2B-4DD6-9174-8AD63E619FB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {94E09215-FE96-4150-AF58-B4E52FA7B785}

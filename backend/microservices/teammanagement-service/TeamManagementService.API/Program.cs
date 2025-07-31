@@ -56,7 +56,7 @@ switch (dbProvider.ToLowerInvariant())
             })
                    .AddInterceptors(new SoftDeleteInterceptor(serviceProvider.GetRequiredService<ILogger<SoftDeleteInterceptor>>()))
                    .AddInterceptors(new AuditableInterceptor(serviceProvider.GetRequiredService<ILogger<AuditableInterceptor>>()))
-                   .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                   .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
                    .EnableDetailedErrors()
                    .EnableSensitiveDataLogging());
 
@@ -71,7 +71,7 @@ switch (dbProvider.ToLowerInvariant())
             })
                    .AddInterceptors(new SoftDeleteInterceptor(serviceProvider.GetRequiredService<ILogger<SoftDeleteInterceptor>>()))
                    .AddInterceptors(new AuditableInterceptor(serviceProvider.GetRequiredService<ILogger<AuditableInterceptor>>()))
-                   .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                   .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
                    .EnableDetailedErrors()
                    .EnableSensitiveDataLogging());
 

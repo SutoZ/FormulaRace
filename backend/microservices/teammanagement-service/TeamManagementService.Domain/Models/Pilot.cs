@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace TeamManagementService.Domain.Models;
 
@@ -12,7 +11,7 @@ public class Pilot : Entity
     [JsonIgnore]
     public virtual Team Team { get; set; }
 
-    [ForeignKey("Team")]
+    //[ForeignKey("Team")]  Set in configuration
     public int TeamId { get; set; }
 
     public Pilot() { }

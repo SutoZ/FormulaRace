@@ -1,18 +1,12 @@
 ﻿using TeamManagementService.Domain.Models;
 
-namespace TeamManagement.Application.Tests.Builders;
+namespace TeamManagement.Application.Helper.Builders;
 
 public class TeamBuilder
 {
-    private int _id = 1;
     private string _name = "Default Team";
     private int _championshipPoints = 100;
-
-    public TeamBuilder WithId(int id)
-    {
-        _id = id;
-        return this;
-    }
+    private string _ownerName = "Default Owner";
 
     public TeamBuilder WithName(string name)
     {
@@ -26,12 +20,18 @@ public class TeamBuilder
         return this;
     }
 
+    public TeamBuilder WithOwnerName(string ownerName)
+    {
+        _ownerName = ownerName;
+        return this;
+    }
+
     public Team Build()
     {
         return new Team
         {
-            Id = _id,
             Name = _name,
+            OwnerName = _ownerName,
             ChampionShipPoints = _championshipPoints,
             DateOfFoundation = DateTime.UtcNow.AddYears(-5),
             Active = true

@@ -21,8 +21,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TeamManagement.Application.Helper\TeamManagement.Application.Helper.csproj" />
     <ProjectReference Include="..\TeamManagementService.API\TeamManagementService.API.csproj" />
     <ProjectReference Include="..\TeamManagementService.Infrastructure\TeamManagementService.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Builder\" />
   </ItemGroup>
 
 </Project>

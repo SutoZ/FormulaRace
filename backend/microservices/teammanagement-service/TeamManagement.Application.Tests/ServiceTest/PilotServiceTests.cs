@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using OneOf.Types;
-using TeamManagement.Application.Tests.Builders;
+using TeamManagement.Application.Helper.Builders;
 using TeamManagementService.Application.Dtos.Pilots;
 using TeamManagementService.Application.Interfaces;
 using TeamManagementService.Application.Interfaces.Repositories;
@@ -59,9 +59,9 @@ public class PilotServiceTests
     {
         // Arrange
         var pilotId = 1;
-        var pilotDetails = new PilotDetailsDto(pilotId, "Lewis Hamilton", "44", "HAM", "British");
+        var pilotDetails = new PilotDetailsDtoBuilder().WithId(pilotId).WithName("Lewis Hamilton").WithCode("44").WithCode("HAM").WithNationality("British").Build();
 
-        pilotRepositoryMock.Setup(repo => repo.GetByIdAsync(pilotId, It.IsAny<CancellationToken>()))
+        pilotRepositoryMock.Setup(repo => repo.GetByIdAsync(pilotDetails.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(pilotDetails);
 
         // Act
@@ -95,13 +95,15 @@ public class PilotServiceTests
     public async Task CreateAsync_WithValidDto_ReturnsPilotListDto()
     {
         // Arrange
-        var createDto = new PilotCreateDto("Charles Leclerc", "16", "LEC", "Monegasque", 1);
+        var createDto = new PilotCreateDtoBuilder().WithName("Charles Leclerc").WithNumber("16").WithCode("LEC").WithNationality("Monegasque").WithTeamId(1).Build();
+
         var pilot = new PilotBuilder()
-            .WithId(1)
             .WithName(createDto.Name)
             .WithNumber(createDto.Number)
             .WithCode(createDto.Code)
-            .WithNationality(createDto.Nationality).WithTeamId(createDto.TeamId).Build();
+            .WithNationality(createDto.Nationality)
+            .WithTeamId(createDto.TeamId)
+            .Build();
 
         pilotRepositoryMock.Setup(repo => repo.CreateAsync(createDto, It.IsAny<CancellationToken>()))
             .ReturnsAsync(pilot);

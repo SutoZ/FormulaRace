@@ -1,10 +1,9 @@
-﻿namespace TeamManagement.Application.Tests.Builders;
+﻿using TeamManagementService.Domain.Models;
 
-using TeamManagementService.Domain.Models;
+namespace TeamManagement.Application.Helper.Builders;
 
 public class PilotBuilder
 {
-    private int _id = 1;
     private string _name = "Default Pilot";
     private string _number = "00";
     private string _code = "DEF";
@@ -15,12 +14,6 @@ public class PilotBuilder
     public PilotBuilder()
     {
         _team = new Team { Id = _teamId, Name = "Default Team" };
-    }
-
-    public PilotBuilder WithId(int id)
-    {
-        _id = id;
-        return this;
     }
 
     public PilotBuilder WithName(string name)
@@ -64,7 +57,6 @@ public class PilotBuilder
     {
         var pilot = new Pilot(_name, _number, _code, _nationality, _teamId)
         {
-            Id = _id,
             Team = _team,
             CreatedAt = DateTime.UtcNow,
             Active = true

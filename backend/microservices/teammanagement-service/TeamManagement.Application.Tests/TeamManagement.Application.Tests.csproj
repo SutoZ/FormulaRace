@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TeamManagement.Application.Helper\TeamManagement.Application.Helper.csproj" />
     <ProjectReference Include="..\TeamManagementService.Application\TeamManagementService.Application.csproj" />
   </ItemGroup>
 
