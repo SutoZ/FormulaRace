@@ -25,7 +25,7 @@ services:
       timeout: 5s
       retries: 5
       # Start period allows the service to initialize before health checks begin
-      start_period: 30s
+      start_period: 60s
     networks:
       - race-network # Connect the API to the custom network
 

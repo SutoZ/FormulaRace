@@ -3,21 +3,24 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
-import { MatOptionModule } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ITeamListViewModel } from '../../models/team.models';
 import { PilotsService } from '../../services/pilotservice';
 import { TeamsService } from '../../services/teams.service';
+import { HttpParams } from '@angular/common/http';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-pilot-create-component',
   imports: [
     MatCardModule,
     MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatOptionModule,
   ],
   templateUrl: './pilot-create-component.html',
   styleUrl: './pilot-create-component.css',
@@ -47,10 +50,11 @@ export class PilotCreateComponent implements OnInit {
   }
 
   loadTeams(): void {
+    const params = new HttpParams().set('page', '1').set('pageSize', '1000');
     // Assuming getTeams can fetch all teams without pagination for the dropdown
-    this.teamsService.getTeams().subscribe({
-      next: (teamList) => {
-        this.teams = teamList;
+    this.teamsService.getTeams(params).subscribe({
+      next: (pagedList) => {
+        this.teams = pagedList.data;
       },
       error: () => {
         this.snackBar.open('Error loading teams', 'Close', { duration: 3000 });
@@ -58,7 +62,7 @@ export class PilotCreateComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  onSubmit() {
     if (this.createPilotForm.invalid) {
       // Mark all fields as touched to display validation errors
       this.createPilotForm.markAllAsTouched();

@@ -1,0 +1,53 @@
+/*
+  Container for the component
+  - Ensures the component has some padding around it.
+*/
+:host {
+  display: block;
+  padding: 2rem;
+}
+
+/*
+  Style for the main card
+  - Sets a maximum width for the card.
+  - Centers the card on the page.
+*/
+mat-card {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/*
+  Responsive form layout using Flexbox
+  - `display: flex` and `flex-wrap: wrap` allow items to flow in a row and wrap to the next line on smaller screens.
+  - `gap` adds space between the form fields, both horizontally and vertically when they wrap.
+*/
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/*
+  Flex properties for form fields
+  - `flex: 1 1 300px` is a shorthand for:
+    - `flex-grow: 1`: allows the item to grow and fill available space.
+    - `flex-shrink: 1`: allows the item to shrink if needed.
+    - `flex-basis: 300px`: sets the initial size of the item.
+  - This combination creates a responsive column effect. On wide screens, fields will try to be at least 300px and share space. On narrow screens, they will wrap and take up the full width.
+*/
+mat-form-field {
+  flex: 1 1 300px;
+}
+
+/*
+  Spacing for the card title and actions
+  - Adds some vertical space to separate the title and buttons from the form content.
+*/
+mat-card-title {
+  margin-bottom: 1.5rem;
+}
+
+mat-card-actions {
+  margin-top: 1rem;
+}

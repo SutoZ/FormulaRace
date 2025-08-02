@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormField } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -31,11 +31,10 @@ import { PilotsService } from '../../services/pilotservice';
     MatIcon,
     CommonModule,
     MatPaginator,
-    MatFormField,
+    MatFormFieldModule,
     MatTableModule,
     MatProgressSpinner,
     MatSort,
-    MatFormField,
   ],
   templateUrl: './pilot-list-component.html',
   styleUrl: './pilot-list-component.css',
