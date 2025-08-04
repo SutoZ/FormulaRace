@@ -2,11 +2,11 @@ import { HttpParams } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort, SortDirection } from '@angular/material/sort';
+import { MatSort, MatSortModule, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import {
@@ -23,21 +23,26 @@ import { IPilotsListViewModel } from 'src/app/race-administration/models/pilot.m
 import { PilotDeleteComponent } from '../pilot-delete-component/pilot-delete-component';
 import { CommonModule } from '@angular/common';
 import { PilotsService } from '../../services/pilotservice';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-pilot-list-component',
   imports: [
-    RouterModule,
-    MatIcon,
     CommonModule,
-    MatPaginator,
-    MatFormFieldModule,
+    RouterModule,
     MatTableModule,
-    MatProgressSpinner,
-    MatSort,
+    MatSortModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './pilot-list-component.html',
   styleUrl: './pilot-list-component.css',
+  standalone: true,
 })
 export class PilotListComponent implements AfterViewInit, OnDestroy {
   displayedColumns: string[] = ['Name', 'Number', 'Code', 'Nationality', 'actions'];

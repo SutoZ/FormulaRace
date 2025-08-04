@@ -6,27 +6,42 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatOption, MatSelect } from '@angular/material/select';
-import { ActivatedRoute } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { IPilotsListViewModel } from '../../models/pilot.models';
 import { HttpParams } from '@angular/common/http';
 import { TeamsService } from 'src/app/race-administration/services/teams.service';
-import { IPagedList } from 'src/app/PagedList';
 import { ITeamListViewModel } from 'src/app/race-administration/models/team.models';
 import { PilotsService } from '../../services/pilotservice';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-pilot-edit-component',
-  imports: [MatFormField, MatLabel, MatError, MatSelect, MatOption, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './pilot-edit-component.html',
   styleUrl: './pilot-edit-component.css',
+  standalone: true,
 })
 export class PilotEditComponent implements OnInit {
   form: FormGroup;
-  title: string;
-  id: number | undefined;
-  pilot: IPilotsListViewModel | undefined;
+  title: string = '';
+  id?: number;
+  pilot?: IPilotsListViewModel;
   teams: ITeamListViewModel[] = [];
 
   constructor(
@@ -36,7 +51,6 @@ export class PilotEditComponent implements OnInit {
     private readonly teamsService: TeamsService
   ) {
     this.form = new FormGroup({});
-    this.title = 'Create new Pilot';
   }
 
   ngOnInit() {
@@ -52,12 +66,9 @@ export class PilotEditComponent implements OnInit {
 
     const idParam = this.activatedRoute.snapshot.paramMap.get('id');
     this.id = idParam ? +idParam : undefined;
+
     if (this.id) {
       this.title = 'Loading...';
-    } else {
-      this.title = 'Create new Pilot';
-    }
-    if (this.id) {
       this.pilotService.getPilotById(this.id).subscribe({
         next: (pilot) => {
           this.pilot = pilot;
@@ -78,7 +89,7 @@ export class PilotEditComponent implements OnInit {
       .set('filterColumn', '')
       .set('filterQuery', '');
 
-    this.teamsService.getTeams<IPagedList<ITeamListViewModel>>(params).subscribe({
+    this.teamsService.getTeams(params).subscribe({
       next: (result) => (this.teams = result.data),
       error: (err) => console.error(err),
     });

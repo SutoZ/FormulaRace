@@ -5,37 +5,20 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatOptionModule } from '@angular/material/core';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
 import { ErrorInterceptor } from './interceptors/ErrorInterceptor';
-import { RouterModule } from '@angular/router';
 import { NavMenuComponent } from './layout-module/nav-menu/nav-menu-component/nav-menu-component';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
   bootstrap: [AppComponent],
   imports: [
+    // Core Angular Modules
     BrowserModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
-    MatFormFieldModule,
-    RouterModule,
-    MatInputModule,
-    MatPaginatorModule,
-    MatFormFieldModule,
+    AppRoutingModule,
+
+    // Standalone Components used in this module's templates
     NavMenuComponent,
-    MatInputModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatOptionModule,
-    ReactiveFormsModule,
-    MatSelectModule,
   ],
   providers: [
     {

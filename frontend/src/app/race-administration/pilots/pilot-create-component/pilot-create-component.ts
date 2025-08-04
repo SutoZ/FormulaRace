@@ -11,19 +11,22 @@ import { TeamsService } from '../../services/teams.service';
 import { HttpParams } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-pilot-create-component',
   imports: [
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    ReactiveFormsModule,
+    CommonModule, // For *ngIf, *ngFor
+    ReactiveFormsModule, // For formGroup, formControlName
+    MatCardModule, // For <mat-card>
+    MatFormFieldModule, // For <mat-form-field>, <mat-label>, <mat-error>
+    MatInputModule, // For the matInput directive
+    MatSelectModule, // For <mat-select> and <mat-option>
+    MatButtonModule, // For mat-button, mat-raised-button
   ],
   templateUrl: './pilot-create-component.html',
   styleUrl: './pilot-create-component.css',
+  standalone: true,
 })
 export class PilotCreateComponent implements OnInit {
   createPilotForm: FormGroup;
