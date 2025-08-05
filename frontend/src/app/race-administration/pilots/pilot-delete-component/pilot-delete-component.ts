@@ -7,6 +7,7 @@ import { PilotsService } from '../../services/pilotservice';
   imports: [MatDialogModule],
   templateUrl: './pilot-delete-component.html',
   styleUrl: './pilot-delete-component.css',
+  standalone: true,
 })
 export class PilotDeleteComponent {
   constructor(private readonly pilotsService: PilotsService) {}
