@@ -31,9 +31,9 @@ jobs:
 
       - name: Restore, Build, and Test .NET Project
         run: |
-          dotnet restore .src/TeamManagementService.sln
-          dotnet build ./src/TeamManagementService.sln --no-restore --configuration Release
-          dotnet test ./src/TeamManagementService.sln --no-build --verbosity normal
+          dotnet restore .src/backend/microservices/TeamManagementService.sln
+          dotnet build ./src/backend/microservices/TeamManagementService.sln --no-restore --configuration Release
+          dotnet test ./src/backend/microservices/TeamManagementService.sln --no-build --verbosity normal
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
