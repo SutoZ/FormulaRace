@@ -31,9 +31,9 @@ jobs:
 
       - name: Restore, Build, and Test .NET Project
         run: |
-          dotnet restore ./backend/microservices/TeamManagementService.sln
-          dotnet build ./backend/microservices/TeamManagementService.sln --no-restore --configuration Release
-          dotnet test ./backend/microservices/TeamManagementService.sln --no-build --verbosity normal
+          dotnet restore .src/TeamManagementService.sln
+          dotnet build ./src/TeamManagementService.sln --no-restore --configuration Release
+          dotnet test ./src/TeamManagementService.sln --no-build --verbosity normal
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -63,7 +63,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./backend/microservices/teammanagement-service/TeamManagementService.API/Dockerfile
+          file: .src/backend/microservices/teammanagement-service/TeamManagementService.API/Dockerfile
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta_api.outputs.tags }}
           labels: ${{ steps.meta_api.outputs.labels }}
