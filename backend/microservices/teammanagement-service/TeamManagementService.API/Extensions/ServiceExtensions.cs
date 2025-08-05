@@ -87,7 +87,7 @@ public static class ServiceExtensions
             options.UseSqlServer(conn)
                    .AddInterceptors(new SoftDeleteInterceptor(serviceProvider.GetRequiredService<ILogger<SoftDeleteInterceptor>>()))
                    .AddInterceptors(new AuditableInterceptor(serviceProvider.GetRequiredService<ILogger<AuditableInterceptor>>()))
-                   .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                   .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
                    .EnableDetailedErrors()
                    .EnableSensitiveDataLogging();
         });

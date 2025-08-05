@@ -2,12 +2,18 @@
 
 namespace TeamManagementService.Application.Dtos.Teams;
 
-public record TeamListDto(int Id, string Name, DateTime DateOfFoundation, string OwnerName, int ChampionShipPoints)
+public record TeamListDto
 {
-    public static TeamListDto FromTeam(Team team) => new(
-        team.Id,
-        team.Name,
-        team.DateOfFoundation,
-        team.OwnerName,
-        team.ChampionShipPoints);
+    public string? Name { get; init; }
+    public DateTime? DateOfFoundation { get; init; }
+    public string? OwnerName { get; init; }
+    public int? ChampionShipPoints { get; init; }    
+
+    public static TeamListDto FromTeam(Team team) => new()
+    {
+        Name = team.Name,
+        DateOfFoundation = team.DateOfFoundation,
+        OwnerName = team.OwnerName,
+        ChampionShipPoints = team.ChampionShipPoints
+    };
 }

@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { IPagedList } from 'src/app/PagedList';
+import { ITeamListViewModel } from '../models/team.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TeamsService {
   header = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -13,10 +15,13 @@ export class TeamsService {
 
   filterQuery$ = new BehaviorSubject<string>('');
 
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
-  getTeams<PagedList>(parameters: HttpParams): Observable<PagedList> {
-    return this.http.get<PagedList>(this.baseUrl, { headers: this.header, params: parameters });
+  getTeams(parameters: HttpParams): Observable<IPagedList<ITeamListViewModel>> {
+    return this.http.get<IPagedList<ITeamListViewModel>>(this.baseUrl, {
+      headers: this.header,
+      params: parameters,
+    });
   }
 
   getTeamById<ITeamListViewModel>(id: number): Observable<ITeamListViewModel> {
@@ -25,10 +30,14 @@ export class TeamsService {
 
   postTeam<ITeamListViewModel>(team: ITeamListViewModel): Observable<ITeamListViewModel> {
     return this.http.post<ITeamListViewModel>(this.baseUrl, team, { headers: this.header });
-  };
+  }
 
-  putTeam<ITeamListViewModel>(id: number, team: ITeamListViewModel): Observable<ITeamListViewModel> {
-    return this.http.put<ITeamListViewModel>(`${this.baseUrl}/${id}`, team, { headers: this.header });
-  };
-
+  putTeam<ITeamListViewModel>(
+    id: number,
+    team: ITeamListViewModel
+  ): Observable<ITeamListViewModel> {
+    return this.http.put<ITeamListViewModel>(`${this.baseUrl}/${id}`, team, {
+      headers: this.header,
+    });
+  }
 }

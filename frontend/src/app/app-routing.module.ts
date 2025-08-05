@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { PilotListComponent } from './race-administration/pilots/pilot-list-component/pilot-list-component';
+import { PilotEditComponent } from './race-administration/pilots/pilot-edit-component/pilot-edit-component';
+import { PilotCreateComponent } from './race-administration/pilots/pilot-create-component/pilot-create-component';
 
 const routes: Routes = [
   {
@@ -13,14 +15,18 @@ const routes: Routes = [
     path: 'pilots',
     component: PilotListComponent,
   },
-  // {
-  //   path: 'pilots/:id',
-  //   component: PilotEditComponent
-  // },
-  // {
-  //   path: 'pilot',
-  //   component: PilotEditComponent
-  // },
+  {
+    path: 'pilots/:id',
+    component: PilotEditComponent,
+  },
+  {
+    path: 'pilot-edit/:id',
+    component: PilotEditComponent,
+  },
+  {
+    path: 'pilot-create',
+    component: PilotCreateComponent,
+  },
   // {
   //   path: 'teams',
   //   component: TeamsComponent

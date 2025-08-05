@@ -20,6 +20,8 @@ public static class SeedData
                 logger.LogInformation("Seeding Teams at {Timestamp}", DateTimeOffset.UtcNow);
                 await SeedTeamsAsync(context);
 
+                await context.SaveChangesAsync();
+
                 logger.LogInformation("Seeding Pilots at {Timestamp}", DateTimeOffset.UtcNow);
                 await SeedPilotsAsync(context);
 

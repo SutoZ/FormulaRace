@@ -2,12 +2,20 @@
 
 namespace TeamManagementService.Application.Dtos.Pilots;
 
-public record PilotDetailsDto(int Id, string Name, string Number, string Code, string Nationality)
+public record PilotDetailsDto
 {
-    public static PilotDetailsDto FromPilot(Pilot pilot) => new(
-        pilot.Id,
-        pilot.Name,
-        pilot.Number,
-        pilot.Code,
-        pilot.Nationality);
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public string? Number { get; set; }
+    public string? Code { get; set; }
+    public string? Nationality { get; set; }
+
+    public static PilotDetailsDto FromPilot(Pilot pilot) => new()
+    {
+        Id = pilot.Id,
+        Code = pilot.Code,
+        Name = pilot.Name,
+        Number = pilot.Number,
+        Nationality = pilot.Nationality,
+    };
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OneOf;
@@ -40,9 +41,14 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
 
         logger.LogInformation("Retrieving pilots with pagination parameters: {@PagerParameters}", pagerParameters);
 
-        Expression<Func<Pilot, PilotListDto>> projection = x => new PilotListDto(
-            x.Id, x.Name, x.Number, x.Code, x.Nationality, x.Team == null ? null : new TeamListDto(
-                x.Team.Id, x.Team.Name, x.Team.DateOfFoundation, x.Team.OwnerName, x.Team.ChampionShipPoints));
+        Expression<Func<Pilot, PilotListDto>> projection = x => new PilotListDto
+        {
+            Code = x.Code,
+            Name = x.Name,
+            Nationality = x.Nationality,
+            Number = x.Number,
+            TeamListDto = new TeamListDto { ChampionShipPoints = x.Team.ChampionShipPoints, DateOfFoundation = x.Team.DateOfFoundation, Name = x.Team.Name, OwnerName = x.Team.OwnerName }
+        };
 
         var result = await PagedList<PilotListDto>.CreateAsync(query, pagerParameters, projection, token);
 
@@ -56,18 +62,18 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
 
     public async Task<OneOf<PilotDetailsDto, NotFound, Error>> GetByIdAsync(int id, CancellationToken token)
     {
-        var pilot = await context.Pilots
+        var result = await context.Pilots
             .Include(ent => ent.Team)
             .AsNoTracking()
+            .ProjectTo<PilotDetailsDto>(mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(x => x.Id == id, token);
 
-        if (pilot is null)
+        if (result is null)
         {
             logger.LogInformation("Pilot with id: {Id} not found.", id);
             return new NotFound();
         }
 
-        var result = mapper.Map<PilotDetailsDto>(pilot);
         return result;
     }
 
@@ -90,18 +96,18 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
 
     public async Task UpdateAsync(int id, PilotUpdateDto updateDto, CancellationToken token)
     {
-        var pilotExists = await context.Pilots.AnyAsync(x => x.Id == id, token);
+        var pilot = await context.Pilots.FirstOrDefaultAsync(x => x.Id == id, token);
 
-        if (!pilotExists)
+        if (pilot is null)
         {
             logger.LogInformation("Pilot with id: {Id} not found.", id);
             //return new NotFound();
             throw new KeyNotFoundException($"Pilot with id: {id} not found.");
         }
 
-        var pilot = await context.Pilots.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, token);
-
         mapper.Map(updateDto, pilot);
+        context.Pilots.Update(pilot);
+
         logger.LogInformation("Pilot with id: {Id} updated successfully.", id);
     }
 }

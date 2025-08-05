@@ -9,9 +9,14 @@ public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
-        CreateMap<Pilot, PilotListDto>();
-        CreateMap<Pilot, PilotDetailsDto>();
+        CreateMap<Pilot, PilotListDto>().ReverseMap();
+        CreateMap<Pilot, PilotCreateDto>().ReverseMap();
+        CreateMap<Pilot, PilotDetailsDto>().ReverseMap();
+        CreateMap<Pilot, PilotUpdateDto>().ReverseMap();
 
-        CreateMap<Team, TeamDetailsDto>();
+        CreateMap<Team, TeamDetailsDto>().ReverseMap();
+        CreateMap<Team, TeamListDto>().ReverseMap();
+        CreateMap<Team, TeamUpdateDto>().ReverseMap();
+        CreateMap<Team, TeamCreateDto>().ReverseMap();
     }
 }

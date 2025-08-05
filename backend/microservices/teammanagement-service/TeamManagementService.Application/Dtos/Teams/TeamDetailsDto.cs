@@ -3,13 +3,20 @@ using TeamManagementService.Domain.Models;
 
 namespace TeamManagementService.Application.Dtos.Teams;
 
-public record TeamDetailsDto(int Id, string Name, DateTime DateOfFoundation, string OwnerName, int ChampionShipPoints, List<PilotDetailsDto> Pilots)
+public record TeamDetailsDto
 {
-    public static TeamDetailsDto FromTeam(Team team) => new(
-        team.Id,
-        team.Name,
-        team.DateOfFoundation,
-        team.OwnerName,
-        team.ChampionShipPoints,
-        team.Pilots != null ? team.Pilots.ConvertAll(PilotDetailsDto.FromPilot) : []);
+    public string? Name { get; set; }
+    public DateTimeOffset? DateOfFoundation { get; set; }
+    public string? OwnerName { get; set; }
+    public int? ChampionShipPoints { get; set; }
+    public List<PilotDetailsDto> Pilots { get; set; } = [];
+
+    public static TeamDetailsDto FromTeam(Team team) => new()
+    {
+        Name = team.Name,
+        DateOfFoundation = team.DateOfFoundation,
+        OwnerName = team.OwnerName,
+        ChampionShipPoints = team.ChampionShipPoints,
+        Pilots = team.Pilots is not null ? team.Pilots.ConvertAll(PilotDetailsDto.FromPilot) : []
+    };
 }
