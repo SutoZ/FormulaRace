@@ -9,7 +9,7 @@ COPY ["backend/microservices/teammanagement-service/TeamManagementService.Applic
 COPY ["backend/microservices/teammanagement-service/TeamManagementService.Domain/TeamManagementService.Domain.csproj", "teammanagement-service/TeamManagementService.Domain/"]
 COPY ["backend/microservices/teammanagement-service/TeamManagementService.Infrastructure/TeamManagementService.Infrastructure.csproj", "teammanagement-service/TeamManagementService.Infrastructure/"]
 # If you have other projects (like shared libraries), copy them here as well
-COPY ["backend/shared/Race.Shared.Utilities/Race.Shared.Utilities.csproj", "shared/Race.Shared.Utilities/"]
+COPY ["backend/microservices/shared/Race.Shared.Utilities/Race.Shared.Utilities.csproj", "shared/Race.Shared.Utilities/"]
 
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
