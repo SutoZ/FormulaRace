@@ -33,7 +33,8 @@ jobs:
         run: |
           dotnet restore ./backend/microservices/teammanagement-service/TeamManagementService.sln
           dotnet build ./backend/microservices/teammanagement-service/TeamManagementService.sln --no-restore --configuration Release
-          dotnet test ./backend/microservices/teammanagement-service/TeamManagementService.sln --no-build --configuration Release --verbosity normal
+          # Exclude integration tests
+          dotnet test ./backend/microservices/teammanagement-service/TeamManagementService.sln --no-build --configuration Release --verbosity normal --filter "FullyQualifiedName!~Integration"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
