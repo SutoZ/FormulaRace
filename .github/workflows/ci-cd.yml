@@ -35,6 +35,9 @@ jobs:
           dotnet build ./backend/microservices/teammanagement-service/TeamManagementService.sln --no-restore --configuration Release
           dotnet test ./backend/microservices/teammanagement-service/TeamManagementService.sln --no-build --verbosity normal
 
+      - name: Run tests
+        run: dotnet test ./backend/microservices/teammanagement-service/TeamManagementService.sln --no-build --verbosity normal
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
