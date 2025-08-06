@@ -27,7 +27,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x' # Match your project's .NET version
+          dotnet-version: '9.0.x' # Use .NET 9.0 SDK
 
       - name: Restore, Build, and Test .NET Project
         run: |
