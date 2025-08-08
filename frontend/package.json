@@ -23,7 +23,8 @@
     "@angular/router": "^20.0.6",
     "@material/dialog": "^14.0.0",
     "@material/snackbar": "^14.0.0",
-    "bootstrap": "^5.3.7"
+    "bootstrap": "^5.3.7",
+    "zone.js": "^0.15.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^20.0.5",
