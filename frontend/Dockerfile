@@ -9,7 +9,7 @@ RUN apk add --no-cache curl
 WORKDIR /app
 
 # Copy package.json and package-lock.json to leverage Docker cache
-COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package-lock.json ./
 
 # Install project dependencies
 RUN npm install
