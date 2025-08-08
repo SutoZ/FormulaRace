@@ -12,10 +12,11 @@ WORKDIR /app
 COPY frontend/package.json frontend/package-lock.json ./
 
 # Install project dependencies
-RUN npm install
+# Use 'npm ci' for clean, reproducible production installs
+RUN npm ci
 
-# Copy the rest of the application source code
-COPY . .
+# Copy the rest of the application source code from frontend directory
+COPY frontend/ .
 
 # Build the application for production
 # The output will be in /app/dist/racefrontend/browser
@@ -26,7 +27,7 @@ RUN npm run build -- --configuration production
 # Use a lightweight Nginx image
 FROM nginx:alpine
 
-# Install curl for health checks and debugging
+# Install curl for health checks and debugging (required by docker-compose.yaml)
 RUN apk add --no-cache curl
 
 # Copy the built artifacts from the 'builder' stage
@@ -35,6 +36,8 @@ COPY --from=builder /app/dist/racefrontend/browser/ /usr/share/nginx/html
 
 # Copy the custom Nginx configuration
 COPY --from=builder /app/nginx.conf /etc/nginx/conf.d/default.conf
+
+USER appuser
 
 # Expose port 80 to the outside world
 EXPOSE 80
