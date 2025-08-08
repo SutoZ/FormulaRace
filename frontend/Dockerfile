@@ -33,8 +33,8 @@ RUN apk add --no-cache curl
 # Angular CLI with application builder outputs to dist/racefrontend/browser/
 COPY --from=builder /app/dist/racefrontend/browser/ /usr/share/nginx/html
 
-# Copy the custom Nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy the custom Nginx configuration FROM THE BUILDER STAGE
+COPY --from=builder /app/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80 to the outside world
 EXPOSE 80
