@@ -41,7 +41,7 @@ export class PilotCreateComponent implements OnInit {
   ) {
     this.createPilotForm = this.fb.group({
       name: ['', Validators.required],
-      number: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      number: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
       code: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
       nationality: ['', Validators.required],
       teamId: ['', Validators.required],
@@ -59,8 +59,22 @@ export class PilotCreateComponent implements OnInit {
       next: (pagedList) => {
         this.teams = pagedList.data;
       },
-      error: () => {
-        this.snackBar.open('Error loading teams', 'Close', { duration: 3000 });
+      error: (error) => {
+        console.error('Error loading teams:', error);
+        let errorMessage = 'Error loading teams';
+
+        if (error.status === 409) {
+          errorMessage = 'Conflict error loading teams - check backend configuration';
+          console.error('409 Conflict: This may indicate a backend business rule violation or resource conflict');
+        } else if (error.status === 404) {
+          errorMessage = 'Teams endpoint not found';
+        } else if (error.status === 500) {
+          errorMessage = 'Server error loading teams';
+        } else if (error.status === 0) {
+          errorMessage = 'Network error - check if backend is running';
+        }
+
+        this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
       },
     });
   }

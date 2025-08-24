@@ -14,7 +14,7 @@
       <!-- Number -->
       <mat-form-field appearance="fill">
         <mat-label>Number</mat-label>
-        <input matInput type="number" formControlName="number" required />
+        <input matInput type="text" formControlName="number" required />
         <mat-error *ngIf="createPilotForm.get('number')?.hasError('required')">
           Number is required.
         </mat-error>

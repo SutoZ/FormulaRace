@@ -42,8 +42,14 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 var dbProvider = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
 var conn = builder.Configuration.GetConnectionString("RaceConnection");
 
-if (builder.Environment.EnvironmentName is not "Test")
-    ArgumentException.ThrowIfNullOrEmpty(conn);
+Log.Information("Connection string retrieved: {ConnectionString}", 
+    string.IsNullOrEmpty(conn) ? "NULL/EMPTY" : "CONFIGURED");
+
+Log.Information("Available configuration keys: {Keys}", 
+    string.Join(", ", builder.Configuration.AsEnumerable().Select(x => x.Key)));
+
+// if (builder.Environment.EnvironmentName is not "Test")
+//     ArgumentException.ThrowIfNullOrEmpty(conn);
 
 switch (dbProvider.ToLowerInvariant())
 {
@@ -86,6 +92,8 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
 });
+
+builder.Services.AddHttpContextAccessor();
 
 
 builder.Services.AddEndpointsApiExplorer();

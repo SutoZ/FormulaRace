@@ -3,13 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IPagedList } from 'src/app/PagedList';
 import { IPilotsListViewModel } from 'src/app/race-administration/models/pilot.models';
-import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PilotsService {
-  private readonly baseUrl = `${environment.BASE_URL}/api/pilots`;
+  private readonly baseUrl = '/api/pilots';
 
   constructor(private readonly http: HttpClient) {}
 

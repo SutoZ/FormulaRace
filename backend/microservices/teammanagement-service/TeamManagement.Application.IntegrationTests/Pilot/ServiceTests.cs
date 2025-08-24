@@ -103,7 +103,6 @@ public class ServiceTests : BaseIntegrationTest
         Assert.That(notFound, Is.Not.Null);
         Assert.That(notFound, Is.TypeOf<NotFound>());
     }
-
     [Test]
     public async Task UpdateAsync_WithValidData_ShouldUpdatePilotInDatabase()
     {

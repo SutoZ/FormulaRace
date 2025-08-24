@@ -89,6 +89,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
         Pilot pilot = mapper.Map<Pilot>(createDto);
 
         context.Pilots.Add(pilot);
+        await context.SaveChangesAsync(token); // ✅ FIX: Save changes to database
         logger.LogInformation("Pilot with name: {Name} created successfully.", createDto.Name);
 
         return pilot;

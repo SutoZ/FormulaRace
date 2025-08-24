@@ -21,12 +21,12 @@ RUN dotnet restore "backend/microservices/teammanagement-service/TeamManagementS
 COPY . .
 WORKDIR "/src/backend/microservices/teammanagement-service/TeamManagementService.API"
 
-# Build the project in Release configuration
-RUN dotnet build "TeamManagementService.API.csproj" -c Release -o /app/build
+# Build the project in Debug configuration
+RUN dotnet build "TeamManagementService.API.csproj" -c Debug -o /app/build
 
 # Publish the application
 FROM build AS publish
-RUN dotnet publish "TeamManagementService.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "TeamManagementService.API.csproj" -c Debug -o /app/publish /p:UseAppHost=false
 
 # Stage 2: Create the final runtime image
 # Use the smaller ASP.NET runtime image for the final stage
@@ -36,6 +36,11 @@ COPY --from=publish /app/publish .
 
 # Expose port 8080 for the application to listen on
 EXPOSE 8080
+EXPOSE 5005
+
+# Enable debugging
+ENV DOTNET_ENVIRONMENT=Development
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 # Define the entry point for the container
 ENTRYPOINT ["dotnet", "TeamManagementService.API.dll"]

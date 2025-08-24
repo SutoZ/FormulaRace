@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Race.Shared.Utilities.Paging;
 using System.Text;
 using TeamManagementService.Application.CQRS.Pilots.Commands;
+using TeamManagementService.Application.CQRS.Teams.Handlers;
 using TeamManagementService.Application.Interfaces;
 using TeamManagementService.Application.Interfaces.Repositories;
 using TeamManagementService.Application.Interfaces.Services;
@@ -31,9 +32,6 @@ public static class ServiceExtensions
         services.AddScoped<SoftDeleteInterceptor>();
         services.AddScoped<AuditableInterceptor>();
         services.AddScoped(typeof(IPagedList<>), typeof(PagedList<>));
-
-        services.AddHttpContextAccessor();
-        services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
 
         return services;
     }
@@ -70,6 +68,7 @@ public static class ServiceExtensions
         {
             cfg.RegisterServicesFromAssembly(typeof(Program).Assembly); // Register current assembly
             cfg.RegisterServicesFromAssembly(typeof(CreatePilotCommand).Assembly); // Register CreatePilotCommand assembly
+            cfg.RegisterServicesFromAssembly(typeof(GetAllTeamsHandler).Assembly); // Register GetAllTeamsHandler assembly
         });
 
         return services;

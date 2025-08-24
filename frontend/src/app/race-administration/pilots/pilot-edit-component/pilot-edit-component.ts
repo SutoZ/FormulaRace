@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { IPilotsListViewModel } from '../../models/pilot.models';
 import { HttpParams } from '@angular/common/http';
@@ -48,7 +49,8 @@ export class PilotEditComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
     private readonly pilotService: PilotsService,
-    private readonly teamsService: TeamsService
+    private readonly teamsService: TeamsService,
+    private readonly snackBar: MatSnackBar
   ) {
     this.form = new FormGroup({});
   }
@@ -91,7 +93,23 @@ export class PilotEditComponent implements OnInit {
 
     this.teamsService.getTeams(params).subscribe({
       next: (result) => (this.teams = result.data),
-      error: (err) => console.error(err),
+      error: (error) => {
+        console.error('Error loading teams:', error);
+        let errorMessage = 'Error loading teams';
+
+        if (error.status === 409) {
+          errorMessage = 'Conflict error loading teams - check backend configuration';
+          console.error('409 Conflict: This may indicate a backend business rule violation or resource conflict');
+        } else if (error.status === 404) {
+          errorMessage = 'Teams endpoint not found';
+        } else if (error.status === 500) {
+          errorMessage = 'Server error loading teams';
+        } else if (error.status === 0) {
+          errorMessage = 'Network error - check if backend is running';
+        }
+
+        this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
+      },
     });
   }
 
