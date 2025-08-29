@@ -14,6 +14,6 @@ public class Entity : IEntity, ISoftDelete, IAuditable
     public string? UpdatedBy { get; set; }
 
     // ISoftDelete properties
-    public bool Active { get; set; }
+    public bool Active { get; set; } = true;
     public DateTimeOffset? DeletedAt { get; set; }
 }
