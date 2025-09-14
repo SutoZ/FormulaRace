@@ -99,7 +99,9 @@ export class PilotEditComponent implements OnInit {
 
         if (error.status === 409) {
           errorMessage = 'Conflict error loading teams - check backend configuration';
-          console.error('409 Conflict: This may indicate a backend business rule violation or resource conflict');
+          console.error(
+            '409 Conflict: This may indicate a backend business rule violation or resource conflict'
+          );
         } else if (error.status === 404) {
           errorMessage = 'Teams endpoint not found';
         } else if (error.status === 500) {
