@@ -9,14 +9,14 @@ RUN apk add --no-cache curl
 WORKDIR /app
 
 # Copy package.json and package-lock.json to leverage Docker cache
-COPY frontend/package.json frontend/package-lock.json ./
+COPY package.json package-lock.json ./
 
 # Install project dependencies
 # Use 'npm ci' for clean, reproducible production installs
 RUN npm ci
 
-# Copy the rest of the application source code from frontend directory
-COPY frontend/ .
+# Copy the rest of the application source code
+COPY . .
 
 # Build the application for production
 # The output will be in /app/dist/racefrontend/browser
@@ -35,9 +35,7 @@ RUN apk add --no-cache curl
 COPY --from=builder /app/dist/racefrontend/browser/ /usr/share/nginx/html
 
 # Copy the custom Nginx configuration
-COPY --from=builder /app/nginx.conf /etc/nginx/conf.d/default.conf
-
-USER appuser
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80 to the outside world
 EXPOSE 80

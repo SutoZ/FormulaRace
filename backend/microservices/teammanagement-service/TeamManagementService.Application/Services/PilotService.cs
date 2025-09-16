@@ -10,17 +10,29 @@ using TeamManagementService.Application.Specifications;
 
 namespace TeamManagementService.Application.Services;
 
-public class PilotService(
-    IUnitOfWork uow,
-    ILogger<PilotService> logger,
-    IValidator<PilotDeleteDto> deleteValidator,
-    IValidator<PilotFilterDto> getByIdValidator) : IPilotService
+public class PilotService : IPilotService
 {
+    private readonly IUnitOfWork _uow;
+    private readonly ILogger<PilotService> _logger;
+    private readonly IValidator<PilotDeleteDto> _deleteValidator;
+    private readonly IValidator<PilotFilterDto> _getByIdValidator;
+
+    public PilotService(IUnitOfWork uow,
+        ILogger<PilotService> logger,
+        IValidator<PilotDeleteDto> deleteValidator,
+        IValidator<PilotFilterDto> getByIdValidator)
+    {
+        _uow = uow;
+        _logger = logger;
+        _deleteValidator = deleteValidator;
+        _getByIdValidator = getByIdValidator;
+    }
+
     public async Task<PilotListDto> CreateAsync(PilotCreateDto createDto, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(createDto, nameof(createDto));
 
-        var result = await uow.Pilot.CreateAsync(createDto, token);
+        var result = await _uow.Pilot.CreateAsync(createDto, token);
         return PilotListDto.FromPilot(result);
     }
 
@@ -29,20 +41,20 @@ public class PilotService(
         ArgumentNullException.ThrowIfNull(pagerParameters, nameof(pagerParameters));
         var query = PilotFilterSpecifiation.AsExpression(filterDto);
 
-        logger.LogInformation("Fetching all pilots with pagination parameters: {@PagerParameters}", pagerParameters);
-        return await uow.Pilot.GetAllAsync(pagerParameters, query, token);
+        _logger.LogInformation("Fetching all pilots with pagination parameters: {@PagerParameters}", pagerParameters);
+        return await _uow.Pilot.GetAllAsync(pagerParameters, query, token);
     }
 
     public async Task<OneOf<PilotDetailsDto, NotFound, Error>> GetByIdAsync(int id, CancellationToken token)
     {
-        logger.LogInformation("Fetching pilot with ID: {Id}", id);
+        _logger.LogInformation("Fetching pilot with ID: {Id}", id);
 
         PilotFilterDto filterDto = new() { Id = id, Name = string.Empty, Number = string.Empty, Code = string.Empty, Nationality = string.Empty };
 
-        await getByIdValidator.ValidateAndThrowAsync(filterDto, token);
+        await _getByIdValidator.ValidateAndThrowAsync(filterDto, token);
 
-        var result = await uow.Pilot.GetByIdAsync(id, token);
-        logger.LogInformation("Pilot retrieval result for ID {Id}: {@Result}", id, result);
+        var result = await _uow.Pilot.GetByIdAsync(id, token);
+        _logger.LogInformation("Pilot retrieval result for ID {Id}: {@Result}", id, result);
 
         return result;
     }
@@ -50,20 +62,20 @@ public class PilotService(
     public async Task UpdateAsync(int id, PilotUpdateDto updateDto, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(updateDto, nameof(updateDto));
-        logger.LogInformation("Updating pilot with ID: {Id}", id);
+        _logger.LogInformation("Updating pilot with ID: {Id}", id);
 
-        await uow.Pilot.UpdateAsync(id, updateDto, token);
+        await _uow.Pilot.UpdateAsync(id, updateDto, token);
     }
 
     public async Task<OneOf<int, NotFound, Error>> DeleteAsync(int id, CancellationToken token)
     {
-        logger.LogInformation("Attempting to delete pilot with ID: {Id}", id);
+        _logger.LogInformation("Attempting to delete pilot with ID: {Id}", id);
 
         var pilotDeleteDto = new PilotDeleteDto(id);
-        await deleteValidator.ValidateAndThrowAsync(pilotDeleteDto, token);
+        await _deleteValidator.ValidateAndThrowAsync(pilotDeleteDto, token);
 
-        var result = await uow.Pilot.DeleteAsync(id, token);
-        logger.LogInformation("Response for delete request for pilot ID {Id}: {@Result}", id, result);
+        var result = await _uow.Pilot.DeleteAsync(id, token);
+        _logger.LogInformation("Response for delete request for pilot ID {Id}: {@Result}", id, result);
 
         return result;
     }

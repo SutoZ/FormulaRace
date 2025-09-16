@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Polly;
@@ -95,7 +96,6 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 
 builder.Services.AddHttpContextAccessor();
 
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -111,6 +111,7 @@ builder.Services.AddCors(setup =>
     });
 });
 
+builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(typeof(PilotDeleteValidator).Assembly);
 
 builder.Services.AddScopedServices();

@@ -27,12 +27,14 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
         }
 
         context.Pilots.Remove(pilot);
+        await context.SaveChangesAsync(token); // ✅ FIX: Save changes to database
         logger.LogInformation("Pilot with id: {Id} deleted successfully.", id);
 
         return pilot.Id;
     }
 
-    public async Task<OneOf<IPagedList<PilotListDto>, NotFound, Error>> GetAllAsync(PagerParameters pagerParameters, Expression<Func<Pilot, bool>> predicate, CancellationToken token)
+    public async Task<OneOf<IPagedList<PilotListDto>, NotFound, Error>> GetAllAsync(PagerParameters pagerParameters,
+        Expression<Func<Pilot, bool>> predicate, CancellationToken token)
     {
         var query = context.Pilots
             .Include(x => x.Team)
@@ -43,11 +45,16 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
 
         Expression<Func<Pilot, PilotListDto>> projection = x => new PilotListDto
         {
+            Id = x.Id,
             Code = x.Code,
             Name = x.Name,
             Nationality = x.Nationality,
             Number = x.Number,
-            TeamListDto = new TeamListDto { ChampionShipPoints = x.Team.ChampionShipPoints, DateOfFoundation = x.Team.DateOfFoundation, Name = x.Team.Name, OwnerName = x.Team.OwnerName }
+            TeamListDto = new TeamListDto
+            {
+                Id = x.Team.Id, ChampionShipPoints = x.Team.ChampionShipPoints,
+                DateOfFoundation = x.Team.DateOfFoundation, Name = x.Team.Name, OwnerName = x.Team.OwnerName
+            }
         };
 
         var result = await PagedList<PilotListDto>.CreateAsync(query, pagerParameters, projection, token);
@@ -108,6 +115,7 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
 
         mapper.Map(updateDto, pilot);
         context.Pilots.Update(pilot);
+        await context.SaveChangesAsync(token);
 
         logger.LogInformation("Pilot with id: {Id} updated successfully.", id);
     }
