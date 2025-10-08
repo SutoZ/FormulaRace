@@ -18,7 +18,7 @@ pr:
 
 variables:
   buildConfiguration: 'Release'
-  dotNetVersion: '8.0.x'
+  dotNetVersion: '9.0.x'
   vmImageName: 'ubuntu-latest'
   projectName: 'TeamManagementService'
   solutionPath: '**/*.sln'
