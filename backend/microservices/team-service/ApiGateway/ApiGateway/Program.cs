@@ -1,19 +1,25 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Ocelot.DependencyInjection;
+﻿using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace ApiGateway;
 
-// Load the ocelot.json configuration file
-builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+public class Program
+{
+    public static async Task Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-// Add Ocelot services to the dependency injection container
-builder.Services.AddOcelot(builder.Configuration);
+        // Load the ocelot.json configuration file
+        builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
-var app = builder.Build();
+        // Add Ocelot services to the dependency injection container
+        builder.Services.AddOcelot(builder.Configuration);
 
-// Add the Ocelot middleware to the pipeline
-await app.UseOcelot();
+        var app = builder.Build();
 
-app.Run();
+        // Add the Ocelot middleware to the pipeline
+        await app.UseOcelot();
+
+        app.Run();
+    }
+}
