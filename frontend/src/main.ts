@@ -10,7 +10,8 @@ if (environment.production) {
 const providers = [{ provide: 'BASE_URL', useFactory: getBaseUrl, deps: [] }];
 
 export function getBaseUrl() {
-  return document.getElementsByTagName('base')[0].href;
+  const base = document.getElementsByTagName('base')[0];
+  return base ? base.href : '/';
 }
 
 platformBrowser(providers)
