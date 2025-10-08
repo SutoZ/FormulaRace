@@ -1,0 +1,180 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+      - feature/*
+  paths:
+    exclude:
+      - README.md
+      - docs/*
+      - '*.md'
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+
+variables:
+  buildConfiguration: 'Release'
+  dotNetVersion: '8.0.x'
+  vmImageName: 'ubuntu-latest'
+  projectName: 'TeamManagementService'
+  solutionPath: '**/*.sln'
+  testProjectsPath: '**/*Tests/*.csproj'
+  apiProjectPath: 'TeamManagementService.API/TeamManagementService.API.csproj'
+
+stages:
+  - stage: CI
+    displayName: 'Continuous Integration'
+    jobs:
+      - job: Build
+        displayName: 'Build and Test'
+        pool:
+          vmImage: $(vmImageName)
+
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET Core SDK'
+            inputs:
+              packageType: 'sdk'
+              version: $(dotNetVersion)
+              includePreviewVersions: false
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore NuGet packages'
+            inputs:
+              command: 'restore'
+              projects: $(solutionPath)
+              feedsToUse: 'select'
+              verbosityRestore: 'Normal'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build solution'
+            inputs:
+              command: 'build'
+              projects: $(solutionPath)
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run unit tests'
+            inputs:
+              command: 'test'
+              projects: $(testProjectsPath)
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --results-directory $(Agent.TempDirectory)/TestResults --logger trx'
+              publishTestResults: true
+
+          - task: PublishCodeCoverageResults@1
+            displayName: 'Publish code coverage results'
+            inputs:
+              codeCoverageTool: 'Cobertura'
+              summaryFileLocation: '$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml'
+              reportDirectory: '$(Agent.TempDirectory)/TestResults/CoverageReport'
+            condition: succeededOrFailed()
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish API application'
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: $(apiProjectPath)
+              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/api --no-restore --no-build'
+
+          - task: CopyFiles@2
+            displayName: 'Copy deployment files'
+            inputs:
+              SourceFolder: '$(Build.SourcesDirectory)'
+              Contents: |
+                Dockerfile
+                docker-compose.yml
+                appsettings*.json
+                **/*.dacpac
+              TargetFolder: '$(Build.ArtifactStagingDirectory)/deploy'
+            condition: succeededOrFailed()
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish build artifacts'
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: '$(projectName)-$(Build.BuildNumber)'
+              publishLocation: 'Container'
+            condition: succeededOrFailed()
+
+      - job: CodeQuality
+        displayName: 'Code Quality Analysis'
+        pool:
+          vmImage: $(vmImageName)
+        dependsOn: Build
+        condition: succeeded()
+
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET Core SDK'
+            inputs:
+              packageType: 'sdk'
+              version: $(dotNetVersion)
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore packages for analysis'
+            inputs:
+              command: 'restore'
+              projects: $(solutionPath)
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run security scan'
+            inputs:
+              command: 'custom'
+              custom: 'list'
+              arguments: 'package --vulnerable --include-transitive'
+              projects: $(solutionPath)
+            continueOnError: true
+
+          - task: PublishTestResults@2
+            displayName: 'Publish test results'
+            inputs:
+              testResultsFormat: 'VSTest'
+              testResultsFiles: '$(Agent.TempDirectory)/TestResults/*.trx'
+              mergeTestResults: true
+              failTaskOnFailedTests: true
+            condition: succeededOrFailed()
+# Placeholder for future CD stages - uncomment and configure when needed
+# - stage: Deploy_Dev
+#   displayName: 'Deploy to Development'
+#   dependsOn: CI
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+#   jobs:
+#   - deployment: DeployDev
+#     displayName: 'Deploy to Dev Environment'
+#     pool:
+#       vmImage: $(vmImageName)
+#     environment: 'Development'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - template: deploy-template.yml
+#             parameters:
+#               environment: 'dev'
+#               azureSubscription: 'Azure-ServiceConnection-Dev'
+#               appServiceName: 'teammanagement-dev'
+
+# - stage: Deploy_Prod
+#   displayName: 'Deploy to Production'
+#   dependsOn: CI
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#   jobs:
+#   - deployment: DeployProd
+#     displayName: 'Deploy to Production Environment'
+#     pool:
+#       vmImage: $(vmImageName)
+#     environment: 'Production'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - template: deploy-template.yml
+#             parameters:
+#               environment: 'prod'
+#               azureSubscription: 'Azure-ServiceConnection-Prod'
+#               appServiceName: 'teammanagement-prod'
