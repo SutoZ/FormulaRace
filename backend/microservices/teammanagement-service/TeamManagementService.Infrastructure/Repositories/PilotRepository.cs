@@ -11,6 +11,7 @@ using TeamManagementService.Application.Dtos.Teams;
 using TeamManagementService.Application.Interfaces.Repositories;
 using TeamManagementService.Domain.Models;
 using TeamManagementService.Infrastructure.ApplicationContext;
+using TeamManagementService.Infrastructure.Exceptions;
 
 namespace TeamManagementService.Infrastructure.Repositories;
 
@@ -109,14 +110,21 @@ public class PilotRepository(RaceContext context, IMapper mapper, ILogger<PilotR
         if (pilot is null)
         {
             logger.LogInformation("Pilot with id: {Id} not found.", id);
-            //return new NotFound();
             throw new KeyNotFoundException($"Pilot with id: {id} not found.");
         }
 
-        mapper.Map(updateDto, pilot);
-        context.Pilots.Update(pilot);
-        await context.SaveChangesAsync(token);
+        try
+        {
+            mapper.Map(updateDto, pilot);
+            context.Pilots.Update(pilot);
+            await context.SaveChangesAsync(token);
 
-        logger.LogInformation("Pilot with id: {Id} updated successfully.", id);
+            logger.LogInformation("Pilot with id: {Id} updated successfully.", id);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            logger.LogWarning("Concurrency conflict detected while updating pilot with id: {Id}.", id);
+            throw new ConcurrencyException("Pilot", id);
+        }
     }
 }

@@ -13,6 +13,8 @@ public class Entity : IEntity, ISoftDelete, IAuditable
     public string CreatedBy { get; set; }
     public string? UpdatedBy { get; set; }
 
+    public byte[] Rowversion { get; set; }
+    
     // ISoftDelete properties
     public bool Active { get; set; } = true;
     public DateTimeOffset? DeletedAt { get; set; }

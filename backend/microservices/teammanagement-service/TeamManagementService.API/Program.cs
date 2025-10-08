@@ -67,7 +67,9 @@ switch (dbProvider.ToLowerInvariant())
                    .EnableDetailedErrors()
                    .EnableSensitiveDataLogging());
 
-        builder.Services.AddHealthChecks().AddSqlServer(conn!);
+        builder.Services.AddHealthChecks()
+            .AddSqlServer(conn!, name: "sqlserver-db", tags: new[] { "database", "sql" })
+            .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy("API is running"));
         break;
     case "postgres":
         builder.Services.AddDbContext<RaceContext>((serviceProvider, options) =>
@@ -82,7 +84,9 @@ switch (dbProvider.ToLowerInvariant())
                    .EnableDetailedErrors()
                    .EnableSensitiveDataLogging());
 
-        builder.Services.AddHealthChecks().AddNpgSql(conn!);
+        builder.Services.AddHealthChecks()
+            .AddNpgSql(conn!, name: "postgresql-db", tags: new[] { "database", "postgresql" })
+            .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy("API is running"));
         break;
     default:
         throw new NotSupportedException($"Database provider '{dbProvider}' is not supported.");
@@ -170,6 +174,29 @@ app.UseSession();
 
 app.UseRouting();
 app.UseCors("AllowFrontend");
+
+// Add health check endpoints
+app.MapHealthChecks("/healthz");
+app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        var response = new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(x => new
+            {
+                name = x.Key,
+                status = x.Value.Status.ToString(),
+                exception = x.Value.Exception?.Message,
+                duration = x.Value.Duration
+            }),
+            duration = report.TotalDuration
+        };
+        await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(response));
+    }
+});
 
 app.MapGet("/", () => "API is running!");
 
