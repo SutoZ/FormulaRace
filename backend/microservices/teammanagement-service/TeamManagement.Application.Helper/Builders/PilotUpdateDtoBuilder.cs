@@ -27,13 +27,7 @@ public class PilotUpdateDtoBuilder
         _nationality = nationality;
         return this;
     }
-
-    public PilotUpdateDtoBuilder WithId(int id)
-    {
-        _id = id;
-        return this;
-    }
-
+    
     public PilotUpdateDtoBuilder WithCode(string code)
     {
         _code = code;

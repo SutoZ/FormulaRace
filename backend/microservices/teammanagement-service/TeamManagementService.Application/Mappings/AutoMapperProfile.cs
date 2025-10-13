@@ -12,7 +12,10 @@ public class AutoMapperProfile : Profile
         CreateMap<Pilot, PilotListDto>().ReverseMap();
         CreateMap<Pilot, PilotCreateDto>().ReverseMap();
         CreateMap<Pilot, PilotDetailsDto>().ReverseMap();
-        CreateMap<Pilot, PilotUpdateDto>().ReverseMap();
+        
+        CreateMap<Pilot, PilotUpdateDto>();
+        CreateMap<PilotUpdateDto, Pilot>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
 
         CreateMap<Team, TeamDetailsDto>().ReverseMap();
         CreateMap<Team, TeamListDto>().ReverseMap();

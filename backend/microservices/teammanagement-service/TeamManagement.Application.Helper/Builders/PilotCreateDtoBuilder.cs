@@ -17,12 +17,6 @@ public class PilotCreateDtoBuilder
         return this;
     }
 
-    public PilotCreateDtoBuilder WithId(int id)
-    {
-        _pilotId = id;
-        return this;
-    }
-
     public PilotCreateDtoBuilder WithTeamId(int teamId)
     {
         _teamId = teamId;
