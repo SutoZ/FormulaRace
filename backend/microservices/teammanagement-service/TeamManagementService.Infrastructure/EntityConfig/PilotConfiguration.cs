@@ -38,6 +38,7 @@ public class PilotConfiguration : IEntityTypeConfiguration<Pilot>
 
         builder.Property(x => x.Rowversion)
             .IsRowVersion()
+            .ValueGeneratedOnAddOrUpdate()
             .IsConcurrencyToken();
 
         builder.HasIndex(x => x.Name);

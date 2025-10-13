@@ -33,7 +33,9 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
 
         builder.Property(x => x.Rowversion)
             .IsRowVersion()
+            .ValueGeneratedOnAddOrUpdate()
             .IsConcurrencyToken();
+            
         
         builder.Property(x => x.ChampionShipPoints); //.IsRequired();
 
