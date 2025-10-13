@@ -64,13 +64,30 @@ stages:
               projects: $(testProjectsPath)
               arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --results-directory $(Agent.TempDirectory)/TestResults --logger trx'
               publishTestResults: true
+              testRunTitle: 'Unit Tests - $(Build.BuildNumber)'
 
-          - task: PublishCodeCoverageResults@1
-            displayName: 'Publish code coverage results'
+          - task: DotNetCoreCLI@2
+            displayName: 'Install ReportGenerator'
             inputs:
-              codeCoverageTool: 'Cobertura'
-              summaryFileLocation: '$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml'
+              command: 'custom'
+              custom: 'tool'
+              arguments: 'update -g dotnet-reportgenerator-globaltool'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Generate coverage report'
+            inputs:
+              command: 'custom'
+              custom: 'reportgenerator'
+              arguments: '-reports:$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura;Badges"'
+            condition: succeededOrFailed()
+
+          - task: PublishCodeCoverageResults@2
+            displayName: 'Publish enhanced code coverage'
+            inputs:
+              summaryFileLocation: '$(Agent.TempDirectory)/TestResults/CoverageReport/Cobertura.xml'
               reportDirectory: '$(Agent.TempDirectory)/TestResults/CoverageReport'
+              pathToSources: '$(Build.SourcesDirectory)'
+              failIfCoverageEmpty: false
             condition: succeededOrFailed()
 
           - task: DotNetCoreCLI@2
@@ -129,15 +146,6 @@ stages:
               arguments: 'package --vulnerable --include-transitive'
               projects: $(solutionPath)
             continueOnError: true
-
-          - task: PublishTestResults@2
-            displayName: 'Publish test results'
-            inputs:
-              testResultsFormat: 'VSTest'
-              testResultsFiles: '$(Agent.TempDirectory)/TestResults/*.trx'
-              mergeTestResults: true
-              failTaskOnFailedTests: true
-            condition: succeededOrFailed()
 # Placeholder for future CD stages - uncomment and configure when needed
 # - stage: Deploy_Dev
 #   displayName: 'Deploy to Development'
