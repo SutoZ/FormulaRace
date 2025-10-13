@@ -62,7 +62,7 @@ stages:
             inputs:
               command: 'test'
               projects: $(testProjectsPath)
-              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --results-directory $(Agent.TempDirectory)/TestResults --logger trx'
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage"'
               publishTestResults: true
               testRunTitle: 'Unit Tests - $(Build.BuildNumber)'
 
