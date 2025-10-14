@@ -33,6 +33,7 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
 
         builder.Property(x => x.Rowversion)
             .IsRowVersion()
+            .HasColumnType("rowversion")
             .ValueGeneratedOnAddOrUpdate()
             .IsConcurrencyToken();
             

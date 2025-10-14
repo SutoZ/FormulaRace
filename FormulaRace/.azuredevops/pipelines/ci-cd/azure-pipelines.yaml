@@ -22,7 +22,8 @@ variables:
   vmImageName: 'ubuntu-latest'
   projectName: 'TeamManagementService'
   solutionPath: '**/*.sln'
-  testProjectsPath: '**/*Tests/*.csproj'
+  unitTestProjectsPath: '**/*UnitTests/*.csproj'
+  integrationTestProjectsPath: '**/*IntegrationTests/*.csproj'
   apiProjectPath: 'TeamManagementService.API/TeamManagementService.API.csproj'
   testDbPassword: 'Nagyon_Nemmindegy98*?.-'
   testConnectionString: 'Server=localhost,1433;Database=RaceDbTest;User Id=sa;Password=$(testDbPassword);TrustServerCertificate=True'
@@ -32,8 +33,8 @@ stages:
   - stage: CI
     displayName: 'Continuous Integration'
     jobs:
-      - job: Build
-        displayName: 'Build and Test'
+      - job: BuildAndTests
+        displayName: 'Build & Tests'
         pool:
           vmImage: $(vmImageName)
 
@@ -61,31 +62,29 @@ stages:
               version: $(dotNetVersion)
               includePreviewVersions: false
 
-          - task: DotNetCoreCLI@2
-            displayName: 'Restore NuGet packages'
+          - task: Cache@2
+            displayName: 'Cache NuGet packages'
             inputs:
-              command: 'restore'
-              projects: $(solutionPath)
-              feedsToUse: 'select'
-              verbosityRestore: 'Normal'
+              key: 'nuget | "$(Agent.OS)" | **/packages.lock.json,**/nuget.config'
+              restoreKeys: |
+                nuget | "$(Agent.OS)"
+              path: $(Pipeline.Workspace)/.nuget/packages
 
-          - task: DotNetCoreCLI@2
-            displayName: 'Build solution'
+          - task: Cache@2
+            displayName: 'Cache .NET Global Tools'
             inputs:
-              command: 'build'
-              projects: $(solutionPath)
-              arguments: '--configuration $(buildConfiguration) --no-restore'
+              key: 'dotnet-tools | "$(Agent.OS)" | $(dotNetVersion)'
+              restoreKeys: |
+                dotnet-tools | "$(Agent.OS)"
+              path: ~/.dotnet/tools
 
-          - task: DotNetCoreCLI@2
-            displayName: 'Run unit tests'
+          - task: Cache@2
+            displayName: 'Cache APT packages'
             inputs:
-              command: 'test'
-              projects: $(testProjectsPath)
-              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx --verbosity normal --filter "Category!=Integration"'
-              publishTestResults: true
-              testRunTitle: 'Unit Tests - $(Build.BuildNumber)'
-            env:
-              ASPNETCORE_ENVIRONMENT: 'Test'
+              key: 'apt | "$(Agent.OS)" | mssql-tools18'
+              restoreKeys: |
+                apt | "$(Agent.OS)"
+              path: /var/cache/apt/archives
 
           - task: DotNetCoreCLI@2
             displayName: 'Install EF Core tools'
@@ -94,6 +93,13 @@ stages:
               command: 'custom'
               custom: 'tool'
               arguments: 'update --global dotnet-ef'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Install ReportGenerator'
+            inputs:
+              command: 'custom'
+              custom: 'tool'
+              arguments: 'update --global dotnet-reportgenerator-globaltool'
 
           - script: |
               # Install SQL Server command line tools
@@ -115,6 +121,33 @@ stages:
               which sqlcmd || echo "⚠️  sqlcmd not found in PATH"
               echo "✅ SQL Server tools installation completed"
             displayName: 'Install SQL Server tools'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore NuGet packages'
+            inputs:
+              command: 'restore'
+              projects: $(solutionPath)
+              feedsToUse: 'select'
+              verbosityRestore: 'Normal'
+              restoreArguments: '--packages $(Pipeline.Workspace)/.nuget/packages'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build solution'
+            inputs:
+              command: 'build'
+              projects: $(solutionPath)
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run unit tests'
+            inputs:
+              command: 'test'
+              projects: $(unitTestProjectsPath)
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx --verbosity normal'
+              publishTestResults: true
+              testRunTitle: 'Unit Tests - $(Build.BuildNumber)'
+            env:
+              ASPNETCORE_ENVIRONMENT: 'Test'
 
           - script: |
               echo "Waiting for SQL Server to be ready..."
@@ -184,21 +217,14 @@ stages:
             displayName: 'Run integration tests'
             inputs:
               command: 'test'
-              projects: $(testProjectsPath)
-              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx --verbosity normal --filter "Category=Integration"'
+              projects: $(integrationTestProjectsPath)
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx --verbosity normal'
               publishTestResults: true
               testRunTitle: 'Integration Tests - $(Build.BuildNumber)'
             env:
               ConnectionStrings__RaceConnection: $(testConnectionString)
               ASPNETCORE_ENVIRONMENT: 'Test'
             condition: succeeded()
-
-          - task: DotNetCoreCLI@2
-            displayName: 'Install ReportGenerator'
-            inputs:
-              command: 'custom'
-              custom: 'tool'
-              arguments: 'update -g dotnet-reportgenerator-globaltool'
 
           - task: DotNetCoreCLI@2
             displayName: 'Generate coverage report'
@@ -249,7 +275,7 @@ stages:
         displayName: 'Code Quality Analysis'
         pool:
           vmImage: $(vmImageName)
-        dependsOn: Build
+        dependsOn: BuildAndUnitTest # ← Fixed dependency name
         condition: succeeded()
 
         steps:
@@ -259,14 +285,32 @@ stages:
               packageType: 'sdk'
               version: $(dotNetVersion)
 
+          # ✅ Reuse NuGet cache
+          - task: Cache@2
+            displayName: 'Cache NuGet packages'
+            inputs:
+              key: 'nuget | "$(Agent.OS)" | **/packages.lock.json,**/nuget.config'
+              restoreKeys: |
+                nuget | "$(Agent.OS)"
+              path: $(Pipeline.Workspace)/.nuget/packages
+
           - task: DotNetCoreCLI@2
             displayName: 'Restore packages for analysis'
             inputs:
               command: 'restore'
               projects: $(solutionPath)
+              restoreArguments: '--packages $(Pipeline.Workspace)/.nuget/packages'
+
+          # ✅ Add missing build step
+          - task: DotNetCoreCLI@2
+            displayName: 'Build solution for analysis'
+            inputs:
+              command: 'build'
+              projects: $(solutionPath)
+              arguments: '--configuration $(buildConfiguration) --no-restore'
 
           - task: DotNetCoreCLI@2
-            displayName: 'Run security scan'
+            displayName: 'Run security vulnerability scan'
             inputs:
               command: 'custom'
               custom: 'list'

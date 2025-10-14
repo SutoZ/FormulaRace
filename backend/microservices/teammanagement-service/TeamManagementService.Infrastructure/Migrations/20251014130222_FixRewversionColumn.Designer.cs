@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeamManagementService.Infrastructure.ApplicationContext;
 
@@ -11,9 +12,11 @@ using TeamManagementService.Infrastructure.ApplicationContext;
 namespace TeamManagementService.Infrastructure.Migrations
 {
     [DbContext(typeof(RaceContext))]
-    partial class RaceContextModelSnapshot : ModelSnapshot
+    [Migration("20251014130222_FixRewversionColumn")]
+    partial class FixRewversionColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

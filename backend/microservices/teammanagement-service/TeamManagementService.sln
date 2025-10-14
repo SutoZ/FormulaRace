@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{CA5B7D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Race.Shared.Utilities", "..\shared\Race.Shared.Utilities\Race.Shared.Utilities.csproj", "{BF0A7B54-51DA-44D4-DB03-7502532B4BC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamManagement.Application.Tests", "TeamManagement.Application.Tests\TeamManagement.Application.Tests.csproj", "{B4AB76A0-8943-4483-B683-8945FFE127FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamManagement.Application.UnitTests", "TeamManagement.Application.UnitTests\TeamManagement.Application.UnitTests.csproj", "{B4AB76A0-8943-4483-B683-8945FFE127FF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamManagement.Application.IntegrationTests", "TeamManagement.Application.IntegrationTests\TeamManagement.Application.IntegrationTests.csproj", "{5DE84944-B63E-4D1A-A1CF-338E58B773D5}"
 EndProject

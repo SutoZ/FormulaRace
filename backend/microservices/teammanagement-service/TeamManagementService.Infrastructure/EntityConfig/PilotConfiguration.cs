@@ -37,6 +37,7 @@ public class PilotConfiguration : IEntityTypeConfiguration<Pilot>
             .HasMaxLength(CodeMaxLength);
 
         builder.Property(x => x.Rowversion)
+            .HasColumnType("rowversion")
             .IsRowVersion()
             .ValueGeneratedOnAddOrUpdate()
             .IsConcurrencyToken();
