@@ -142,13 +142,13 @@ stages:
             env:
               ASPNETCORE_ENVIRONMENT: 'Test'
 
-          - task: DotNetCoreCLI@2
-            displayName: 'Generate coverage report'
-            inputs:
-              command: 'custom'
-              custom: 'reportgenerator'
-              arguments: '-reports:$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura;Badges"'
-            condition: succeededOrFailed()
+          # - task: DotNetCoreCLI@2
+          #   displayName: 'Generate coverage report'
+          #   inputs:
+          #     command: 'custom'
+          #     custom: 'reportgenerator'
+          #     arguments: '-reports:$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura;Badges"'
+          #   condition: succeededOrFailed()
 
           - task: PublishCodeCoverageResults@2
             displayName: 'Publish enhanced code coverage'
