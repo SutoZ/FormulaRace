@@ -48,9 +48,9 @@ stages:
             options: >-
               --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P '$(testDbPassword)' -Q 'SELECT 1' || exit 1"
               --health-interval=15s
-              --health-timeout=3s
+              --health-timeout=10s
               --health-retries=10
-              --health-start-period=60s
+              --health-start-period=90s
 
         steps:
           - task: UseDotNet@2
@@ -96,13 +96,31 @@ stages:
 
           - script: |
               echo "Waiting for SQL Server to be ready..."
-
               export PATH="$PATH:/opt/mssql-tools18/bin"
+
+
+              # Wait up to 4 minutes for SQL Server
+              connected=false
+              max_attempts=80
+
+              for i in $(seq 1 $max_attempts); do
+                echo "🔍 Attempt $i/$max_attempts: Testing SQL Server connection..."
+                
+                if sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -Q "SELECT 1" -C -t 10 > /dev/null 2>&1; then
+                  echo "✅ SQL Server is ready!"
+                  connected=true
+                  break
+                fi
+                
+                echo "⏳ SQL Server not ready yet, waiting 3 seconds..."
+                sleep 3
+              done
+
               for i in {1..30}; do
-              if sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -Q "SELECT 1" -t 5 > /dev/null 2>&1; then
-                echo "✅ SQL Server is ready!"
+                if sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -Q "SELECT 1" -C -t 5 > /dev/null 2>&1; then
+                  echo "✅ SQL Server is ready!"
                 break
-              fi
+                fi
               echo "⏳ Attempt $i: Waiting for SQL Server..."
               sleep 2
               done              
@@ -119,6 +137,14 @@ stages:
                 PRINT 'RaceDbTest database already exists ℹ️';
               END
               "  
+
+              # Verify database creation
+              if [ $? -eq 0 ]; then
+                echo "🎯 Database setup completed successfully!"
+              else
+                echo "❌ Database creation failed"
+                exit 1
+              fi
 
               echo "🎯 Database setup completed!"
             displayName: 'Setup test database'
