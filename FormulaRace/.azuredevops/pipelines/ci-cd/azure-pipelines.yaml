@@ -49,7 +49,7 @@ stages:
               --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P '$(testDbPassword)' -Q 'SELECT 1' || exit 1"
               --health-interval=15s
               --health-timeout=10s
-              --health-retries=10
+              --health-retries=20
               --health-start-period=90s
 
         steps:
@@ -87,7 +87,6 @@ stages:
               # Add to Path
               echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
               export PATH="$PATH:/opt/mssql-tools18/bin"
-              sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -Q "SELECT 1" -C -t 5
 
               # Verify installation
               which sqlcmd || echo "⚠️  sqlcmd not found in PATH"
@@ -98,8 +97,7 @@ stages:
               echo "Waiting for SQL Server to be ready..."
               export PATH="$PATH:/opt/mssql-tools18/bin"
 
-
-              # Wait up to 4 minutes for SQL Server
+              # Wait  for SQL Server to be ready (max 4 minutes)
               connected=false
               max_attempts=80
 
@@ -116,27 +114,27 @@ stages:
                 sleep 3
               done
 
-              for i in {1..30}; do
-                if sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -Q "SELECT 1" -C -t 5 > /dev/null 2>&1; then
-                  echo "✅ SQL Server is ready!"
-                break
-                fi
-              echo "⏳ Attempt $i: Waiting for SQL Server..."
-              sleep 2
-              done              
+              # Verify connection was established
+              if [ "$connected" != "true" ]; then
+                echo "❌ SQL Server failed to start after $((max_attempts * 3)) seconds"
+                echo "🔍 Debugging information:"
+                docker ps -a | grep sql || echo "No SQL containers found"
+                docker logs sqlserver 2>/dev/null | tail -30 || echo "Cannot get container logs"
+                exit 1
+              fi
 
               echo "📋 Creating test database..."
               sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -C -Q "
               IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'RaceDbTest')
               BEGIN
-                CREATE DATABASE RaceDbTest;
-                PRINT 'RaceDbTest database created successfully ✅';
+                  CREATE DATABASE RaceDbTest;
+                  PRINT 'RaceDbTest database created successfully ✅';
               END
               ELSE
               BEGIN
-                PRINT 'RaceDbTest database already exists ℹ️';
+                  PRINT 'RaceDbTest database already exists ℹ️';
               END
-              "  
+              "
 
               # Verify database creation
               if [ $? -eq 0 ]; then
@@ -145,8 +143,6 @@ stages:
                 echo "❌ Database creation failed"
                 exit 1
               fi
-
-              echo "🎯 Database setup completed!"
             displayName: 'Setup test database'
             condition: succeeded()
 
@@ -155,7 +151,7 @@ stages:
             inputs:
               command: 'test'
               projects: $(testProjectsPath)
-              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx'
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx --verbosity normal'
               publishTestResults: true
               testRunTitle: 'Unit Tests - $(Build.BuildNumber)'
             env:
