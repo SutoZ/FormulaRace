@@ -66,7 +66,7 @@ stages:
           - task: Cache@2
             displayName: 'Cache NuGet packages'
             inputs:
-              key: 'nuget | "$(Agent.OS)" | $(Build.SourcesDirectory)/**/*.csproj'
+              key: 'nuget | "$(Agent.OS)" | "$(Build.SourceVersion)"'
               restoreKeys: |
                 nuget | "$(Agent.OS)"
               path: $(Pipeline.Workspace)/.nuget/packages
@@ -74,7 +74,7 @@ stages:
           - task: Cache@2
             displayName: 'Cache .NET Global Tools'
             inputs:
-              key: 'dotnet-tools | "$(Agent.OS)" | $(dotNetVersion)'
+              key: 'dotnet-tools | "$(Agent.OS)" | "$(dotNetVersion)"'
               restoreKeys: |
                 dotnet-tools | "$(Agent.OS)"
               path: ~/.dotnet/tools
@@ -82,7 +82,7 @@ stages:
           - task: Cache@2
             displayName: 'Cache APT packages'
             inputs:
-              key: 'apt | "$(Agent.OS)" | mssql-tools18'
+              key: 'apt | "$(Agent.OS)" | "mssql-tools18"'
               restoreKeys: |
                 apt | "$(Agent.OS)"
               path: /var/cache/apt/archives
@@ -290,7 +290,7 @@ stages:
           - task: Cache@2
             displayName: 'Cache NuGet packages'
             inputs:
-              key: 'nuget | "$(Agent.OS)" |  $(Build.SourcesDirectory)/**/*.csproj'
+              key: 'nuget | "$(Agent.OS)" | "$(Build.SourceVersion)"'
               restoreKeys: |
                 nuget | "$(Agent.OS)"
               path: $(Pipeline.Workspace)/.nuget/packages
