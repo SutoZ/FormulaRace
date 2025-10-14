@@ -158,13 +158,13 @@ stages:
               failIfCoverageEmpty: false
             condition: succeededOrFailed()
 
-          - task: DotNetCoreCLI@2
-            displayName: 'Publish API application'
-            inputs:
-              command: 'publish'
-              publishWebProjects: false
-              projects: $(apiProjectPath)
-              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/api --no-restore --no-build'
+          # - task: DotNetCoreCLI@2
+          #   displayName: 'Publish API application'
+          #   inputs:
+          #     command: 'publish'
+          #     publishWebProjects: false
+          #     projects: $(apiProjectPath)
+          #     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/api --no-restore --no-build'
 
           - task: CopyFiles@2
             displayName: 'Copy deployment files'
