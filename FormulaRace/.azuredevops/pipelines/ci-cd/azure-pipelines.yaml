@@ -24,6 +24,8 @@ variables:
   solutionPath: '**/*.sln'
   testProjectsPath: '**/*Tests/*.csproj'
   apiProjectPath: 'TeamManagementService.API/TeamManagementService.API.csproj'
+  testDbPassword: 'Nagyon_Nemmindegy98*?.-'
+  testConnectionString: 'Server=localhost,1433;Database=RaceDbTest;User Id=sa;Password=$(testDbPassword);TrustServerCertificate=True'
 
 stages:
   - stage: CI
@@ -33,6 +35,22 @@ stages:
         displayName: 'Build and Test'
         pool:
           vmImage: $(vmImageName)
+
+        services:
+          sqlserver:
+            image: mcr.microsoft.com/mssql/server:2022-latest
+            env:
+              ACCEPT_EULA: Y
+              SA_PASSWORD: $(testDbPassword)
+              MSSQL_PID: Developer
+            ports:
+              - 1433:1433
+            options: >-
+              --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P '$(testDbPassword)' -Q 'SELECT 1' || exit 1"
+              --health-interval=15s
+              --health-timeout=3s
+              --health-retries=10
+              --health-start-period=60s
 
         steps:
           - task: UseDotNet@2
@@ -57,14 +75,66 @@ stages:
               projects: $(solutionPath)
               arguments: '--configuration $(buildConfiguration) --no-restore'
 
+          - script: |
+              # Install SQL Server command line tools
+              curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+              curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
+
+              # Update and install
+              sudo apt-get update
+              sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
+
+              # Add to Path
+              echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+              export PATH="$PATH:/opt/mssql-tools18/bin"
+              sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -Q "SELECT 1" -C -t 5
+
+              # Verify installation
+              which sqlcmd || echo "⚠️  sqlcmd not found in PATH"
+              echo "✅ SQL Server tools installation completed"
+            displayName: 'Install SQL Server tools'
+
+          - script: |
+              echo "Waiting for SQL Server to be ready..."
+
+              export PATH="$PATH:/opt/mssql-tools18/bin"
+              for i in {1..30}; do
+              if sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -Q "SELECT 1" -t 5 > /dev/null 2>&1; then
+                echo "✅ SQL Server is ready!"
+                break
+              fi
+              echo "⏳ Attempt $i: Waiting for SQL Server..."
+              sleep 2
+              done              
+
+              echo "📋 Creating test database..."
+              sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -C -Q "
+              IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'RaceDbTest')
+              BEGIN
+                CREATE DATABASE RaceDbTest;
+                PRINT 'RaceDbTest database created successfully ✅';
+              END
+              ELSE
+              BEGIN
+                PRINT 'RaceDbTest database already exists ℹ️';
+              END
+              "  
+
+              echo "🎯 Database setup completed!"
+            displayName: 'Setup test database'
+            condition: succeeded()
+
           - task: DotNetCoreCLI@2
             displayName: 'Run unit tests'
             inputs:
               command: 'test'
               projects: $(testProjectsPath)
-              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage"'
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx'
               publishTestResults: true
               testRunTitle: 'Unit Tests - $(Build.BuildNumber)'
+            env:
+              ConnectionStrings__RaceConnection: $(testConnectionString)
+              ASPNETCORE_ENVIRONMENT: 'Test'
 
           - task: DotNetCoreCLI@2
             displayName: 'Install ReportGenerator'

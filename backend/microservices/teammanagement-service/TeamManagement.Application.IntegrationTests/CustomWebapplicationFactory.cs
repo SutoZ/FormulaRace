@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace TeamManagement.Application.IntegrationTests;
 
-public class CustomWebApplicationFactory : WebApplicationFactory<IApiMarker>, IAsyncDisposable
+public class CustomWebApplicationFactory : WebApplicationFactory<IApiMarker>
 {
     private readonly MsSqlContainer _dbContainer = new MsSqlBuilder()
     .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
