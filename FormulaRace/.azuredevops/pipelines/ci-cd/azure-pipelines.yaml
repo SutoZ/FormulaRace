@@ -275,7 +275,7 @@ stages:
         displayName: 'Code Quality Analysis'
         pool:
           vmImage: $(vmImageName)
-        dependsOn: BuildAndUnitTest # ← Fixed dependency name
+        dependsOn: BuildAndTests # ← Fixed dependency name
         condition: succeeded()
 
         steps:
