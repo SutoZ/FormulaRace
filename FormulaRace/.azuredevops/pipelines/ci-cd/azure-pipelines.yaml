@@ -46,7 +46,7 @@ stages:
             ports:
               - 1433:1433
             options: >-
-              --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P '$(testDbPassword)' -Q 'SELECT 1' || exit 1"
+              --health-cmd="/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P '$(testDbPassword)' -Q 'SELECT 1' -C || exit 1"
               --health-interval=15s
               --health-timeout=10s
               --health-retries=20
