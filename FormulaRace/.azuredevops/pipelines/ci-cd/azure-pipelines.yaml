@@ -26,6 +26,7 @@ variables:
   apiProjectPath: 'TeamManagementService.API/TeamManagementService.API.csproj'
   testDbPassword: 'Nagyon_Nemmindegy98*?.-'
   testConnectionString: 'Server=localhost,1433;Database=RaceDbTest;User Id=sa;Password=$(testDbPassword);TrustServerCertificate=True'
+  infrastructureProjectPath: 'TeamManagementService.Infrastructure/TeamManagementService.Infrastructure.csproj'
 
 stages:
   - stage: CI
@@ -75,10 +76,32 @@ stages:
               projects: $(solutionPath)
               arguments: '--configuration $(buildConfiguration) --no-restore'
 
+          - task: DotNetCoreCLI@2
+            displayName: 'Run unit tests'
+            inputs:
+              command: 'test'
+              projects: $(testProjectsPath)
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx --verbosity normal --filter "Category!=Integration"'
+              publishTestResults: true
+              testRunTitle: 'Unit Tests - $(Build.BuildNumber)'
+            env:
+              ASPNETCORE_ENVIRONMENT: 'Test'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Install EF Core tools'
+            condition: succeeded()
+            inputs:
+              command: 'custom'
+              custom: 'tool'
+              arguments: 'update --global dotnet-ef'
+
           - script: |
               # Install SQL Server command line tools
-              curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-              curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
+              # Modern way to add Microsoft repository key
+              curl -sSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+
+              # Add repository with keyring reference
+              echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/20.04/prod focal main" | sudo tee /etc/apt/sources.list.d/msprod.list
 
               # Update and install
               sudo apt-get update
@@ -147,16 +170,28 @@ stages:
             condition: succeeded()
 
           - task: DotNetCoreCLI@2
-            displayName: 'Run unit tests'
+            displayName: 'Apply database migrations'
             inputs:
-              command: 'test'
-              projects: $(testProjectsPath)
-              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx --verbosity normal'
-              publishTestResults: true
-              testRunTitle: 'Unit Tests - $(Build.BuildNumber)'
+              command: 'custom'
+              custom: 'ef'
+              arguments: 'database update --project $(infrastructureProjectPath) --startup-project $(apiProjectPath) --configuration $(buildConfiguration) --verbosity normal'
             env:
               ConnectionStrings__RaceConnection: $(testConnectionString)
               ASPNETCORE_ENVIRONMENT: 'Test'
+            condition: succeeded()
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run integration tests'
+            inputs:
+              command: 'test'
+              projects: $(testProjectsPath)
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx --verbosity normal --filter "Category=Integration"'
+              publishTestResults: true
+              testRunTitle: 'Integration Tests - $(Build.BuildNumber)'
+            env:
+              ConnectionStrings__RaceConnection: $(testConnectionString)
+              ASPNETCORE_ENVIRONMENT: 'Test'
+            condition: succeeded()
 
           - task: DotNetCoreCLI@2
             displayName: 'Install ReportGenerator'
