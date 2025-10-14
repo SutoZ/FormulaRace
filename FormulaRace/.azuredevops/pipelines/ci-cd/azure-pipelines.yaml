@@ -24,10 +24,9 @@ variables:
   solutionPath: '**/*.sln'
   unitTestProjectsPath: '**/*UnitTests/*.csproj'
   integrationTestProjectsPath: '**/*IntegrationTests/*.csproj'
-  apiProjectPath: 'TeamManagementService.API/TeamManagementService.API.csproj'
-  testDbPassword: 'Nagyon_Nemmindegy98*?.-'
+  apiProjectPath: '**/TeamManagementService.API.csproj'
   testConnectionString: 'Server=localhost,1433;Database=RaceDbTest;User Id=sa;Password=$(testDbPassword);TrustServerCertificate=True'
-  infrastructureProjectPath: 'TeamManagementService.Infrastructure/TeamManagementService.Infrastructure.csproj'
+  infrastructureProjectPath: '**/TeamManagementService.Infrastructure.csproj'
 
 stages:
   - stage: CI
@@ -138,6 +137,25 @@ stages:
               command: 'build'
               projects: $(solutionPath)
               arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - script: |
+              echo "🔍 Debugging project structure..."
+              echo "Current directory: $(pwd)"
+              echo "Source directory: $(Build.SourcesDirectory)"
+
+              echo "📁 All .csproj files found:"
+              find $(Build.SourcesDirectory) -name "*.csproj" -type f
+
+              echo "📁 All .sln files found:"
+              find $(Build.SourcesDirectory) -name "*.sln" -type f
+
+              echo "🎯 Looking for Infrastructure project specifically:"
+              find $(Build.SourcesDirectory) -name "*Infrastructure*.csproj" -type f
+
+              echo "🎯 Looking for API project specifically:"
+              find $(Build.SourcesDirectory) -name "*API*.csproj" -type f
+            displayName: 'Debug project structure'
+            condition: succeededOrFailed()
 
           - task: DotNetCoreCLI@2
             displayName: 'Run unit tests'
