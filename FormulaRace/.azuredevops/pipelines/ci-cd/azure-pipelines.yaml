@@ -23,7 +23,7 @@ variables:
   - name: dotNetVersion
     value: '9.0.x'
   - name: vmImageName
-    value: 'ubuntu-latest'
+    value: 'ubuntu-22:04'
   - name: projectName
     value: 'TeamManagementService'
   - name: solutionPath
@@ -47,7 +47,7 @@ stages:
         displayName: 'Build & Unit Tests'
         pool:
           vmImage: $(vmImageName)
-        timeoutInMinutes: 30
+        timeoutInMinutes: 15
 
         steps:
           - task: UseDotNet@2
@@ -60,9 +60,10 @@ stages:
           - task: Cache@2
             displayName: 'Cache NuGet packages'
             inputs:
-              key: 'nuget | "$(Agent.OS)" | "$(Build.SourceVersion)"'
+              key: 'nuget | "$(Agent.OS)" | "$(Build.SourcesDirectory)/**/*c.csproj"'
               restoreKeys: |
                 nuget | "$(Agent.OS)"
+                nuget-v3
               path: $(Pipeline.Workspace)/.nuget/packages
 
           - task: Cache@2
@@ -71,7 +72,7 @@ stages:
               key: 'dotnet-tools | "$(Agent.OS)" | "$(dotNetVersion)"'
               restoreKeys: |
                 dotnet-tools | "$(Agent.OS)"
-              path: $HOME/.dotnet/tools
+              path: $(Agent.HomeDirectory)/dotnet/tools
 
           - task: DotNetCoreCLI@2
             displayName: 'Install EF Core tools'
