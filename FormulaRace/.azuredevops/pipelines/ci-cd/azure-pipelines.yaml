@@ -66,13 +66,13 @@ stages:
                 nuget-v3
               path: $(Pipeline.Workspace)/.nuget/packages
 
-          - task: Cache@2
-            displayName: 'Cache .NET Global Tools'
-            inputs:
-              key: 'dotnet-tools | "$(Agent.OS)" | "$(dotNetVersion)"'
-              restoreKeys: |
-                dotnet-tools | "$(Agent.OS)"
-              path: $(Agent.HomeDirectory)/.dotnet/tools
+          # - task: Cache@2
+          #   displayName: 'Cache .NET Global Tools'
+          #   inputs:
+          #     key: 'dotnet-tools | "$(Agent.OS)" | "$(dotNetVersion)"'
+          #     restoreKeys: |
+          #       dotnet-tools | "$(Agent.OS)"
+          #     path: $(Agent.HomeDirectory)/.dotnet/tools
 
           - task: DotNetCoreCLI@2
             displayName: 'Install EF Core tools'
