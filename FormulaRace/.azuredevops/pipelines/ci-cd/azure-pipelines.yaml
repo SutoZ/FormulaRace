@@ -23,7 +23,7 @@ variables:
   - name: dotNetVersion
     value: '9.0.x'
   - name: vmImageName
-    value: 'ubuntu-22:04'
+    value: 'ubuntu-latest'
   - name: projectName
     value: 'TeamManagementService'
   - name: solutionPath
