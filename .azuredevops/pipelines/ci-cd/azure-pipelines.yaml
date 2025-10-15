@@ -17,22 +17,37 @@ pr:
       - develop
 
 variables:
-  buildConfiguration: 'Release'
-  dotNetVersion: '9.0.x'
-  vmImageName: 'ubuntu-latest'
-  projectName: 'TeamManagementService'
-  solutionPath: '**/*.sln'
-  testProjectsPath: '**/*Tests/*.csproj'
-  apiProjectPath: 'TeamManagementService.API/TeamManagementService.API.csproj'
+  - group: Teammanagement-secrets
+  - name: buildConfiguration
+    value: 'Release'
+  - name: dotNetVersion
+    value: '9.0.x'
+  - name: vmImageName
+    value: 'ubuntu-latest'
+  - name: projectName
+    value: 'TeamManagementService'
+  - name: solutionPath
+    value: '**/*.sln'
+  - name: unitTestProjectsPath
+    value: '**/*UnitTests/*.csproj'
+  - name: apiProjectPath
+    value: 'TeamManagementService.API/TeamManagementService.API.csproj'
+  - name: infrastructureProjectPath
+    value: 'TeamManagementService.Infrastructure/TeamManagementService.Infrastructure.csproj'
+  - name: integrationTestProjectsPath
+    value: 'TeamManagement.Application.IntegrationTests/TeamManagement.Application.IntegrationTests.csproj'
+  - name: testConnectionString
+    value: 'Server=localhost,1433;Database=RaceDbTest;User Id=sa;Password=$(testDbPassword);TrustServerCertificate=True'
 
 stages:
   - stage: CI
     displayName: 'Continuous Integration'
     jobs:
-      - job: Build
-        displayName: 'Build and Test'
+      - job: BuildAndUnitTests
+        displayName: 'Build & Unit Tests'
         pool:
           vmImage: $(vmImageName)
+        timeoutInMinutes: 15
 
         steps:
           - task: UseDotNet@2
@@ -42,6 +57,38 @@ stages:
               version: $(dotNetVersion)
               includePreviewVersions: false
 
+          - task: Cache@2
+            displayName: 'Cache NuGet packages'
+            inputs:
+              key: 'nuget | "$(Agent.OS)" | "$(Build.SourcesDirectory)/**/*c.csproj"'
+              restoreKeys: |
+                nuget | "$(Agent.OS)"
+                nuget-v3
+              path: $(Pipeline.Workspace)/.nuget/packages
+
+          # - task: Cache@2
+          #   displayName: 'Cache .NET Global Tools'
+          #   inputs:
+          #     key: 'dotnet-tools | "$(Agent.OS)" | "$(dotNetVersion)"'
+          #     restoreKeys: |
+          #       dotnet-tools | "$(Agent.OS)"
+          #     path: $(Agent.HomeDirectory)/.dotnet/tools
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Install EF Core tools'
+            condition: succeeded()
+            inputs:
+              command: 'custom'
+              custom: 'tool'
+              arguments: 'update --global dotnet-ef'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Install ReportGenerator'
+            inputs:
+              command: 'custom'
+              custom: 'tool'
+              arguments: 'update --global dotnet-reportgenerator-globaltool'
+
           - task: DotNetCoreCLI@2
             displayName: 'Restore NuGet packages'
             inputs:
@@ -49,6 +96,7 @@ stages:
               projects: $(solutionPath)
               feedsToUse: 'select'
               verbosityRestore: 'Normal'
+              restoreArguments: '--packages $(Pipeline.Workspace)/.nuget/packages'
 
           - task: DotNetCoreCLI@2
             displayName: 'Build solution'
@@ -57,29 +105,59 @@ stages:
               projects: $(solutionPath)
               arguments: '--configuration $(buildConfiguration) --no-restore'
 
+          - script: |
+              echo "🔍 Debugging project structure..."
+              echo "Current directory: $(pwd)"
+              echo "Source directory: $(Build.SourcesDirectory)"
+
+              echo "📁 All .csproj files found:"
+              find $(Build.SourcesDirectory) -name "*.csproj" -type f
+
+              echo "📁 All .sln files found:"
+              find $(Build.SourcesDirectory) -name "*.sln" -type f
+
+              echo "🎯 Looking for Infrastructure project specifically:"
+              find $(Build.SourcesDirectory) -name "*Infrastructure*.csproj" -type f
+
+              echo "🎯 Looking for API project specifically:"
+              find $(Build.SourcesDirectory) -name "*API*.csproj" -type f
+            displayName: 'Debug project structure'
+            condition: succeededOrFailed()
+
           - task: DotNetCoreCLI@2
             displayName: 'Run unit tests'
             inputs:
               command: 'test'
-              projects: $(testProjectsPath)
-              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --results-directory $(Agent.TempDirectory)/TestResults --logger trx'
+              projects: $(unitTestProjectsPath)
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx --verbosity normal'
               publishTestResults: true
+              testRunTitle: 'Unit Tests - $(Build.BuildNumber)'
+            env:
+              ASPNETCORE_ENVIRONMENT: 'Test'
 
-          - task: PublishCodeCoverageResults@1
-            displayName: 'Publish code coverage results'
+          # - task: DotNetCoreCLI@2
+          #   displayName: 'Generate coverage report'
+          #   inputs:
+          #     command: 'custom'
+          #     custom: 'reportgenerator'
+          #     arguments: '-reports:$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura;Badges"'
+          #   condition: succeededOrFailed()
+
+          - task: PublishCodeCoverageResults@2
+            displayName: 'Publish enhanced code coverage'
             inputs:
-              codeCoverageTool: 'Cobertura'
-              summaryFileLocation: '$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml'
-              reportDirectory: '$(Agent.TempDirectory)/TestResults/CoverageReport'
+              summaryFileLocation: '$(Agent.TempDirectory)/TestResults/CoverageReport/Cobertura.xml'
+              pathToSources: '$(Build.SourcesDirectory)'
+              failIfCoverageEmpty: false
             condition: succeededOrFailed()
 
-          - task: DotNetCoreCLI@2
-            displayName: 'Publish API application'
-            inputs:
-              command: 'publish'
-              publishWebProjects: false
-              projects: $(apiProjectPath)
-              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/api --no-restore --no-build'
+          # - task: DotNetCoreCLI@2
+          #   displayName: 'Publish API application'
+          #   inputs:
+          #     command: 'publish'
+          #     publishWebProjects: false
+          #     projects: $(apiProjectPath)
+          #     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/api --no-restore --no-build'
 
           - task: CopyFiles@2
             displayName: 'Copy deployment files'
@@ -101,12 +179,29 @@ stages:
               publishLocation: 'Container'
             condition: succeededOrFailed()
 
-      - job: CodeQuality
-        displayName: 'Code Quality Analysis'
+      - job: IntegrationTests
+        displayName: 'Integration tests'
+        dependsOn: BuildAndUnitTests
+        condition: succeeded()
         pool:
           vmImage: $(vmImageName)
-        dependsOn: Build
-        condition: succeeded()
+        timeoutInMinutes: 25
+
+        services:
+          sqlserver:
+            image: mcr.microsoft.com/mssql/server:2022-latest
+            env:
+              ACCEPT_EULA: Y
+              SA_PASSWORD: $(testDbPassword)
+              MSSQL_PID: Developer
+            ports:
+              - 1433:1433
+            options: >-
+              --health-cmd="/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P '$(testDbPassword)' -Q 'SELECT 1' -C || exit 1"
+              --health-interval=15s
+              --health-timeout=10s
+              --health-retries=20
+              --health-start-period=90s
 
         steps:
           - task: UseDotNet@2
@@ -115,29 +210,241 @@ stages:
               packageType: 'sdk'
               version: $(dotNetVersion)
 
+          - task: Cache@2
+            displayName: 'Cache NuGet packages'
+            inputs:
+              key: 'nuget | "$(Agent.OS)" | "$(Build.SourceVersion)"'
+              restoreKeys: |
+                nuget | "$(Agent.OS)"
+              path: $(Pipeline.Workspace)/.nuget/packages
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Install EF Core tools'
+            inputs:
+              command: 'custom'
+              custom: 'tool'
+              arguments: 'update --global dotnet-ef'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore packages'
+            inputs:
+              command: 'restore'
+              projects: $(solutionPath)
+              restoreArguments: '--packages $(Pipeline.Workspace)/.nuget/packages'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build solution'
+            inputs:
+              command: 'build'
+              projects: $(solutionPath)
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - script: |
+              echo "📦 Installing SQL Server command line tools..."
+
+              # Modern way to add Microsoft repository key
+              curl -sSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+
+              # Add repository with keyring reference
+              echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/20.04/prod focal main" | sudo tee /etc/apt/sources.list.d/msprod.list
+
+              # Update and install
+              sudo apt-get update
+              sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
+
+              # Add to Path
+              echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+              export PATH="$PATH:/opt/mssql-tools18/bin"
+
+              # Verify installation
+              which sqlcmd || echo "⚠️ sqlcmd not found in PATH"
+              echo "✅ SQL Server tools installation completed"
+            displayName: 'Install SQL Server tools'
+            timeoutInMinutes: 5
+
+          - script: |
+              echo "⏳ Waiting for SQL Server to be ready..."
+              export PATH="$PATH:/opt/mssql-tools18/bin"
+
+              # Wait for SQL Server to be ready (max 4 minutes)
+              connected=false
+              max_attempts=80
+
+              for i in $(seq 1 $max_attempts); do
+                echo "🔍 Attempt $i/$max_attempts: Testing SQL Server connection..."
+                
+                if sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -Q "SELECT 1" -C -t 10 > /dev/null 2>&1; then
+                  echo "✅ SQL Server is ready!"
+                  connected=true
+                  break
+                fi
+                
+                echo "⏳ SQL Server not ready yet, waiting 3 seconds..."
+                sleep 3
+              done
+
+              # Verify connection was established
+              if [ "$connected" != "true" ]; then
+                echo "❌ SQL Server failed to start after $((max_attempts * 3)) seconds"
+                echo "🔍 Debugging information:"
+                docker ps -a | grep sql || echo "No SQL containers found"
+                exit 1
+              fi
+
+              echo "📋 Creating test database..."
+              sqlcmd -S localhost,1433 -U SA -P '$(testDbPassword)' -C -Q "
+              IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'RaceDbTest')
+              BEGIN
+                  CREATE DATABASE RaceDbTest;
+                  PRINT 'RaceDbTest database created successfully ✅';
+              END
+              ELSE
+              BEGIN
+                  PRINT 'RaceDbTest database already exists ℹ️';
+              END
+              "
+
+              if [ $? -eq 0 ]; then
+                echo "🎯 Database setup completed successfully!"
+              else
+                echo "❌ Database creation failed"
+                exit 1
+              fi
+            displayName: 'Setup test database'
+            condition: succeeded()
+            timeoutInMinutes: 6
+
+          - script: |
+              echo "🔍 Finding project paths dynamically..."
+
+              # Find Infrastructure project
+              INFRA_PROJECT=$(find $(Build.SourcesDirectory) -name "*Infrastructure*.csproj" -type f | head -1)
+              echo "Infrastructure project: $INFRA_PROJECT"
+
+              # Find API project  
+              API_PROJECT=$(find $(Build.SourcesDirectory) -name "*API*.csproj" -type f | head -1)
+              echo "API project: $API_PROJECT"
+
+              if [ -z "$INFRA_PROJECT" ] || [ -z "$API_PROJECT" ]; then
+                echo "❌ Could not find required project files"
+                echo "Available projects:"
+                find $(Build.SourcesDirectory) -name "*.csproj" -type f
+                exit 1
+              fi
+
+              echo "🚀 Running EF migrations..."
+              export PATH="$PATH:/root/.dotnet/tools:$HOME/.dotnet/tools"
+              dotnet ef database update \
+                --project "$INFRA_PROJECT" \
+                --startup-project "$API_PROJECT" \
+                --configuration $(buildConfiguration) \
+                --verbosity normal
+            displayName: 'Apply database migrations'
+            env:
+              ConnectionStrings__RaceConnection: $(testConnectionString)
+              ASPNETCORE_ENVIRONMENT: 'Test'
+            condition: succeeded()
+            timeoutInMinutes: 5
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run integration tests'
+            inputs:
+              command: 'test'
+              projects: $(integrationTestProjectsPath)
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx --verbosity normal'
+              publishTestResults: true
+              testRunTitle: 'Integration Tests - $(Build.BuildNumber)'
+            env:
+              ConnectionStrings__RaceConnection: $(testConnectionString)
+              ASPNETCORE_ENVIRONMENT: 'Test'
+            condition: succeeded()
+            timeoutInMinutes: 10
+
+      - job: CodeQuality
+        displayName: 'Code Quality Analysis'
+        pool:
+          vmImage: $(vmImageName)
+        dependsOn: BuildAndUnitTests
+        condition: succeeded()
+        timeoutInMinutes: 10
+
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET Core SDK'
+            inputs:
+              packageType: 'sdk'
+              version: $(dotNetVersion)
+
+          - task: Cache@2
+            displayName: 'Cache NuGet packages'
+            inputs:
+              key: 'nuget | "$(Agent.OS)" | "$(Build.SourceVersion)"'
+              restoreKeys: |
+                nuget | "$(Agent.OS)"
+              path: $(Pipeline.Workspace)/.nuget/packages
+
           - task: DotNetCoreCLI@2
             displayName: 'Restore packages for analysis'
             inputs:
               command: 'restore'
               projects: $(solutionPath)
+              restoreArguments: '--packages $(Pipeline.Workspace)/.nuget/packages'
 
           - task: DotNetCoreCLI@2
-            displayName: 'Run security scan'
+            displayName: 'Build solution for analysis'
+            inputs:
+              command: 'build'
+              projects: $(solutionPath)
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run security vulnerability scan'
             inputs:
               command: 'custom'
               custom: 'list'
               arguments: 'package --vulnerable --include-transitive'
               projects: $(solutionPath)
             continueOnError: true
+# Placeholder for future CD stages - uncomment and configure when needed
+# - stage: Deploy_Dev
+#   displayName: 'Deploy to Development'
+#   dependsOn: CI
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+#   jobs:
+#   - deployment: DeployDev
+#     displayName: 'Deploy to Dev Environment'
+#     pool:
+#       vmImage: $(vmImageName)
+#     environment: 'Development'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - template: deploy-template.yml
+#             parameters:
+#               environment: 'dev'
+#               azureSubscription: 'Azure-ServiceConnection-Dev'
+#               appServiceName: 'teammanagement-dev'
 
-          - task: PublishTestResults@2
-            displayName: 'Publish test results'
-            inputs:
-              testResultsFormat: 'VSTest'
-              testResultsFiles: '$(Agent.TempDirectory)/TestResults/*.trx'
-              mergeTestResults: true
-              failTaskOnFailedTests: true
-            condition: succeededOrFailed()
+# - stage: Deploy_Prod
+#   displayName: 'Deploy to Production'
+#   dependsOn: CI
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#   jobs:
+#   - deployment: DeployProd
+#     displayName: 'Deploy to Production Environment'
+#     pool:
+#       vmImage: $(vmImageName)
+#     environment: 'Production'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - template: deploy-template.yml
+#             parameters:
+#               environment: 'prod'
+#               azureSubscription: 'Azure-ServiceConnection-Prod'
+#               appServiceName: 'teammanagement-prod'
 # Placeholder for future CD stages - uncomment and configure when needed
 # - stage: Deploy_Dev
 #   displayName: 'Deploy to Development'
