@@ -57,23 +57,23 @@ stages:
               version: $(dotNetVersion)
               includePreviewVersions: false
 
-          - task: Cache@2
-            displayName: 'Cache NuGet packages'
-            inputs:
-              key: 'nuget | "$(Agent.OS)" | "$(Build.SourcesDirectory)/**/*.csproj"'
-              restoreKeys: |
-                nuget | "$(Agent.OS)"
-                nuget-v3
-              path: $(Pipeline.Workspace)/.nuget/packages
+          # - task: Cache@2
+          #   displayName: 'Cache NuGet packages'
+          #   inputs:
+          #     key: 'nuget | "$(Agent.OS)" | "$(Build.SourcesDirectory)/**/*.csproj"'
+          #     restoreKeys: |
+          #       nuget | "$(Agent.OS)"
+          #       nuget-v3
+          #     path: $(Pipeline.Workspace)/.nuget/packages
 
-          - task: Cache@2
-            displayName: 'Cache .NET Global Tools'
-            inputs:
-              key: 'dotnet-tools-v4 | "$(Agent.OS)" | "$(dotNetVersion)"'
-              restoreKeys: |
-                dotnet-tools-v4 | "$(Agent.OS)"
-                dotnet-tools-v3 | "$(Agent.OS)"
-              path: $(Agent.HomeDirectory)/.dotnet/tools
+          # - task: Cache@2
+          #   displayName: 'Cache .NET Global Tools'
+          #   inputs:
+          #     key: 'dotnet-tools-v4 | "$(Agent.OS)" | "$(dotNetVersion)"'
+          #     restoreKeys: |
+          #       dotnet-tools-v4 | "$(Agent.OS)"
+          #       dotnet-tools-v3 | "$(Agent.OS)"
+          #     path: $(Agent.HomeDirectory)/.dotnet/tools
 
           - task: DotNetCoreCLI@2
             displayName: 'Install EF Core tools'
@@ -211,14 +211,14 @@ stages:
               packageType: 'sdk'
               version: $(dotNetVersion)
 
-          - task: Cache@2
-            displayName: 'Cache NuGet packages'
-            inputs:
-              key: 'nuget | "$(Agent.OS)" | "$(Build.SourcesDirectory)/**/*.csproj"'
-              restoreKeys: |
-                dotnet-tools-v4 | "$(Agent.OS)"
-                dotnet-tools-v3 | "$(Agent.OS)"
-              path: /home/vsts/.dotnet/tools
+          # - task: Cache@2
+          #   displayName: 'Cache NuGet packages'
+          #   inputs:
+          #     key: 'nuget | "$(Agent.OS)" | "$(Build.SourcesDirectory)/**/*.csproj"'
+          #     restoreKeys: |
+          #       dotnet-tools-v4 | "$(Agent.OS)"
+          #       dotnet-tools-v3 | "$(Agent.OS)"
+          #     path: /home/vsts/.dotnet/tools
 
           - task: DotNetCoreCLI@2
             displayName: 'Install EF Core tools'
@@ -377,14 +377,14 @@ stages:
               packageType: 'sdk'
               version: $(dotNetVersion)
 
-          - task: Cache@2
-            displayName: 'Cache NuGet packages'
-            inputs:
-              key: 'nuget | "$(Agent.OS)" | "$(Build.SourceVersion)"'
-              restoreKeys: |
-                dotnet-tools-v4 | "$(Agent.OS)"
-                dotnet-tools-v3 | "$(Agent.OS)"
-              path: $(Pipeline.Workspace)/.nuget/packages
+          # - task: Cache@2
+          #   displayName: 'Cache NuGet packages'
+          #   inputs:
+          #     key: 'nuget | "$(Agent.OS)" | "$(Build.SourceVersion)"'
+          #     restoreKeys: |
+          #       dotnet-tools-v4 | "$(Agent.OS)"
+          #       dotnet-tools-v3 | "$(Agent.OS)"
+          #     path: $(Pipeline.Workspace)/.nuget/packages
 
           - task: DotNetCoreCLI@2
             displayName: 'Restore packages for analysis'
