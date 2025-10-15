@@ -60,19 +60,20 @@ stages:
           - task: Cache@2
             displayName: 'Cache NuGet packages'
             inputs:
-              key: 'nuget | "$(Agent.OS)" | "$(Build.SourcesDirectory)/**/*c.csproj"'
+              key: 'nuget | "$(Agent.OS)" | "$(Build.SourcesDirectory)/**/*.csproj"'
               restoreKeys: |
                 nuget | "$(Agent.OS)"
                 nuget-v3
               path: $(Pipeline.Workspace)/.nuget/packages
 
-          # - task: Cache@2
-          #   displayName: 'Cache .NET Global Tools'
-          #   inputs:
-          #     key: 'dotnet-tools | "$(Agent.OS)" | "$(dotNetVersion)"'
-          #     restoreKeys: |
-          #       dotnet-tools | "$(Agent.OS)"
-          #     path: $(Agent.HomeDirectory)/.dotnet/tools
+          - task: Cache@2
+            displayName: 'Cache .NET Global Tools'
+            inputs:
+              key: 'dotnet-tools-v4 | "$(Agent.OS)" | "$(dotNetVersion)"'
+              restoreKeys: |
+                dotnet-tools-v4 | "$(Agent.OS)"
+                dotnet-tools-v3 | "$(Agent.OS)"
+              path: $(Agent.HomeDirectory)/.dotnet/tools
 
           - task: DotNetCoreCLI@2
             displayName: 'Install EF Core tools'
@@ -143,13 +144,13 @@ stages:
           #     arguments: '-reports:$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura;Badges"'
           #   condition: succeededOrFailed()
 
-          - task: PublishCodeCoverageResults@2
-            displayName: 'Publish enhanced code coverage'
-            inputs:
-              summaryFileLocation: '$(Agent.TempDirectory)/TestResults/CoverageReport/Cobertura.xml'
-              pathToSources: '$(Build.SourcesDirectory)'
-              failIfCoverageEmpty: false
-            condition: succeededOrFailed()
+          # - task: PublishCodeCoverageResults@2
+          #   displayName: 'Publish enhanced code coverage'
+          #   inputs:
+          #     summaryFileLocation: '$(Agent.TempDirectory)/TestResults/CoverageReport/Cobertura.xml'
+          #     pathToSources: '$(Build.SourcesDirectory)'
+          #     failIfCoverageEmpty: false
+          #   condition: succeededOrFailed()
 
           # - task: DotNetCoreCLI@2
           #   displayName: 'Publish API application'
@@ -213,10 +214,11 @@ stages:
           - task: Cache@2
             displayName: 'Cache NuGet packages'
             inputs:
-              key: 'nuget | "$(Agent.OS)" | "$(Build.SourceVersion)"'
+              key: 'nuget | "$(Agent.OS)" | "$(Build.SourcesDirectory)/**/*.csproj"'
               restoreKeys: |
-                nuget | "$(Agent.OS)"
-              path: $(Pipeline.Workspace)/.nuget/packages
+                dotnet-tools-v4 | "$(Agent.OS)"
+                dotnet-tools-v3 | "$(Agent.OS)"
+              path: /home/vsts/.dotnet/tools
 
           - task: DotNetCoreCLI@2
             displayName: 'Install EF Core tools'
@@ -312,7 +314,7 @@ stages:
               fi
             displayName: 'Setup test database'
             condition: succeeded()
-            timeoutInMinutes: 6
+            timeoutInMinutes: 3
 
           - script: |
               echo "🔍 Finding project paths dynamically..."
@@ -344,7 +346,7 @@ stages:
               ConnectionStrings__RaceConnection: $(testConnectionString)
               ASPNETCORE_ENVIRONMENT: 'Test'
             condition: succeeded()
-            timeoutInMinutes: 5
+            timeoutInMinutes: 3
 
           - task: DotNetCoreCLI@2
             displayName: 'Run integration tests'
@@ -358,7 +360,7 @@ stages:
               ConnectionStrings__RaceConnection: $(testConnectionString)
               ASPNETCORE_ENVIRONMENT: 'Test'
             condition: succeeded()
-            timeoutInMinutes: 10
+            timeoutInMinutes: 5
 
       - job: CodeQuality
         displayName: 'Code Quality Analysis'
@@ -366,7 +368,7 @@ stages:
           vmImage: $(vmImageName)
         dependsOn: BuildAndUnitTests
         condition: succeeded()
-        timeoutInMinutes: 10
+        timeoutInMinutes: 8
 
         steps:
           - task: UseDotNet@2
@@ -380,7 +382,8 @@ stages:
             inputs:
               key: 'nuget | "$(Agent.OS)" | "$(Build.SourceVersion)"'
               restoreKeys: |
-                nuget | "$(Agent.OS)"
+                dotnet-tools-v4 | "$(Agent.OS)"
+                dotnet-tools-v3 | "$(Agent.OS)"
               path: $(Pipeline.Workspace)/.nuget/packages
 
           - task: DotNetCoreCLI@2
@@ -405,83 +408,3 @@ stages:
               arguments: 'package --vulnerable --include-transitive'
               projects: $(solutionPath)
             continueOnError: true
-# Placeholder for future CD stages - uncomment and configure when needed
-# - stage: Deploy_Dev
-#   displayName: 'Deploy to Development'
-#   dependsOn: CI
-#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
-#   jobs:
-#   - deployment: DeployDev
-#     displayName: 'Deploy to Dev Environment'
-#     pool:
-#       vmImage: $(vmImageName)
-#     environment: 'Development'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - template: deploy-template.yml
-#             parameters:
-#               environment: 'dev'
-#               azureSubscription: 'Azure-ServiceConnection-Dev'
-#               appServiceName: 'teammanagement-dev'
-
-# - stage: Deploy_Prod
-#   displayName: 'Deploy to Production'
-#   dependsOn: CI
-#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-#   jobs:
-#   - deployment: DeployProd
-#     displayName: 'Deploy to Production Environment'
-#     pool:
-#       vmImage: $(vmImageName)
-#     environment: 'Production'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - template: deploy-template.yml
-#             parameters:
-#               environment: 'prod'
-#               azureSubscription: 'Azure-ServiceConnection-Prod'
-#               appServiceName: 'teammanagement-prod'
-# Placeholder for future CD stages - uncomment and configure when needed
-# - stage: Deploy_Dev
-#   displayName: 'Deploy to Development'
-#   dependsOn: CI
-#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
-#   jobs:
-#   - deployment: DeployDev
-#     displayName: 'Deploy to Dev Environment'
-#     pool:
-#       vmImage: $(vmImageName)
-#     environment: 'Development'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - template: deploy-template.yml
-#             parameters:
-#               environment: 'dev'
-#               azureSubscription: 'Azure-ServiceConnection-Dev'
-#               appServiceName: 'teammanagement-dev'
-
-# - stage: Deploy_Prod
-#   displayName: 'Deploy to Production'
-#   dependsOn: CI
-#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-#   jobs:
-#   - deployment: DeployProd
-#     displayName: 'Deploy to Production Environment'
-#     pool:
-#       vmImage: $(vmImageName)
-#     environment: 'Production'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - template: deploy-template.yml
-#             parameters:
-#               environment: 'prod'
-#               azureSubscription: 'Azure-ServiceConnection-Prod'
-#               appServiceName: 'teammanagement-prod'
