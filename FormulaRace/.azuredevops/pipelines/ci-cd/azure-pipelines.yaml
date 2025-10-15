@@ -71,15 +71,7 @@ stages:
               key: 'dotnet-tools | "$(Agent.OS)" | "$(dotNetVersion)"'
               restoreKeys: |
                 dotnet-tools | "$(Agent.OS)"
-              path: ~/.dotnet/tools
-
-          - task: Cache@2
-            displayName: 'Cache APT packages'
-            inputs:
-              key: 'apt | "$(Agent.OS)" | "mssql-tools18"'
-              restoreKeys: |
-                apt | "$(Agent.OS)"
-              path: /var/cache/apt/archives
+              path: $HOME/.dotnet/tools
 
           - task: DotNetCoreCLI@2
             displayName: 'Install EF Core tools'
