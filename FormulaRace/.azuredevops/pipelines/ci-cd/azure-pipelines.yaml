@@ -72,7 +72,7 @@ stages:
               key: 'dotnet-tools | "$(Agent.OS)" | "$(dotNetVersion)"'
               restoreKeys: |
                 dotnet-tools | "$(Agent.OS)"
-              path: $(Agent.HomeDirectory)/dotnet/tools
+              path: $(Agent.HomeDirectory)/.dotnet/tools
 
           - task: DotNetCoreCLI@2
             displayName: 'Install EF Core tools'
