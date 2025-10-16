@@ -312,7 +312,7 @@ stages:
               dotnet ef -v database update \
                 --project "$INFRA_PROJECT" \
                 --startup-project "$API_PROJECT" \
-                --configuration $(buildConfiguration) \
+                --configuration $(buildConfiguration)
             displayName: 'Apply database migrations'
             env:
               ConnectionStrings__RaceConnection: $(testConnectionString)
