@@ -7,11 +7,14 @@ services:
       dockerfile: teammanagement-service/TeamManagementService.API/Dockerfile
     ports:
       - '8080:8080' # Map host port 8080 to container port 8080
+      - '5005:5005' # Map host port 5005 to container port 5005 for debugging
     environment:
       # Override the connection string from appsettings.json
-      - ConnectionStrings__RaceConnection=Server=database;Database=RaceDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
+      - ConnectionStrings__RaceConnection=Server=database,1433;Database=RaceDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
       - ASPNETCORE__ENVIRONMENT=${ASPNETCORE_ENVIRONMENT} # Set the environment for ASP.NET Core
       - ASPNETCORE__URLS=${ASPNETCORE_URLS} # Set the URLs for ASP.NET Core
+      - DOTNET__ENVIRONMENT=${DOTNET_ENVIRONMENT} # Set the .NET environment
+      - ASPNETCORE__ENVIRONMENT=${ASPNETCORE_ENVIRONMENT} # Set the ASP.NET Core environment
       - Seq__ServerUrl=${Seq_ServerUrl} # URL for Seq logging
     depends_on:
       seq:

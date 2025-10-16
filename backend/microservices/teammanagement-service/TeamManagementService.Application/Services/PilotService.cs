@@ -14,7 +14,8 @@ public class PilotService(
     IUnitOfWork uow,
     ILogger<PilotService> logger,
     IValidator<PilotDeleteDto> deleteValidator,
-    IValidator<PilotFilterDto> getByIdValidator) : IPilotService
+    IValidator<PilotFilterDto> getByIdValidator)
+    : IPilotService
 {
     public async Task<PilotListDto> CreateAsync(PilotCreateDto createDto, CancellationToken token)
     {
@@ -53,6 +54,8 @@ public class PilotService(
         logger.LogInformation("Updating pilot with ID: {Id}", id);
 
         await uow.Pilot.UpdateAsync(id, updateDto, token);
+        
+        logger.LogInformation("Pilot with ID: {Id} updated successfully.", id);
     }
 
     public async Task<OneOf<int, NotFound, Error>> DeleteAsync(int id, CancellationToken token)

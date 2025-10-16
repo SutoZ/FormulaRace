@@ -12,7 +12,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Install project dependencies
-RUN npm install
+# Use 'npm ci' for clean, reproducible production installs
+RUN npm ci
 
 # Copy the rest of the application source code
 COPY . .
@@ -26,7 +27,7 @@ RUN npm run build -- --configuration production
 # Use a lightweight Nginx image
 FROM nginx:alpine
 
-# Install curl for health checks and debugging
+# Install curl for health checks and debugging (required by docker-compose.yaml)
 RUN apk add --no-cache curl
 
 # Copy the built artifacts from the 'builder' stage

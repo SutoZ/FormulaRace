@@ -22,8 +22,23 @@ public abstract class BaseIntegrationTest
         await _factory.InitializeAsync();
         _client = _factory.Client;
 
+
+        var isCI = Environment.GetEnvironmentVariable("TF_BUILD") == "True"; // Azure DevOps
+        string connectionString = "";
+
+        if (isCI)
+        {
+            connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__RaceConnection")
+                               ??
+                               "Server=(localdb)\\MSSQLLocalDB;Database=RaceDbTest;Integrated Security=true;TrustServerCertificate=True;";
+        }
+        else
+        {
+            connectionString = _factory.Services.GetRequiredService<IConfiguration>()
+                .GetConnectionString("RaceConnection");
+        }
+
         // Create a single Respawner instance with an explicitly opened connection.
-        var connectionString = _factory.Services.GetRequiredService<IConfiguration>().GetConnectionString("RaceConnection");
 
         using var conn = new SqlConnection(connectionString!);
         await conn.OpenAsync();
@@ -48,7 +63,8 @@ public abstract class BaseIntegrationTest
         _dbContext = _scope.ServiceProvider.GetRequiredService<RaceContext>();
 
         // Reset the database before each test.
-        var connectionString = _factory.Services.GetRequiredService<IConfiguration>().GetConnectionString("RaceConnection");
+        var connectionString =
+            _factory.Services.GetRequiredService<IConfiguration>().GetConnectionString("RaceConnection");
         await _respawner.ResetAsync(connectionString!);
     }
 

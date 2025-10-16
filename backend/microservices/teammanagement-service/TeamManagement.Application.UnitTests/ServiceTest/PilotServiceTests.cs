@@ -9,7 +9,7 @@ using TeamManagementService.Application.Interfaces;
 using TeamManagementService.Application.Interfaces.Repositories;
 using TeamManagementService.Application.Services;
 
-namespace TeamManagement.Application.Tests.ServiceTest;
+namespace TeamManagement.Application.UnitTests.ServiceTest;
 
 [TestFixture]
 [Category("unit")]

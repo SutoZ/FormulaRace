@@ -22,6 +22,7 @@ public class TeamRepository(RaceContext context, IMapper mapper, ILogger<TeamRep
 
         Expression<Func<Team, TeamListDto>> projection = ent => new TeamListDto
         {
+            Id = ent.Id,
             Name = ent.Name,
             DateOfFoundation = ent.DateOfFoundation,
             OwnerName = ent.OwnerName,

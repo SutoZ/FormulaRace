@@ -1,4 +1,5 @@
-﻿using TeamManagementService.Domain.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+using TeamManagementService.Domain.Interfaces;
 
 namespace TeamManagementService.Domain.Models;
 
@@ -13,7 +14,10 @@ public class Entity : IEntity, ISoftDelete, IAuditable
     public string CreatedBy { get; set; }
     public string? UpdatedBy { get; set; }
 
+    [Timestamp]
+    public byte[] Rowversion { get; set; }
+    
     // ISoftDelete properties
-    public bool Active { get; set; }
+    public bool Active { get; set; } = true;
     public DateTimeOffset? DeletedAt { get; set; }
 }

@@ -13,7 +13,7 @@ public class Pilot : Entity
 
     //[ForeignKey("Team")]  Set in configuration
     public int TeamId { get; set; }
-
+    
     public Pilot() { }
 
     public Pilot(string name, string number, string code, string nationality, int teamId)

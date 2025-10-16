@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { IPagedList } from 'src/app/PagedList';
 import { ITeamListViewModel } from '../models/team.models';
 
@@ -11,7 +10,7 @@ import { ITeamListViewModel } from '../models/team.models';
 export class TeamsService {
   header = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-  private readonly baseUrl = `${environment.BASE_URL}/api/teams`;
+  private readonly baseUrl = '/api/teams';
 
   filterQuery$ = new BehaviorSubject<string>('');
 

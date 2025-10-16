@@ -4,9 +4,21 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Builder\**" />
+    <EmbeddedResource Remove="Builder\**" />
+    <None Remove="Builder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
@@ -24,10 +36,6 @@
     <ProjectReference Include="..\TeamManagement.Application.Helper\TeamManagement.Application.Helper.csproj" />
     <ProjectReference Include="..\TeamManagementService.API\TeamManagementService.API.csproj" />
     <ProjectReference Include="..\TeamManagementService.Infrastructure\TeamManagementService.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Builder\" />
   </ItemGroup>
 
 </Project>

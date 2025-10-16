@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeamManagementService.Infrastructure.ApplicationContext;
 
@@ -11,9 +12,11 @@ using TeamManagementService.Infrastructure.ApplicationContext;
 namespace TeamManagementService.Infrastructure.Migrations
 {
     [DbContext(typeof(RaceContext))]
-    partial class RaceContextModelSnapshot : ModelSnapshot
+    [Migration("20251006133523_FixRowversionType")]
+    partial class FixRowversionType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -326,10 +329,8 @@ namespace TeamManagementService.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<byte[]>("Rowversion")
-                        .IsConcurrencyToken()
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");

@@ -31,6 +31,13 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
           //  .IsRequired()
             .HasMaxLength(OwnerNameMaxLength);
 
+        builder.Property(x => x.Rowversion)
+            .IsRowVersion()
+            .HasColumnType("rowversion")
+            .ValueGeneratedOnAddOrUpdate()
+            .IsConcurrencyToken();
+            
+        
         builder.Property(x => x.ChampionShipPoints); //.IsRequired();
 
         builder.HasIndex(x => x.Name).IsUnique().HasDatabaseName("IX_Team_Name");

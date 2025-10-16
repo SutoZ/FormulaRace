@@ -34,6 +34,7 @@ public class TeamBuilder
             OwnerName = _ownerName,
             ChampionShipPoints = _championshipPoints,
             DateOfFoundation = DateTime.UtcNow.AddYears(-5),
+            CreatedAt = DateTimeOffset.UtcNow,
             Active = true
         };
     }

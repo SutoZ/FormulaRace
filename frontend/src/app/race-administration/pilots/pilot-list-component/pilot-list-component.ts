@@ -115,6 +115,14 @@ export class PilotListComponent implements AfterViewInit, OnDestroy {
   }
 
   openDeleteDialog(pilotId: number) {
+    // Check if pilotId is valid before proceeding
+    if (!pilotId || pilotId === 0) {
+      this.snackBar.open('Cannot delete pilot: Invalid pilot ID', 'Close', {
+        duration: 3000,
+      });
+      return;
+    }
+
     const dialogRef = this.dialog.open(PilotDeleteComponent);
 
     dialogRef.afterClosed().subscribe((result) => {

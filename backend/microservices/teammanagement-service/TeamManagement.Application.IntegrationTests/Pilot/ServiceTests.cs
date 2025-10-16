@@ -29,10 +29,10 @@ public class ServiceTests : BaseIntegrationTest
     {
         // Arrange
         // 1. Seed a team to which the pilot can be assigned.
-        var pilot = await SeedPilotAsync("Test Pilot");
+        var pilot = await SeedPilotAsync();
 
         // 2. Create the DTO for the new pilot.
-        var createDto = new PilotCreateDtoBuilder().WithId(0).WithName("Lando Norris").WithNumber("4").WithNationality("British").WithCode("NOR").WithTeamId(pilot.Team.Id).Build();
+        var createDto = new PilotCreateDtoBuilder().WithName("Lando Norris").WithNumber("4").WithNationality("British").WithCode("NOR").WithTeamId(pilot.Team.Id).Build();
 
         // Act
         var resultDto = await _pilotService.CreateAsync(createDto, CancellationToken.None);
@@ -48,12 +48,12 @@ public class ServiceTests : BaseIntegrationTest
         Assert.That(resultDto.Name, Is.EqualTo(createDto.Name));
 
         // 2. Verify directly against the database that the pilot was created.
-        var pilotInDb = await _dbContext.Pilots.AsNoTracking().FirstOrDefaultAsync(p => p.Id == createDto.Id);
+        var pilotInDb = await _dbContext.Pilots.AsNoTracking().FirstOrDefaultAsync(p => p.Id == resultDto.Id);
 
         Assert.That(pilotInDb, Is.Not.Null);
-        Assert.That(pilotInDb!.Number, Is.EqualTo(createDto.Number));
-        Assert.That(pilotInDb!.Code, Is.EqualTo(createDto.Code));
-        Assert.That(pilotInDb!.Nationality, Is.EqualTo(createDto.Nationality));
+        Assert.That(pilotInDb!.Number, Is.EqualTo(resultDto.Number));
+        Assert.That(pilotInDb.Code, Is.EqualTo(resultDto.Code));
+        Assert.That(pilotInDb.Nationality, Is.EqualTo(resultDto.Nationality));
         Assert.That(pilotInDb.TeamId, Is.EqualTo(pilot.Team.Id));
     }
 
@@ -103,7 +103,6 @@ public class ServiceTests : BaseIntegrationTest
         Assert.That(notFound, Is.Not.Null);
         Assert.That(notFound, Is.TypeOf<NotFound>());
     }
-
     [Test]
     public async Task UpdateAsync_WithValidData_ShouldUpdatePilotInDatabase()
     {

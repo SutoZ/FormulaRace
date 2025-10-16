@@ -31,10 +31,16 @@ public class PilotConfiguration : IEntityTypeConfiguration<Pilot>
             .HasMaxLength(NationalityMaxLength);
 
         builder.Property(x => x.Number); //.IsRequired();
-
+        
         builder.Property(x => x.Code)
            // .IsRequired()
             .HasMaxLength(CodeMaxLength);
+
+        builder.Property(x => x.Rowversion)
+            .HasColumnType("rowversion")
+            .IsRowVersion()
+            .ValueGeneratedOnAddOrUpdate()
+            .IsConcurrencyToken();
 
         builder.HasIndex(x => x.Name);
         builder.HasIndex(x => x.Code).IsUnique().HasDatabaseName("IX_Pilot_Code");

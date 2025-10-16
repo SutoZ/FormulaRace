@@ -1,81 +1,148 @@
 <div class="mat-elevation-z8">
-  <mat-form-field>
-    <input
-      matInput
-      #filterInput
-      placeholder="Filter by Name..."
-      (keyup)="applyFilter($event)"
-      [value]="filterQuery"
-    />
-  </mat-form-field>
-
-  <div class="loading-shade" *ngIf="isLoading">
-    <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <!-- Search Filter Section -->
+  <div class="filter-section">
+    <mat-form-field appearance="outline">
+      <mat-label>Filter pilots</mat-label>
+      <input
+        matInput
+        #filterInput
+        placeholder="Search by name, number, or code..."
+        (keyup)="applyFilter($event)"
+        [value]="filterQuery"
+        autocomplete="off"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
   </div>
 
-  <button
-    *ngIf="dataSource"
-    mat-raised-button
-    color="primary"
-    class="add-button"
-    [routerLink]="['/pilot-create']"
-  >
-    Add new Pilot
-  </button>
+  <!-- Loading Spinner -->
+  <div class="loading-shade" *ngIf="isLoading" role="status" aria-label="Loading pilots">
+    <mat-spinner></mat-spinner>
+  </div>
 
-  <mat-table
-    mat-table
-    [dataSource]="dataSource"
-    matSort
-    [matSortActive]="defaultSortColumn"
-    [matSortDirection]="defaultSortOrder"
-    class="mat-elevation-z8"
-  >
-    <ng-container matColumnDef="Name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-      <td mat-cell *matCellDef="let pilot">
-        <a [routerLink]="['/pilots', pilot.id]"> {{pilot.name}} </a>
-      </td>
-    </ng-container>
+  <!-- Add New Pilot Button -->
+  <div class="action-section">
+    <button
+      *ngIf="dataSource"
+      mat-raised-button
+      color="primary"
+      class="add-button"
+      [routerLink]="['/pilot-create']"
+      aria-label="Add new pilot"
+    >
+      <mat-icon>add</mat-icon>
+      Add New Pilot
+    </button>
+  </div>
 
-    <ng-container matColumnDef="Number">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Number</th>
-      <td mat-cell *matCellDef="let pilot">{{pilot.number}}</td>
-    </ng-container>
+  <!-- Data Table -->
+  <div class="table-container">
+    <mat-table
+      [dataSource]="dataSource"
+      matSort
+      [matSortActive]="defaultSortColumn"
+      [matSortDirection]="defaultSortOrder"
+      class="pilots-table"
+      role="table"
+      aria-label="Pilots list"
+    >
+      <!-- Name Column -->
+      <ng-container matColumnDef="Name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header role="columnheader">
+          <mat-icon>person</mat-icon>
+          Name
+        </th>
+        <td mat-cell *matCellDef="let pilot" role="cell">
+          <a [routerLink]="['/pilots', pilot.id]" class="pilot-name-link"> {{pilot.name}} </a>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="Code">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
-      <td mat-cell *matCellDef="let pilot">{{pilot.code}}</td>
-    </ng-container>
+      <!-- Number Column -->
+      <ng-container matColumnDef="Number">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header role="columnheader">
+          <mat-icon>tag</mat-icon>
+          Number
+        </th>
+        <td mat-cell *matCellDef="let pilot" role="cell">
+          <span class="pilot-number">{{pilot.number}}</span>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="Nationality">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nationality</th>
-      <td mat-cell *matCellDef="let pilot">{{pilot.nationality}}</td>
-    </ng-container>
+      <!-- Code Column -->
+      <ng-container matColumnDef="Code">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header role="columnheader">
+          <mat-icon>code</mat-icon>
+          Code
+        </th>
+        <td mat-cell *matCellDef="let pilot" role="cell">
+          <span class="pilot-code">{{pilot.code}}</span>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let pilot">
-        <!-- Edit button -->
-        <button mat-icon-button [routerLink]="['/pilot-edit', pilot.id]" aria-label="Edit Pilot">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <!-- Delete button -->
-        <button mat-icon-button (click)="openDeleteDialog(pilot.id)" aria-label="Delete Pilot">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <!-- Nationality Column -->
+      <ng-container matColumnDef="Nationality">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header role="columnheader">
+          <mat-icon>flag</mat-icon>
+          Nationality
+        </th>
+        <td mat-cell *matCellDef="let pilot" role="cell">
+          <span class="pilot-nationality">{{pilot.nationality}}</span>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns; trackBy: trackbyPilotId"></tr>
-  </mat-table>
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef role="columnheader">
+          <mat-icon>settings</mat-icon>
+          Actions
+        </th>
+        <td mat-cell *matCellDef="let pilot" role="cell">
+          <div class="action-buttons">
+            <!-- Edit button -->
+            <button
+              mat-icon-button
+              [routerLink]="['/pilot-edit', pilot.id]"
+              [attr.aria-label]="'Edit pilot ' + pilot.name"
+              matTooltip="Edit pilot"
+              color="primary"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
 
-  <mat-paginator
-    [pageSize]="pageSize"
-    [pageIndex]="pageIndex"
-    [length]="length"
-    [pageSizeOptions]="[10, 20, 50]"
-    showFirstLastButtons
-  ></mat-paginator>
+            <!-- Delete button -->
+            <button
+              mat-icon-button
+              (click)="openDeleteDialog(pilot.id)"
+              [attr.aria-label]="'Delete pilot ' + pilot.name"
+              matTooltip="Delete pilot"
+              color="warn"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Table Headers and Rows -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" role="row"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns; trackBy: trackbyPilotId"
+        role="row"
+        class="pilot-row"
+      ></tr>
+    </mat-table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-section">
+    <mat-paginator
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [length]="length"
+      [pageSizeOptions]="[10, 20, 50]"
+      showFirstLastButtons
+      aria-label="Select page of pilots"
+    ></mat-paginator>
+  </div>
 </div>

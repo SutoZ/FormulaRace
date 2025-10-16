@@ -4,7 +4,10 @@
 
 export const environment = {
   production: false,
-  BASE_URL: 'http://localhost:8080'
+  BASE_URL: 'http://localhost:8080',
+  apiVersion: 'v1',
+  enableLogging: true,
+  enableDebugMode: true,
 };
 
 /*

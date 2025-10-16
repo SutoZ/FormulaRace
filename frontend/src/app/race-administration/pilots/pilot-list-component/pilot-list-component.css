@@ -1,14 +1,330 @@
-table {
-  width: 100%;
-  border: 1px solid, #000000;
-  background-color: rosybrown;
+/* Container for centering and responsive layout */
+.mat-elevation-z8 {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(33, 150, 243, 0.15);
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
+/* Section containers */
+.filter-section,
+.action-section,
+.table-container,
+.pagination-section {
+  width: 100%;
+}
+
+/* Modern form field styling */
 .mat-form-field {
-  font-size: 14px;
+  font-size: 16px;
   width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-button {
-  margin-bottom: 2em;
+.mat-form-field:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2);
+}
+
+/* Loading spinner container */
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(227, 242, 253, 0.8);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+/* Add button styling */
+.add-button {
+  background: linear-gradient(45deg, #2196f3, #1976d2);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+}
+
+/* Table container for overflow handling */
+.table-container {
+  flex: 1;
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.1);
+}
+
+/* Table styling */
+.pilots-table {
+  background: rgba(255, 255, 255, 0.95);
+  width: 100%;
+  min-width: 600px;
+}
+
+.mat-header-cell {
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1rem;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mat-cell {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(33, 150, 243, 0.1);
+}
+
+.pilot-row:hover {
+  background-color: rgba(33, 150, 243, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+/* Pilot data styling */
+.pilot-name-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.pilot-name-link:hover {
+  color: #0d47a1;
+  text-decoration: underline;
+}
+
+.pilot-number {
+  background: linear-gradient(45deg, #42a5f5, #1e88e5);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 16px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.pilot-code {
+  background: rgba(33, 150, 243, 0.1);
+  color: #1976d2;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.pilot-nationality {
+  color: #424242;
+  font-weight: 500;
+}
+
+/* Action buttons container */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.mat-icon-button {
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+}
+
+.mat-icon-button:hover {
+  transform: scale(1.1);
+}
+
+.mat-icon-button[color='primary']:hover {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.mat-icon-button[color='warn']:hover {
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+/* Paginator styling */
+.mat-paginator {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  border: 1px solid rgba(33, 150, 243, 0.2);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .mat-elevation-z8 {
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .mat-form-field {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .add-button {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pilots-table {
+    font-size: 0.9rem;
+    min-width: 500px;
+  }
+
+  .mat-header-cell,
+  .mat-cell {
+    padding: 0.75rem 0.5rem;
+  }
+
+  /* Hide less important columns on mobile */
+  .mat-column-Code,
+  .mat-column-Nationality {
+    display: none;
+  }
+
+  .pilots-table {
+    min-width: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mat-elevation-z8 {
+    margin: 0.5rem;
+    padding: 0.75rem;
+    gap: 1rem;
+  }
+
+  .pilots-table {
+    font-size: 0.8rem;
+    min-width: 320px;
+  }
+
+  .mat-header-cell,
+  .mat-cell {
+    padding: 0.5rem 0.25rem;
+  }
+
+  /* Further optimize for very small screens */
+  .mat-column-Number {
+    display: none;
+  }
+
+  .pilots-table {
+    min-width: 280px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .mat-icon-button {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mat-elevation-z8 {
+    background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+    color: white;
+  }
+
+  .mat-form-field {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  .pilots-table {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+  }
+
+  .mat-cell {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .pilot-name-link {
+    color: #64b5f6;
+  }
+
+  .pilot-name-link:hover {
+    color: #42a5f5;
+  }
+
+  .pilot-code {
+    background: rgba(255, 255, 255, 0.1);
+    color: #64b5f6;
+  }
+
+  .mat-paginator {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .mat-elevation-z8 {
+    border: 2px solid #000;
+  }
+
+  .pilots-table {
+    border: 1px solid #000;
+  }
+
+  .mat-header-cell {
+    border: 1px solid #000;
+  }
+
+  .mat-cell {
+    border-bottom: 1px solid #000;
+  }
 }
