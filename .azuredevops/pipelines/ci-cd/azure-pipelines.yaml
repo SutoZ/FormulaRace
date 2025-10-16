@@ -309,11 +309,10 @@ stages:
 
               echo "🚀 Running EF migrations..."
               export PATH="$PATH:/root/.dotnet/tools:$HOME/.dotnet/tools"
-              dotnet ef database update \
+              dotnet ef -v database update \
                 --project "$INFRA_PROJECT" \
                 --startup-project "$API_PROJECT" \
                 --configuration $(buildConfiguration) \
-                --verbosity normal
             displayName: 'Apply database migrations'
             env:
               ConnectionStrings__RaceConnection: $(testConnectionString)
